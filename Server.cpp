@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/02 09:38:53 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/02 11:00:24 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 Server::Server()
 {
+    getMyIpAddress();
     Setup_Server();
     fd_set current_sockets, ready_sockets; // fd_set is a set of file descriptors. It is actually a bit array. Each bit corresponds to a file descriptor. If the bit is set, it means that the corresponding file descriptor is set. The FD_ZERO macro clears the set. The FD_SET macro adds a file descriptor to the set. The FD_CLR macro removes a file descriptor from the set. The FD_ISSET macro checks to see if a file descriptor is part of the set.
 
@@ -72,16 +73,12 @@ void Server::Setup_Server()
 
     // initialize address
     address.sin_family = AF_INET; // what is sin_family? sin_family contains a code for the address family. It should always be set to AF_INET.
-    address.sin_port = htons(PORT); // what is sin_port? sin_port contains the port number. However, instead of simply copying the port number to this field, it is necessary to convert this to network byte order using the function htons() which converts a port number in host byte order to a port number in network byte order.
-    address.sin_addr.s_addr = inet_addr("10.11.2.7"); // what is sin_addr? sin_addr contains the IP address. For server code, this will always be the IP address of the machine on which the server is running, and there is a symbolic constant INADDR_ANY which gets this address.
+    address.sin_port = htons(PORT); // what is sin_port? sin_port contains the port number. However, instead of simply copying the port number to this field, it is necessary to convert this to network byte order using the function htons() which converts a port number in host byte order to a port number in network byte order.    
+    std::cout << "IP Address: http://" << ip_address << ":" << PORT << std::endl;
     if(bind(socket_fd_server, (struct sockaddr*)&address, sizeof(address)) == -1) // why we need bind function to bind socket? The bind function is used to bind the socket to a particular "address and port combination". In this case, we are binding to
     {
         std::cout << "Faild to bind to port 8080. " << std::endl;
         exit(EXIT_FAILURE);
-    }
-    else
-    {
-        std::cout << "Bind to port " << PORT << std::endl;
     }
     if(listen(socket_fd_server,BACKLOG) == -1) // why we need listen function to listen socket? The listen function is used on the server side. It tells the socket library that we want to listen in on the server side for incoming connections. The second argument is called the backlog, and it tells the socket library that how many incoming connections can be queued up before the system starts to reject incoming connections.
     {
@@ -130,3 +127,19 @@ void Server::Read_From_Client()
     buffer[message_size-1] = '\0';
     std::cout << "Client said: \n" << buffer << std::endl;
 }
+
+void Server::getMyIpAddress() {
+    char buffer[1024];
+    ip_address = "";
+
+    struct hostent* host; // Structure containing host information
+    if (gethostname(buffer, sizeof(buffer)) != -1) {
+        host = gethostbyname(buffer); // Get the IP address
+        if (host != NULL) {
+            ip_address = inet_ntoa(*((struct in_addr *)host->h_addr_list[0])); // Convert IP to string
+            address.sin_addr.s_addr = inet_addr(ip_address.c_str()); // Use c_str() to get a const char* from the string
+        }
+    }
+    return ;
+}
+
