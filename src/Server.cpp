@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/02 13:02:09 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/02 15:04:31 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,11 @@ void Server::Read_From_Client()
     }
     buffer[message_size-1] = '\0';
     std::cout << "Client said: \n" << buffer << std::endl;
+    std::string message = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<h1>Hello, World!</h1>";
+    if (send(socket_fd_client, message.c_str(), message.length(), 0) < 0) {
+        puts("Send failed");
+        return ;
+    }
     std::cout << "==============================" << std::endl;
 }
 

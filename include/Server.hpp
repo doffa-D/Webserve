@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/02 11:53:03 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/02 15:09:52 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,10 @@ class Server
         int message_size; // message_size is the size of the message that will be sent to the client
        std::string ip_address; // ip_address is the ip address of the server        
     public:
-        void Setup_Server();
-        void Accept_Connection();
-        void Read_From_Client();
-        void getMyIpAddress();
+        void Setup_Server(); // Setup_Server function is used to setup the server
+        void Accept_Connection(); // Accept_Connection function is used to accept a connection request from a client
+        void Read_From_Client(); // Read_From_Client function is used to read data from a client
+        void getMyIpAddress(); // getMyIpAddress function is used to get the ip address of the server
         Server();
         ~Server();
 };
