@@ -1,24 +1,47 @@
-C++ = c++
-FLAGS = -Wall -Wextra -Werror -std=c++98
-SRC = main.cpp\
-	Server.cpp
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
+#    Updated: 2023/11/02 13:02:34 by hdagdagu         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-OBJ = $(SRC:.cpp=.o)
+CXX = c++
+CFLAGS = -Wall -Werror -Wextra #-fsanitize=address -g 
+INCLUDES = include/Server.hpp
+NAME = Webserv
+OBJDIR = .objFiles
 
-NAME = webserv
+SRC_DIR = src
+SRCS = main.cpp Server.cpp
+OBJ = $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.o))
 
-all : $(NAME)
+# DEBUG
+ifeq ($(DEBUG), 1)
+   OPTS = -fsanitize=address -g
+endif
 
-$(NAME) : $(OBJ)
-	@$(C++) $(FLAGS) $(OBJ) $(OPTS) -o $(NAME)
+all: $(NAME)
 
-%.o : %.cpp
-	@$(C++) $(FLAGS) -c $< -o $@
+$(NAME): $(OBJ)
+	$(CXX) $(CFLAGS) $(OBJ) $(OPTS) -o $(NAME)
 
-clean :
-	@rm -f $(OBJ)
+$(OBJDIR)/%.o: $(SRC_DIR)/%.cpp $(INCLUDES)
+	mkdir -p $(OBJDIR)
+	$(CXX) $(CFLAGS) -c $< -o $@
 
-fclean : clean
-	@rm -f $(NAME)
+clean:
+	rm -rf $(OBJDIR)
 
-re:fclean $(NAME)
+fclean: clean
+	rm -f $(NAME)
+
+run: all
+	./$(NAME)
+
+re: fclean all
+

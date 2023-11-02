@@ -6,11 +6,11 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/02 11:00:24 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/02 13:02:09 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "../include/Server.hpp"
 
 Server::Server()
 {
@@ -126,6 +126,7 @@ void Server::Read_From_Client()
     }
     buffer[message_size-1] = '\0';
     std::cout << "Client said: \n" << buffer << std::endl;
+    std::cout << "==============================" << std::endl;
 }
 
 void Server::getMyIpAddress() {

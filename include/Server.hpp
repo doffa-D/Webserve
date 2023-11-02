@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/02 10:51:55 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/02 11:53:03 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,13 @@
 #include <arpa/inet.h> // For inet_ntoa
 #include <netdb.h> // For gethostbyname
 
-
 #define PORT 9999 // the port users will be connecting to
 #define BACKLOG 10 // how many pending connections queue will hold
 #define BUFFER_SIZE 1024 // the size of the buffer that will be used to store data
+
+#ifndef SERVER_HPP
+#define SERVER_HPP
+
 class Server
 {
     private:
@@ -40,3 +43,5 @@ class Server
         Server();
         ~Server();
 };
+
+#endif
