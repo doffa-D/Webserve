@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/02 15:04:31 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/03 14:40:42 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ Server::Server()
                 else
                 {
                     Read_From_Client(); // read function is used to read data from a socket
-                    close(socket_fd_client); // close function is used to close a socket. It takes a single argument, which is the file descriptor of the socket to be closed.
                     FD_CLR(socket_fd_client,&current_sockets); // FD_CLR macro removes a file descriptor from the set
+                    close(socket_fd_client); // close function is used to close a socket. It takes a single argument, which is the file descriptor of the socket to be closed.
                 }
             }
         
@@ -75,9 +75,11 @@ void Server::Setup_Server()
     address.sin_family = AF_INET; // what is sin_family? sin_family contains a code for the address family. It should always be set to AF_INET.
     address.sin_port = htons(PORT); // what is sin_port? sin_port contains the port number. However, instead of simply copying the port number to this field, it is necessary to convert this to network byte order using the function htons() which converts a port number in host byte order to a port number in network byte order.    
     std::cout << "IP Address: http://" << ip_address << ":" << PORT << std::endl;
+    int opt = 1;
+    setsockopt(socket_fd_server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)); // why we need setsockopt function to set socket options? The setsockopt function is used to allow the local address to be reused when the server is restarted before the required wait time expires. The setsockopt function takes four arguments: The first argument is the socket descriptor. The second argument is the level at which the option resides. The third argument is the name of the option. The fourth argument is a pointer to the buffer containing the value for the option. The fifth argument is the size of the buffer containing the value for the option.
     if(bind(socket_fd_server, (struct sockaddr*)&address, sizeof(address)) == -1) // why we need bind function to bind socket? The bind function is used to bind the socket to a particular "address and port combination". In this case, we are binding to
     {
-        std::cout << "Faild to bind to port 8080. " << std::endl;
+        std::cout << "Faild to bind to port " << PORT << std::endl;
         exit(EXIT_FAILURE);
     }
     if(listen(socket_fd_server,BACKLOG) == -1) // why we need listen function to listen socket? The listen function is used on the server side. It tells the socket library that we want to listen in on the server side for incoming connections. The second argument is called the backlog, and it tells the socket library that how many incoming connections can be queued up before the system starts to reject incoming connections.
@@ -107,9 +109,10 @@ void Server::Accept_Connection()
 
 void Server::Read_From_Client()
 {
-    while((bytes_read = read(socket_fd_client,buffer+message_size,sizeof(buffer)-message_size-1))) // read function is used to read data from a socket. It takes the following three arguments: The first argument is the socket file descriptor, and the second is the buffer in which to store the data, and the third is the maximum number of bytes to read. The read function returns the number of bytes actually read, and -1 on error.
+    while(1)
     {
-        if(bytes_read == -1)
+        bytes_read = read(socket_fd_client, buffer, BUFFER_SIZE - 1);
+        if(bytes_read < 0)
         {
             std::cout << "Failed to read from socket. " << std::endl;
             exit(EXIT_FAILURE);
@@ -118,20 +121,23 @@ void Server::Read_From_Client()
         {
             std::cout << "Read from socket. " << std::endl;
         }
-        message_size += bytes_read; // message_size is the size of the message that will be sent to the client
-        if(message_size > BUFFER_SIZE -1 || buffer[message_size-1] == '\n')
+        sBuffer.append(buffer);
+        if (bytes_read < BUFFER_SIZE - 1)
         {
+            buffer[bytes_read] = '\0';
             break;
         }
     }
-    buffer[message_size-1] = '\0';
-    std::cout << "Client said: \n" << buffer << std::endl;
+    std::cout << "Sending response to client. " << std::endl;
+    parse_data(sBuffer); // parse_data function is used to parse data from a client and store it in a multimap key-value pair
+    print_data(); // print_data function is used to print the data that was parsed from the client
     std::string message = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<h1>Hello, World!</h1>";
     if (send(socket_fd_client, message.c_str(), message.length(), 0) < 0) {
         puts("Send failed");
         return ;
     }
-    std::cout << "==============================" << std::endl;
+    std::cout << "============== Response sent to client. ==============" << std::endl;
+    clear_data(); // clear_data function is used to clear the data that was parsed from the client
 }
 
 void Server::getMyIpAddress() {

@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/02 15:09:52 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/03 14:39:27 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,16 @@
 #include <unistd.h> // For read
 #include <arpa/inet.h> // For inet_ntoa
 #include <netdb.h> // For gethostbyname
+#include "parse.hpp"
 
-#define PORT 9999 // the port users will be connecting to
+#define PORT 8080 // the port users will be connecting to
 #define BACKLOG 10 // how many pending connections queue will hold
 #define BUFFER_SIZE 1024 // the size of the buffer that will be used to store data
 
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-class Server
+class Server : public parse
 {
     private:
         int socket_fd_server; // socket_fd_server is the file descriptor of the server socket
@@ -33,8 +34,11 @@ class Server
         int socket_fd_client; // socket_fd_client is the file descriptor of the client socket
         char buffer[BUFFER_SIZE]; // buffer is the buffer that will be used to store data
         int bytes_read; // bytes_read is the number of bytes read from the client
-        int message_size; // message_size is the size of the message that will be sent to the client
-       std::string ip_address; // ip_address is the ip address of the server        
+        // int message_size; // message_size is the size of the message that will be sent to the client
+       std::string ip_address; // ip_address is the ip address of the server      
+        std::string sBuffer;
+
+       
     public:
         void Setup_Server(); // Setup_Server function is used to setup the server
         void Accept_Connection(); // Accept_Connection function is used to accept a connection request from a client
