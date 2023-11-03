@@ -6,7 +6,7 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2023/11/03 10:24:15 by hdagdagu         ###   ########.fr        #
+#    Updated: 2023/11/03 16:02:41 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ NAME = Webserv
 OBJDIR = .objFiles
 
 SRC_DIR = src
-SRCS = main.cpp Server.cpp parse.cpp
+SRCS = main.cpp Server.cpp parseHttpRequest.cpp
 OBJ = $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.o))
 
 # DEBUG
