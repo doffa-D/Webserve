@@ -1,0 +1,7 @@
+git filter-repo --commit-callback '
+    if commit.author.email == b"hdagdagu@c1r3p3.1337.ma":
+        commit.author_name = b"doffa-D"
+        commit.author_email = b"hossam.dagdag@gmail.com"
+        commit.committer_name = b"Houssam Dagdague"
+        commit.committer_email = b"hossam.dagdag@gmail.com"
+' --tag-rename-callback 'return tag' --force
