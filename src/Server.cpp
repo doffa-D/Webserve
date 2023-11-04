@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/03 18:16:01 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/04 10:44:53 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ Server::Server()
 				}
 				else
 				{
-					Read_Request_From_Client();					// read function is used to read data from a socket
+					socket_fd_client = i;
+					Read_Request_From_Client();	
 					FD_CLR(socket_fd_client, &current_sockets); // FD_CLR macro removes a file descriptor from the set
 					close(socket_fd_client);					// close function is used to close a socket. It takes a single argument, which is the file descriptor of the socket to be closed.
 				}
@@ -111,19 +112,19 @@ void Server::Send_Response_To_Client()
 	if (status.empty() == 0)
 	{
 		std::string message = get_Version() + " " + status + "\r\nContent-Type: text/html\r\n\r\n"
-															 "<html>"
-															 "<head>"
-															 "<style>"
-															 "h1 {"
-															 "    text-align: center;"
-															 "}"
-															 "</style>"
-															 "</head>"
-															 "<body>"
-															 "<h1>" +
-							  status + "</h1>"
-									   "</body>"
-									   "</html>";
+							"<html>"
+							"<head>"
+							"<style>"
+							"h1 {"
+							"    text-align: center;"
+							"}"
+							"</style>"
+							"</head>"
+							"<body>"
+							"<h1>" +
+							status + "</h1>"
+							"</body>"
+							"</html>";
 		if (send(socket_fd_client, message.c_str(), message.length(), 0) < 0)
 		{
 			puts("Send failed");
@@ -157,8 +158,10 @@ void Server::Send_Response_To_Client()
 
 void Server::Read_Request_From_Client()
 {
+	char buffer[BUFFER_SIZE];
 	while (1)
 	{
+		bzero(buffer, BUFFER_SIZE);
 		bytes_read = read(socket_fd_client, buffer, BUFFER_SIZE - 1);
 		if (bytes_read < 0)
 		{
@@ -176,15 +179,11 @@ void Server::Read_Request_From_Client()
 			break;
 		}
 	}
+	std::cout << sBuffer << std::endl;
 	parseRequest(sBuffer);
-	std::cout << "Host : " << get_Header("Host") << std::endl;
-	std::cout << "Method : " << get_Method() << std::endl;
-	std::cout << "Version : " << get_Version() << std::endl;
-	std::cout << "URI : " << get_URI() << std::endl;
-	std::cout << "Status : " << get_status() << std::endl;
-
 	sBuffer.clear();
 	Send_Response_To_Client(); // Send_Response_To_Client function is used to send a response to the client
+	// close(socket_fd_client);
 }
 
 void Server::getMyIpAddress()
