@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/04 10:22:03 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/04 16:16:01 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@
 #include <unistd.h>     // For read
 #include <arpa/inet.h>  // For inet_ntoa
 #include <netdb.h>      // For gethostbyname
-#include "parseHttpRequest.hpp"
+#include "parseHttpRequest.hpp" // For parseHttpRequest class
+#include <fstream>      // For ifstream
 
 #define PORT 8080        // the port users will be connecting to
 #define BACKLOG 10       // how many pending connections queue will hold
@@ -35,6 +36,7 @@ class Server : public parseHttpRequest
 		int bytes_read;           // bytes_read is the number of bytes read from the client
 		std::string ip_address;   // ip_address is the ip address of the server
 		std::string sBuffer;      // sBuffer is the buffer that will be used to store data as a string
+		std::string HtmlFile;     // HtmlFile is the html file that will be sent to the client
 
 	public:
 		Server();
@@ -44,6 +46,8 @@ class Server : public parseHttpRequest
 		void Accept_Connection();        // Accept_Connection function is used to accept a connection request from a client
 		void Read_Request_From_Client(); // Read_From_Client function is used to read data from a client
 		void Send_Response_To_Client();  // Send_Response_To_Client function is used to send a response to the client
+		void ReadHtmlFile();             // ReadHtmlFile function is used to read the html file
+		std::string GetMIMEType(std::string key);              // GetMimeType function is used to get the mime type of the html file
 };
 
 #endif

@@ -63,6 +63,11 @@
         "vector": "cpp",
         "iostream": "cpp",
         "thread": "cpp",
-        "future": "cpp"
+        "future": "cpp",
+        "deque": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp",
+        "list": "cpp",
+        "stack": "cpp"
     }
 }
