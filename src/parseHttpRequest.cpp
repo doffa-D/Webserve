@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 15:40:04 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/04 16:54:18 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/05 09:43:30 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,33 @@ function parseHttpRequest(requestString):
     Return an object containing the method, uri, version, headers, and possibly the body
 */
 
+void parseHttpRequest::Check_Request_Status()
+{
+    std::cout << "Method: " << Method << std::endl;
+    std::cout << "URI: " << URI << std::endl;
+    std::cout << "Version: " << Version << std::endl;
+    std::cout << "Content-Length: " << get_Header("Content-Length") << std::endl;
+    std::cout << "Content-Type: " << get_Header("Content-Type") << std::endl;
+    if (URI_check(URI) == false)
+        status = "400 Bad Request";
+    else if(URI.length() > 2048)
+        status = "414 Request-URI Too Long";
+    else if (Method == "POST")
+    {
+        // if (get_Header("Content-Length") == "")
+        //     status = "411 Length Required";
+        // else if (get_Header("Content-Type") != "application/x-www-form-urlencoded")
+        //     status = "415 Unsupported Media Type";
+        // else
+        //     status = "200 OK";
+    }
+    // else if (Method != "GET")
+    //     status = "501 Not Implemented";
+    // else
+    //     status = "200 OK";
+    
+}
+
 void parseHttpRequest::parseRequest(std::string request)
 {
     std::stringstream ss(request);
@@ -40,11 +67,8 @@ void parseHttpRequest::parseRequest(std::string request)
     std::getline(ss, line, '\n');
     std::istringstream iss(line);
     iss >> Method >> URI >> Version;
-    
-    if (URI_check(URI) == false)
-    {
-        status = "400 Bad Request";
-    }
+    Check_Request_Status();
+
 
     while (std::getline(ss, line, '\n') && line != "\r")
     {
@@ -119,10 +143,13 @@ void parseHttpRequest::set_status(std::string status)
 
 void parseHttpRequest::print_all_parseRequest()
 {
+    std::cout << "==============================" << std::endl;
+
     std::map<std::string,std::string>::iterator it = parsed_data.begin();
     while (it != parsed_data.end())
     {
         std::cout << it->first << " => " << it->second << '\n';
         it++;
     }
+    std::cout << "==============================" << std::endl;
 }

@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 15:18:41 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/04 12:18:07 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/04 20:01:47 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <iostream>
 #include <sstream>
 #include <map>
+
 class parseHttpRequest
 {
     private:
@@ -26,7 +27,7 @@ class parseHttpRequest
         std::string status;                                  // status is the status of the request
 
     public:
-        parseHttpRequest(); // this constructor is used to parse the request and store the parsed data in the map
+        parseHttpRequest();                     // this constructor is used to parse the request and store the parsed data in the map
         ~parseHttpRequest();
         void parseRequest(std::string request); // this constructor is used to parse the request and store the parsed data in the map
 
@@ -38,7 +39,8 @@ class parseHttpRequest
         bool URI_check(std::string URI);         // URI_check function is used to check if the URI is valid
         std::string get_status();                // get_status function is used to get the status of the request
         void set_status(std::string status);     // set_status function is used to set the status of the request
-        void print_all_parseRequest();                        // print_all function is used to print all the data in the map
+        void print_all_parseRequest();           // print_all function is used to print all the data in the map
+        void Check_Request_Status();             // Check_Request_Status function is used to check the status of the request
 };
 
 #endif

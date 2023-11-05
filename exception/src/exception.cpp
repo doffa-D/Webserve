@@ -1,19 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   exception.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/01 15:36:49 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/05 12:15:48 by hdagdagu         ###   ########.fr       */
+/*   Created: 2023/11/05 11:49:01 by hdagdagu          #+#    #+#             */
+/*   Updated: 2023/11/05 12:23:51 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/Server.hpp"
+#include "../include/exception.hpp"
 
-int main()
+exception::status_code_exception::status_code_exception(const std::string &msg) : message(msg) {}
+
+const char *exception::status_code_exception::what() const
 {
-    Server server;
-    return (0);
+    return message.c_str();
 }

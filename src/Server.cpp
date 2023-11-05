@@ -6,18 +6,24 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/04 17:55:19 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/05 12:26:01 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Server.hpp"
 
 
-
 Server::Server()
 {
+	parseConfig("config/default.conf");	   // parseConfig function is used to parse the config file and store the parsed data in the map
+	MIME_types_init();					   // MIME_types_init function is used to initialize the map with the mime types
 	getMyIpAddress();					   // getMyIpAddress function is used to get the ip address of the server
 	Setup_Server();						   // Setup_Server function is used to setup the server
+	listen_to_multiple_clients();		   // listen_to_multiple_clients function is used to listen to multiple clients
+}
+
+void Server::listen_to_multiple_clients()
+{
 	fd_set current_sockets, ready_sockets; // fd_set is a set of file descriptors. It is actually a bit array. Each bit corresponds to a file descriptor. If the bit is set, it means that the corresponding file descriptor is set. The FD_ZERO macro clears the set. The FD_SET macro adds a file descriptor to the set. The FD_CLR macro removes a file descriptor from the set. The FD_ISSET macro checks to see if a file descriptor is part of the set.
 
 	FD_ZERO(&current_sockets);					// FD_ZERO macro clears the set
@@ -50,6 +56,9 @@ Server::Server()
 		}
 	}
 }
+
+
+
 Server::~Server()
 {
 	// std::cout << "Server destructor called. " << std::endl;
@@ -66,10 +75,6 @@ void Server::Setup_Server()
 	{
 		std::cout << "Failed to create socket. " << std::endl;
 		exit(EXIT_FAILURE);
-	}
-	else
-	{
-		std::cout << "Creat socket. " << std::endl;
 	}
 
 	// initialize address
@@ -88,10 +93,6 @@ void Server::Setup_Server()
 		std::cout << "Faild to listen. " << std::endl;
 		exit(EXIT_FAILURE);
 	}
-	else
-	{
-		std::cout << "Listen. " << std::endl;
-	}
 }
 
 void Server::Accept_Connection()
@@ -102,57 +103,16 @@ void Server::Accept_Connection()
 		std::cout << "Failed to grab connection. " << std::endl;
 		exit(EXIT_FAILURE);
 	}
-	else
-	{
-		std::cout << "Grab connection. " << std::endl;
-	}
 }
 
 void Server::Send_Response_To_Client()
 {
-	size_t pos = get_URI().find('.');
-	std::string ContentType;
-	if(pos != std::string::npos)
-	{
-		std::string ext = get_URI().substr(pos);
-		ContentType = GetMIMEType(ext);
-	}
 	std::string status = get_status();
-	// print_all_parseRequest();
-	// std::cout << "===> ContentType: " << ContentType << std::endl;
-	// if (status.empty() == 0)
-	// {
-	// 	std::string message = get_Version() + " " + status + "\r\nContent-Type: text/html\r\n\r\n"
-	// 						"<html>"
-	// 						"<head>"
-	// 						"<style>"
-	// 						"h1 {"
-	// 						"    text-align: center;"
-	// 						"}"
-	// 						"</style>"
-	// 						"</head>"
-	// 						"<body>"
-	// 						"<h1>" +
-	// 						status + "</h1>"
-	// 						"</body>"
-	// 						"</html>";
-	// 	if (send(socket_fd_client, message.c_str(), message.length(), 0) < 0)
-	// 	{
-	// 		puts("Send failed");
-	// 		return;
-	// 	}
-	// }
-	// else
-	// {
-
-	std::string message = "HTTP/1.1 200 OK\r\nContent-Type: "+ContentType +"\r\n\r\n" + HtmlFile;
-	// std::cout << message << std::endl;
-	if (send(socket_fd_client, message.c_str(), message.length(), 0) < 0)
-	{
-		std::cout << "Send failed" << std::endl;
-		return;
-	}
-	// }
+	std::cout << "Status: " << status << std::endl;
+	if (status.compare("200 OK"))
+		Send_Error_Response();
+	else
+		Send_Correct_Response();
 	clear_all();
 }
 
@@ -168,10 +128,6 @@ void Server::Read_Request_From_Client()
 			std::cout << "Failed to read from socket. " << std::endl;
 			exit(EXIT_FAILURE);
 		}
-		else
-		{
-			std::cout << "Read from socket. " << std::endl;
-		}
 		sBuffer.append(buffer);
 		if (bytes_read < BUFFER_SIZE - 1)
 		{
@@ -180,9 +136,11 @@ void Server::Read_Request_From_Client()
 		}
 	}
 	ReadHtmlFile();
-	parseRequest(sBuffer); // parseRequest function is used to parse the request and store the parsed data in the map
 	set_status("200 OK");
+	parseRequest(sBuffer); // parseRequest function is used to parse the request and store the parsed data in the map
+	std::cout << "==========================================" << std::endl;
 	std::cout << sBuffer << std::endl;
+	std::cout << "==========================================" << std::endl;
 	// print_all_parseRequest();
 	sBuffer.clear();
 	Send_Response_To_Client(); // Send_Response_To_Client function is used to send a response to the client
@@ -219,184 +177,226 @@ void Server::ReadHtmlFile()
 	file.close();
 }
 
-
-std::string  Server::GetMIMEType(std::string key)
+std::string Server::GetMIMEType(std::string key)
 {
-    std::map<std::string, std::string> mime_types;
-    mime_types[".bmp"] = "image/bmp";
-    mime_types[".css"] = "text/css";
-    mime_types[".html"] = "text/html";
-    mime_types[".js"] = "text/javascript";
-    mime_types[".json"] = "application/json";
-    mime_types[".xml"] = "application/xml";
-    mime_types[".pdf"] = "application/pdf";
-    mime_types[".zip"] = "application/zip";
-    mime_types[".jpeg"] = "image/jpeg";
-    mime_types[".png"] = "image/png";
-    mime_types[".gif"] = "image/gif";
-    mime_types[".svg"] = "image/svg+xml";
-    mime_types[".mp3"] = "audio/mpeg";
-    mime_types[".ogg"] = "audio/ogg";
-    mime_types[".wav"] = "audio/wav";
-    mime_types[".mp4"] = "video/mp4";
-    mime_types[".mpeg"] = "video/mpeg";
-    mime_types[".mov"] = "video/quicktime";
-    mime_types[".ogg"] = "application/ogg";
-    mime_types[".swf"] = "application/x-shockwave-flash";
-    mime_types[".js"] = "application/javascript";
-    mime_types[".js"] = "application/x-javascript";
-    mime_types[".xml"] = "text/xml";
-    mime_types[".x-www-form-urlencoded"] = "application/x-www-form-urlencoded";
-    mime_types[".form-data"] = "multipart/form-data";
-    mime_types[".rss"] = "application/rss+xml";
-    mime_types[".atom"] = "application/atom+xml";
-    mime_types[".rdf"] = "application/rdf+xml";
-    mime_types[".soap"] = "application/soap+xml";
-    mime_types[".mathml"] = "application/mathml+xml";
-    mime_types[".rdf"] = "application/rdf+xml";
-    mime_types[".zip"] = "application/zip";
-    mime_types[".gz"] = "application/gzip";
-    mime_types[".tar"] = "application/x-tar";
-    mime_types[".compressed"] = "application/x-compressed";
-    mime_types[".gzip"] = "application/x-gzip";
-    mime_types[".bzip2"] = "application/x-bzip2";
-    mime_types[".7z"] = "application/x-7z-compressed";
-    mime_types[".rar"] = "application/x-rar-compressed";
-    mime_types[".zip-compressed"] = "application/x-zip-compressed";
-    mime_types[".stuffit"] = "application/x-stuffit";
-    mime_types[".dvi"] = "application/x-dvi";
-    mime_types[".rtf"] = "application/rtf";
-    mime_types[".latex"] = "application/x-latex";
-    mime_types[".postscript"] = "application/postscript";
-    mime_types[".tex"] = "application/x-tex";
-    mime_types[".sh"] = "application/x-sh";
-    mime_types[".bsh"] = "application/x-bsh";
-    mime_types[".csh"] = "application/x-csh";
-    mime_types[".perl"] = "application/x-perl";
-    mime_types[".python"] = "application/x-python";
-    mime_types[".php"] = "application/x-php";
-    mime_types[".java"] = "application/x-java";
-    mime_types[".ruby"] = "application/x-ruby";
-    mime_types[".shellscript"] = "application/x-shellscript";
-    mime_types[".xhtml"] = "application/xhtml+xml";
-    mime_types[".xop"] = "application/xop+xml";
-    mime_types[".soap"] = "application/soap+xml";
-    mime_types[".atom"] = "application/atom+xml";
-    mime_types[".xslt"] = "application/xslt+xml";
-    mime_types[".xspf"] = "application/xspf+xml";
-    mime_types[".xaml"] = "application/xaml+xml";
-    mime_types[".x-silverlight-app"] = "application/x-silverlight-app";
-    mime_types[".cdlink"] = "application/x-cdlink";
-    mime_types[".certificates"] = "application/x-pkcs7-certificates";
-    mime_types[".pkcs7-mime"] = "application/pkcs7-mime";
-    mime_types[".pkcs7-signature"] = "application/pkcs7-signature";
-    mime_types[".pkcs8"] = "application/pkcs8";
-    mime_types[".pkcs10"] = "application/pkcs10";
-    mime_types[".pkcs12"] = "application/x-pkcs12";
-    mime_types[".x509-ca-cert"] = "application/x-x509-ca-cert";
-    mime_types[".x509-user-cert"] = "application/x-x509-user-cert";
-    mime_types[".pkcs7-certreqresp"] = "application/x-pkcs7-certreqresp";
-    mime_types[".s-mime"] = "application/s-mime";
-    mime_types[".pkix-crl"] = "application/pkix-crl";
-    mime_types[".pgp-encrypted"] = "application/pgp-encrypted";
-    mime_types[".pgp-signature"] = "application/pgp-signature";
-    mime_types[".pem-file"] = "application/x-pem-file";
-    mime_types[".x509-ca-cert"] = "application/x-x509-ca-cert";
-    mime_types[".x509-user-cert"] = "application/x-x509-user-cert";
-    mime_types[".x509-email-cert"] = "application/x-x509-email-cert";
-    mime_types[".x509-root-cert"] = "application/x-x509-root-cert";
-    mime_types[".odt"] = "application/vnd.oasis.opendocument.text";
-    mime_types[".odp"] = "application/vnd.oasis.opendocument.presentation";
-    mime_types[".ods"] = "application/vnd.oasis.opendocument.spreadsheet";
-    mime_types[".cab-compressed"] = "application/vnd.ms-cab-compressed";
-    mime_types[".odg"] = "application/vnd.oasis.opendocument.graphics";
-    mime_types[".tika-msoffice"] = "application/x-tika-msoffice";
-    mime_types[".docx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-    mime_types[".dotx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.template";
-    mime_types[".xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    mime_types[".xltx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.template";
-    mime_types[".pptx"] = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-    mime_types[".potx"] = "application/vnd.openxmlformats-officedocument.presentationml.template";
-    mime_types[".ppsx"] = "application/vnd.openxmlformats-officedocument.presentationml.slideshow";
-    mime_types[".sldx"] = "application/vnd.openxmlformats-officedocument.presentationml.slide";
-    mime_types[".opendocument.graphics"] = "application/vnd.openxmlformats-officedocument.graphics";
-    mime_types[".opendocument.graphics-template"] = "application/vnd.openxmlformats-officedocument.graphics-template";
-    mime_types[".opendocument.graphics-template"] = "application/vnd.openxmlformats-officedocument.graphics-template";
-    mime_types[".opendocument.formula-template"] = "application/vnd.openxmlformats-officedocument.formula-template";
-    mime_types[".opendocument.formula-template"] = "application/vnd.openxmlformats-officedocument.formula-template";
-    mime_types[".opendocument.drawingml.diagram-layout"] = "application/vnd.openxmlformats-officedocument.drawingml.diagram-layout";
-    mime_types[".opendocument.drawingml.diagram"] = "application/vnd.openxmlformats-officedocument.drawingml.diagram";
-    mime_types[".opendocument.drawingml.chart"] = "application/vnd.openxmlformats-officedocument.drawingml.chart";
-    mime_types[".ms-project"] = "application/vnd.ms-project";
-    mime_types[".visio"] = "application/vnd.visio";
-    mime_types[".x-mspublisher"] = "application/x-mspublisher";
-    mime_types[".xpsdocument"] = "application/vnd.ms-xpsdocument";
-    mime_types[".3gpp.pic-bw-large"] = "application/vnd.3gpp.pic-bw-large";
-    mime_types[".3gpp.pic-bw-small"] = "application/vnd.3gpp.pic-bw-small";
-    mime_types[".3gpp.pic-bw-var"] = "application/vnd.3gpp.pic-bw-var";
-    mime_types[".3gpp2.tcap"] = "application/vnd.3gpp2.tcap";
-    mime_types[".icq"] = "application/x-icq";
-    mime_types[".aim"] = "application/x-aim";
-    mime_types[".msn-messenger"] = "application/x-msn-messenger";
-    mime_types[".miranda"] = "application/x-miranda";
-    mime_types[".t-relay"] = "application/t-relay";
-    mime_types[".kopete"] = "application/x-kopete";
-    mime_types[".gaim"] = "application/x-gaim";
-    mime_types[".mbox"] = "application/mbox";
-    mime_types[".vocaltec-media"] = "application/vocaltec-media";
-    mime_types[".vocaltec-media-control"] = "application/vocaltec-media-control";
-    mime_types[".dvi"] = "application/x-dvi";
-    mime_types[".xpinstall"] = "application/x-xpinstall";
-    mime_types[".sdp"] = "application/sdp";
-    mime_types[".cpio"] = "application/x-cpio";
-    mime_types[".tcl"] = "application/x-tcl";
-    mime_types[".tex-tfm"] = "application/x-tex-tfm";
-    mime_types[".texinfo"] = "application/x-texinfo";
-    mime_types[".tei+xml"] = "application/tei+xml";
-    mime_types[".sru+xml"] = "application/sru+xml";
-    mime_types[".font-woff"] = "application/x-font-woff";
-    mime_types[".font-otf"] = "application/x-font-otf";
-    mime_types[".font-ttf"] = "application/x-font-ttf";
-    mime_types[".java-archive"] = "application/java-archive";
-    mime_types[".java-vm"] = "application/java-vm";
-    mime_types[".msdownload"] = "application/x-msdownload";
-    mime_types[".executable"] = "application/x-executable";
-    mime_types[".oda"] = "application/oda";
-    mime_types[".opentype-font"] = "application/x-opentype-font";
-    mime_types[".ms-wmd"] = "application/x-ms-wmd";
-    mime_types[".ms-wmz"] = "application/x-ms-wmz";
-    mime_types[".winhlp"] = "application/winhlp";
-    mime_types[".wais-source"] = "application/x-wais-source";
-    mime_types[".ms-access"] = "application/vnd.ms-access";
-    mime_types[".bcpio"] = "application/x-bcpio";
-    mime_types[".dbf"] = "application/x-dbf";
-    mime_types[".director"] = "application/x-director";
-    mime_types[".freemind"] = "application/x-freemind";
-    mime_types[".msmediaview"] = "application/x-msmediaview";
-    mime_types[".msmoney"] = "application/x-msmoney";
-    mime_types[".pkcs7-certificates"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.template";
-    mime_types[".pkcs7-certificates"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    mime_types[".ms-pki.stl"] = "application/vnd.ms-pki.stl";
-    mime_types[".ms-powerpoint"] = "application/vnd.ms-powerpoint";
-    mime_types[".ms-pki.pko"] = "application/vnd.ms-pki.pko";
-    mime_types[".ms-pki.seccat"] = "application/vnd.ms-pki.seccat";
-    mime_types[".quicktimeplayer"] = "application/x-quicktimeplayer";
-    mime_types[".shar"] = "application/x-shar";
-    mime_types[".stuffit"] = "application/x-stuffit";
-    mime_types[".sv4cpio"] = "application/x-sv4cpio";
-    mime_types[".sv4crc"] = "application/x-sv4crc";
-    mime_types[".sun.xml.draw"] = "application/vnd.sun.xml.draw";
-    mime_types[".sun.xml.calc"] = "application/vnd.sun.xml.calc";
-    mime_types[".sun.xml.math"] = "application/vnd.sun.xml.math";
-    mime_types[".sun.xml.impress"] = "application/vnd.sun.xml.impress";
-    mime_types[".sun.xml.writer"] = "application/vnd.sun.xml.writer";
-
-    std::map<std::string, std::string>::iterator it = mime_types.find(key);
-    if (it != mime_types.end()) {
+	std::map<std::string, std::string>::iterator it = MIME_types.find(key);
+	if (it != MIME_types.end())
+	{
 		return it->second;
-        std::cout << "Value for key " << key << " is: " << it->second << std::endl;
-    } else {
-        std::cout << "Key not found in the map." << std::endl;
-    }
+	}
 	return "";
+}
+
+void Server::Send_Error_Response()
+{
+	std::string message = get_Version() + " " + get_status() + "\r\nContent-Type: text/html\r\n\r\n"
+															   "<html>"
+															   "<head>"
+															   "<style>"
+															   "h1 {"
+															   "    text-align: center;"
+															   "}"
+															   "</style>"
+															   "</head>"
+															   "<body>"
+															   "<h1>" +
+						  get_status() + "</h1>"
+										 "</body>"
+										 "</html>";
+	if (send(socket_fd_client, message.c_str(), message.length(), 0) < 0)
+	{
+		puts("Send failed");
+		return;
+	}
+}
+
+void Server::Send_Correct_Response()
+{
+	size_t pos = get_URI().find('.');
+	std::string ContentType;
+	if (pos != std::string::npos)
+	{
+		std::string ext = get_URI().substr(pos);
+		ContentType = GetMIMEType(ext);
+	}
+	std::string message = "HTTP/1.1 200 OK\r\nContent-Type: " + ContentType + "\r\n\r\n" + HtmlFile;
+	// std::cout << message << std::endl;
+	if (send(socket_fd_client, message.c_str(), message.length(), 0) < 0)
+	{
+		std::cout << "Send failed" << std::endl;
+		return;
+	}
+}
+
+void Server::MIME_types_init()
+{
+	MIME_types[".bmp"] = "image/bmp";
+	MIME_types[".css"] = "text/css";
+	MIME_types[".html"] = "text/html";
+	MIME_types[".js"] = "text/javascript";
+	MIME_types[".json"] = "application/json";
+	MIME_types[".xml"] = "application/xml";
+	MIME_types[".pdf"] = "application/pdf";
+	MIME_types[".zip"] = "application/zip";
+	MIME_types[".jpeg"] = "image/jpeg";
+	MIME_types[".png"] = "image/png";
+	MIME_types[".gif"] = "image/gif";
+	MIME_types[".svg"] = "image/svg+xml";
+	MIME_types[".mp3"] = "audio/mpeg";
+	MIME_types[".ogg"] = "audio/ogg";
+	MIME_types[".wav"] = "audio/wav";
+	MIME_types[".mp4"] = "video/mp4";
+	MIME_types[".mpeg"] = "video/mpeg";
+	MIME_types[".mov"] = "video/quicktime";
+	MIME_types[".ogg"] = "application/ogg";
+	MIME_types[".swf"] = "application/x-shockwave-flash";
+	MIME_types[".js"] = "application/javascript";
+	MIME_types[".js"] = "application/x-javascript";
+	MIME_types[".xml"] = "text/xml";
+	MIME_types[".x-www-form-urlencoded"] = "application/x-www-form-urlencoded";
+	MIME_types[".form-data"] = "multipart/form-data";
+	MIME_types[".rss"] = "application/rss+xml";
+	MIME_types[".atom"] = "application/atom+xml";
+	MIME_types[".rdf"] = "application/rdf+xml";
+	MIME_types[".soap"] = "application/soap+xml";
+	MIME_types[".mathml"] = "application/mathml+xml";
+	MIME_types[".rdf"] = "application/rdf+xml";
+	MIME_types[".zip"] = "application/zip";
+	MIME_types[".gz"] = "application/gzip";
+	MIME_types[".tar"] = "application/x-tar";
+	MIME_types[".compressed"] = "application/x-compressed";
+	MIME_types[".gzip"] = "application/x-gzip";
+	MIME_types[".bzip2"] = "application/x-bzip2";
+	MIME_types[".7z"] = "application/x-7z-compressed";
+	MIME_types[".rar"] = "application/x-rar-compressed";
+	MIME_types[".zip-compressed"] = "application/x-zip-compressed";
+	MIME_types[".stuffit"] = "application/x-stuffit";
+	MIME_types[".dvi"] = "application/x-dvi";
+	MIME_types[".rtf"] = "application/rtf";
+	MIME_types[".latex"] = "application/x-latex";
+	MIME_types[".postscript"] = "application/postscript";
+	MIME_types[".tex"] = "application/x-tex";
+	MIME_types[".sh"] = "application/x-sh";
+	MIME_types[".bsh"] = "application/x-bsh";
+	MIME_types[".csh"] = "application/x-csh";
+	MIME_types[".perl"] = "application/x-perl";
+	MIME_types[".python"] = "application/x-python";
+	MIME_types[".php"] = "application/x-php";
+	MIME_types[".java"] = "application/x-java";
+	MIME_types[".ruby"] = "application/x-ruby";
+	MIME_types[".shellscript"] = "application/x-shellscript";
+	MIME_types[".xhtml"] = "application/xhtml+xml";
+	MIME_types[".xop"] = "application/xop+xml";
+	MIME_types[".soap"] = "application/soap+xml";
+	MIME_types[".atom"] = "application/atom+xml";
+	MIME_types[".xslt"] = "application/xslt+xml";
+	MIME_types[".xspf"] = "application/xspf+xml";
+	MIME_types[".xaml"] = "application/xaml+xml";
+	MIME_types[".x-silverlight-app"] = "application/x-silverlight-app";
+	MIME_types[".cdlink"] = "application/x-cdlink";
+	MIME_types[".certificates"] = "application/x-pkcs7-certificates";
+	MIME_types[".pkcs7-mime"] = "application/pkcs7-mime";
+	MIME_types[".pkcs7-signature"] = "application/pkcs7-signature";
+	MIME_types[".pkcs8"] = "application/pkcs8";
+	MIME_types[".pkcs10"] = "application/pkcs10";
+	MIME_types[".pkcs12"] = "application/x-pkcs12";
+	MIME_types[".x509-ca-cert"] = "application/x-x509-ca-cert";
+	MIME_types[".x509-user-cert"] = "application/x-x509-user-cert";
+	MIME_types[".pkcs7-certreqresp"] = "application/x-pkcs7-certreqresp";
+	MIME_types[".s-mime"] = "application/s-mime";
+	MIME_types[".pkix-crl"] = "application/pkix-crl";
+	MIME_types[".pgp-encrypted"] = "application/pgp-encrypted";
+	MIME_types[".pgp-signature"] = "application/pgp-signature";
+	MIME_types[".pem-file"] = "application/x-pem-file";
+	MIME_types[".x509-ca-cert"] = "application/x-x509-ca-cert";
+	MIME_types[".x509-user-cert"] = "application/x-x509-user-cert";
+	MIME_types[".x509-email-cert"] = "application/x-x509-email-cert";
+	MIME_types[".x509-root-cert"] = "application/x-x509-root-cert";
+	MIME_types[".odt"] = "application/vnd.oasis.opendocument.text";
+	MIME_types[".odp"] = "application/vnd.oasis.opendocument.presentation";
+	MIME_types[".ods"] = "application/vnd.oasis.opendocument.spreadsheet";
+	MIME_types[".cab-compressed"] = "application/vnd.ms-cab-compressed";
+	MIME_types[".odg"] = "application/vnd.oasis.opendocument.graphics";
+	MIME_types[".tika-msoffice"] = "application/x-tika-msoffice";
+	MIME_types[".docx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+	MIME_types[".dotx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.template";
+	MIME_types[".xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	MIME_types[".xltx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.template";
+	MIME_types[".pptx"] = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+	MIME_types[".potx"] = "application/vnd.openxmlformats-officedocument.presentationml.template";
+	MIME_types[".ppsx"] = "application/vnd.openxmlformats-officedocument.presentationml.slideshow";
+	MIME_types[".sldx"] = "application/vnd.openxmlformats-officedocument.presentationml.slide";
+	MIME_types[".opendocument.graphics"] = "application/vnd.openxmlformats-officedocument.graphics";
+	MIME_types[".opendocument.graphics-template"] = "application/vnd.openxmlformats-officedocument.graphics-template";
+	MIME_types[".opendocument.graphics-template"] = "application/vnd.openxmlformats-officedocument.graphics-template";
+	MIME_types[".opendocument.formula-template"] = "application/vnd.openxmlformats-officedocument.formula-template";
+	MIME_types[".opendocument.formula-template"] = "application/vnd.openxmlformats-officedocument.formula-template";
+	MIME_types[".opendocument.drawingml.diagram-layout"] = "application/vnd.openxmlformats-officedocument.drawingml.diagram-layout";
+	MIME_types[".opendocument.drawingml.diagram"] = "application/vnd.openxmlformats-officedocument.drawingml.diagram";
+	MIME_types[".opendocument.drawingml.chart"] = "application/vnd.openxmlformats-officedocument.drawingml.chart";
+	MIME_types[".ms-project"] = "application/vnd.ms-project";
+	MIME_types[".visio"] = "application/vnd.visio";
+	MIME_types[".x-mspublisher"] = "application/x-mspublisher";
+	MIME_types[".xpsdocument"] = "application/vnd.ms-xpsdocument";
+	MIME_types[".3gpp.pic-bw-large"] = "application/vnd.3gpp.pic-bw-large";
+	MIME_types[".3gpp.pic-bw-small"] = "application/vnd.3gpp.pic-bw-small";
+	MIME_types[".3gpp.pic-bw-var"] = "application/vnd.3gpp.pic-bw-var";
+	MIME_types[".3gpp2.tcap"] = "application/vnd.3gpp2.tcap";
+	MIME_types[".icq"] = "application/x-icq";
+	MIME_types[".aim"] = "application/x-aim";
+	MIME_types[".msn-messenger"] = "application/x-msn-messenger";
+	MIME_types[".miranda"] = "application/x-miranda";
+	MIME_types[".t-relay"] = "application/t-relay";
+	MIME_types[".kopete"] = "application/x-kopete";
+	MIME_types[".gaim"] = "application/x-gaim";
+	MIME_types[".mbox"] = "application/mbox";
+	MIME_types[".vocaltec-media"] = "application/vocaltec-media";
+	MIME_types[".vocaltec-media-control"] = "application/vocaltec-media-control";
+	MIME_types[".dvi"] = "application/x-dvi";
+	MIME_types[".xpinstall"] = "application/x-xpinstall";
+	MIME_types[".sdp"] = "application/sdp";
+	MIME_types[".cpio"] = "application/x-cpio";
+	MIME_types[".tcl"] = "application/x-tcl";
+	MIME_types[".tex-tfm"] = "application/x-tex-tfm";
+	MIME_types[".texinfo"] = "application/x-texinfo";
+	MIME_types[".tei+xml"] = "application/tei+xml";
+	MIME_types[".sru+xml"] = "application/sru+xml";
+	MIME_types[".font-woff"] = "application/x-font-woff";
+	MIME_types[".font-otf"] = "application/x-font-otf";
+	MIME_types[".font-ttf"] = "application/x-font-ttf";
+	MIME_types[".java-archive"] = "application/java-archive";
+	MIME_types[".java-vm"] = "application/java-vm";
+	MIME_types[".msdownload"] = "application/x-msdownload";
+	MIME_types[".executable"] = "application/x-executable";
+	MIME_types[".oda"] = "application/oda";
+	MIME_types[".opentype-font"] = "application/x-opentype-font";
+	MIME_types[".ms-wmd"] = "application/x-ms-wmd";
+	MIME_types[".ms-wmz"] = "application/x-ms-wmz";
+	MIME_types[".winhlp"] = "application/winhlp";
+	MIME_types[".wais-source"] = "application/x-wais-source";
+	MIME_types[".ms-access"] = "application/vnd.ms-access";
+	MIME_types[".bcpio"] = "application/x-bcpio";
+	MIME_types[".dbf"] = "application/x-dbf";
+	MIME_types[".director"] = "application/x-director";
+	MIME_types[".freemind"] = "application/x-freemind";
+	MIME_types[".msmediaview"] = "application/x-msmediaview";
+	MIME_types[".msmoney"] = "application/x-msmoney";
+	MIME_types[".pkcs7-certificates"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.template";
+	MIME_types[".pkcs7-certificates"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	MIME_types[".ms-pki.stl"] = "application/vnd.ms-pki.stl";
+	MIME_types[".ms-powerpoint"] = "application/vnd.ms-powerpoint";
+	MIME_types[".ms-pki.pko"] = "application/vnd.ms-pki.pko";
+	MIME_types[".ms-pki.seccat"] = "application/vnd.ms-pki.seccat";
+	MIME_types[".quicktimeplayer"] = "application/x-quicktimeplayer";
+	MIME_types[".shar"] = "application/x-shar";
+	MIME_types[".stuffit"] = "application/x-stuffit";
+	MIME_types[".sv4cpio"] = "application/x-sv4cpio";
+	MIME_types[".sv4crc"] = "application/x-sv4crc";
+	MIME_types[".sun.xml.draw"] = "application/vnd.sun.xml.draw";
+	MIME_types[".sun.xml.calc"] = "application/vnd.sun.xml.calc";
+	MIME_types[".sun.xml.math"] = "application/vnd.sun.xml.math";
+	MIME_types[".sun.xml.impress"] = "application/vnd.sun.xml.impress";
+	MIME_types[".sun.xml.writer"] = "application/vnd.sun.xml.writer";
+	MIME_types[".sun.xml.writer.global"] = "application/vnd.sun.xml.writer.global";
+	MIME_types[".sun.xml.writer.template"] = "application/vnd.sun.xml.writer.template";
 }
