@@ -6,36 +6,35 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2023/11/05 12:23:06 by hdagdagu         ###   ########.fr        #
+#    Updated: 2023/11/06 17:39:39 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CXX = c++
-CFLAGS = -Wall -Werror -Wextra -std=c++98 #-fsanitize=address -g 
-INCLUDES = include/Server.hpp
-NAME = Webserv
+CXX = g++
+CFLAGS = -Wall -Werror -Wextra -std=c++98
+NAME = WebServer
 OBJDIR = .objFiles
 
 SRC_DIR = src
-SRCS = main.cpp Server.cpp parseHttpRequest.cpp ServerConfigFile.cpp
-EXCEPTIONS = exceptions/src/exceptions.cpp
+INCLUDE_DIR = include
+CONFIG_INCLUDE_DIR = $(SRC_DIR)/config/include
+EXCEPTION_INCLUDE_DIR = $(SRC_DIR)/exception/include
+REQUEST_INCLUDE_DIR = $(SRC_DIR)/request/include
+SERVER_INCLUDE_DIR = $(SRC_DIR)/server/include
 
-OBJ = $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.o))
-OBJ += $(addprefix $(OBJDIR)/,$(EXCEPTIONS=.o))
+SRCS = main.cpp $(SRC_DIR)/server/src/Server.cpp $(SRC_DIR)/request/src/parseHttpRequest.cpp $(SRC_DIR)/config/src/ServerConfigFile.cpp $(SRC_DIR)/exception/src/exception.cpp
+OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 
-# DEBUG
-ifeq ($(DEBUG), 1)
-   OPTS = -fsanitize=address -g
-endif
+INCLUDES = -I$(INCLUDE_DIR) -I$(CONFIG_INCLUDE_DIR) -I$(EXCEPTION_INCLUDE_DIR) -I$(REQUEST_INCLUDE_DIR) -I$(SERVER_INCLUDE_DIR)
 
 all: $(NAME)
-	
-$(NAME): $(OBJ) 
-	$(CXX) $(CFLAGS) $(OBJ) $(OPTS) -o $(NAME)
 
-$(OBJDIR)/%.o: $(SRC_DIR)/%.cpp $(INCLUDES)
-	mkdir -p $(OBJDIR)
-	$(CXX) $(CFLAGS) -c $< -o $@
+$(NAME): $(OBJS)
+	$(CXX) $(CFLAGS) $(INCLUDES) $^ -o $@
+
+$(OBJDIR)/%.o: %.cpp
+	mkdir -p $(dir $@)
+	$(CXX) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
 	rm -rf $(OBJDIR)
@@ -43,8 +42,7 @@ clean:
 fclean: clean
 	rm -f $(NAME)
 
-run: all
-	./$(NAME)
-
 re: fclean all
+
+.PHONY: all clean fclean re
 

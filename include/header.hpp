@@ -1,19 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   header.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/01 15:36:49 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/05 12:15:48 by hdagdagu         ###   ########.fr       */
+/*   Created: 2023/11/06 16:24:29 by hdagdagu          #+#    #+#             */
+/*   Updated: 2023/11/06 17:37:51 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/Server.hpp"
+#ifndef HEADER_HPP
+#define HEADER_HPP
 
-int main()
-{
-    Server server;
-    return (0);
-}
+#include "../src/exception/include/exception.hpp"
+
+#include "../src/config/include/ServerConfigFile.hpp"
+#include "../src/request/include/parseHttpRequest.hpp"
+// #include "../src/server/include/Server.hpp"
+
+#endif

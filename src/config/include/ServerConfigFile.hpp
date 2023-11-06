@@ -6,13 +6,13 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 10:29:16 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/05 11:16:51 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/06 17:38:34 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVERCONFIGFILE_HPP
 # define SERVERCONFIGFILE_HPP
-
+#include "../../../include/header.hpp"
 
 
 #include <iostream>
@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-class ServerConfigFile 
+class ServerConfigFile : virtual public MY_exception
 {
     private:
         std::string listen_port;

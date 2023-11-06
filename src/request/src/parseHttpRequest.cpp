@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 15:40:04 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/05 09:43:30 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/06 10:32:40 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,24 +34,19 @@ function parseHttpRequest(requestString):
 
 void parseHttpRequest::Check_Request_Status()
 {
-    std::cout << "Method: " << Method << std::endl;
-    std::cout << "URI: " << URI << std::endl;
-    std::cout << "Version: " << Version << std::endl;
-    std::cout << "Content-Length: " << get_Header("Content-Length") << std::endl;
-    std::cout << "Content-Type: " << get_Header("Content-Type") << std::endl;
     if (URI_check(URI) == false)
-        status = "400 Bad Request";
+        throw MY_exception::status_code_exception("400 Bad Request");
     else if(URI.length() > 2048)
-        status = "414 Request-URI Too Long";
-    else if (Method == "POST")
-    {
+        throw MY_exception::status_code_exception("414 Request-URI Too Long");
+    // else if (Method == "POST")
+    // {
         // if (get_Header("Content-Length") == "")
         //     status = "411 Length Required";
         // else if (get_Header("Content-Type") != "application/x-www-form-urlencoded")
         //     status = "415 Unsupported Media Type";
         // else
         //     status = "200 OK";
-    }
+    // }
     // else if (Method != "GET")
     //     status = "501 Not Implemented";
     // else

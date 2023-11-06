@@ -6,17 +6,20 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 15:18:41 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/04 20:01:47 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/06 17:33:15 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSEHTTPREQUEST_HPP
 #define PARSEHTTPREQUEST_HPP
+#include "../../../include/header.hpp"
 #include <iostream>
 #include <sstream>
 #include <map>
 
-class parseHttpRequest
+
+
+class parseHttpRequest : virtual public MY_exception
 {
     private:
         std::string Method;                                  // Method is the method of the request

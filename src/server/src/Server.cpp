@@ -6,20 +6,19 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/05 12:26:01 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/06 16:03:38 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Server.hpp"
 
-
 Server::Server()
 {
-	parseConfig("config/default.conf");	   // parseConfig function is used to parse the config file and store the parsed data in the map
-	MIME_types_init();					   // MIME_types_init function is used to initialize the map with the mime types
-	getMyIpAddress();					   // getMyIpAddress function is used to get the ip address of the server
-	Setup_Server();						   // Setup_Server function is used to setup the server
-	listen_to_multiple_clients();		   // listen_to_multiple_clients function is used to listen to multiple clients
+	parseConfig("config/default.conf"); // parseConfig function is used to parse the config file and store the parsed data in the map
+	MIME_types_init();					// MIME_types_init function is used to initialize the map with the mime types
+	getMyIpAddress();					// getMyIpAddress function is used to get the ip address of the server
+	Setup_Server();						// Setup_Server function is used to setup the server
+	listen_to_multiple_clients();		// listen_to_multiple_clients function is used to listen to multiple clients
 }
 
 void Server::listen_to_multiple_clients()
@@ -56,8 +55,6 @@ void Server::listen_to_multiple_clients()
 		}
 	}
 }
-
-
 
 Server::~Server()
 {
@@ -105,17 +102,6 @@ void Server::Accept_Connection()
 	}
 }
 
-void Server::Send_Response_To_Client()
-{
-	std::string status = get_status();
-	std::cout << "Status: " << status << std::endl;
-	if (status.compare("200 OK"))
-		Send_Error_Response();
-	else
-		Send_Correct_Response();
-	clear_all();
-}
-
 void Server::Read_Request_From_Client()
 {
 	char buffer[BUFFER_SIZE];
@@ -135,16 +121,21 @@ void Server::Read_Request_From_Client()
 			break;
 		}
 	}
-	ReadHtmlFile();
-	set_status("200 OK");
-	parseRequest(sBuffer); // parseRequest function is used to parse the request and store the parsed data in the map
-	std::cout << "==========================================" << std::endl;
-	std::cout << sBuffer << std::endl;
-	std::cout << "==========================================" << std::endl;
-	// print_all_parseRequest();
+
+	try
+	{
+		ReadHtmlFile();
+		parseRequest(sBuffer);
+		get_matched_location_for_request_uri();
+	}
+	catch (const MY_exception::status_code_exception &e)
+	{
+		set_status(e.what());
+		Send_Error_Response();
+	}
 	sBuffer.clear();
-	Send_Response_To_Client(); // Send_Response_To_Client function is used to send a response to the client
 	HtmlFile.clear();
+	clear_all();
 }
 
 void Server::getMyIpAddress()
@@ -209,7 +200,25 @@ void Server::Send_Error_Response()
 		return;
 	}
 }
+void Server::Check_file_existence()
+{
+	std::string filename = getRoot() + "/" + getIndex();
+	std::fstream file;
+	file.open(filename.c_str(), std::ios::in); // Open file in read mode
 
+	if (file.is_open())
+	{
+		file.close();
+		
+	}
+	else
+	{
+		std::cout << "test" << std::endl;
+
+		MY_exception e("404 Not Found");
+		throw e;
+	}
+}
 void Server::Send_Correct_Response()
 {
 	size_t pos = get_URI().find('.');
@@ -225,6 +234,19 @@ void Server::Send_Correct_Response()
 	{
 		std::cout << "Send failed" << std::endl;
 		return;
+	}
+}
+void Server::get_matched_location_for_request_uri()
+{
+	try
+	{
+		Check_file_existence();
+		Send_Correct_Response();
+	}
+	catch (MY_exception &e)
+	{
+		set_status(e.what());
+		Send_Error_Response();
 	}
 }
 

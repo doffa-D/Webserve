@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 10:31:35 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/05 11:16:30 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/06 12:40:46 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void ServerConfigFile::parseConfig(const std::string &configFilePath)
 {
     std::ifstream configFile(configFilePath.c_str());
-
+    int i = 0;
     std::string line;
     while (std::getline(configFile, line))
     {
@@ -38,10 +38,17 @@ void ServerConfigFile::parseConfig(const std::string &configFilePath)
         else if (line.find("root") != std::string::npos)
         {
             root = line.substr(line.find(" ") + 1);
+            root = root.substr(0, root.find(";"));  
         }
         else if (line.find("index") != std::string::npos)
         {
-            index = line.substr(line.find(" ") + 1);
+            if(i == 0)
+            {
+                index = line.substr(line.find(" ") + 1);
+                index.erase(std::remove(index.begin(), index.end(), ';'), index.end());
+                std::cout << "==>    ... : " << index << std::endl;
+                i++;
+            }
         }
         else if (line.find("try_files") != std::string::npos)
         {

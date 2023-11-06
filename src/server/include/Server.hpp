@@ -6,21 +6,21 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/05 12:03:47 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/06 17:37:25 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <sys/socket.h>						  // For socket functions
-#include <netinet/in.h>						  // For sockaddr_in
-#include <cstdlib>							  // For exit() and EXIT_FAILURE
-#include <iostream>							  // For cout
-#include <unistd.h>							  // For read
-#include <arpa/inet.h>						  // For inet_ntoa
-#include <netdb.h>							  // For gethostbyname
-#include <fstream>							  // For ifstream
-#include "parseHttpRequest.hpp"				  // For parseHttpRequest class
-#include "ServerConfigFile.hpp"				  // For ServerConfigFile class
-// #include "../exception/include/exception.hpp" // For exception class
+#include <sys/socket.h>			// For socket functions
+#include <netinet/in.h>			// For sockaddr_in
+#include <cstdlib>				// For exit() and EXIT_FAILURE
+#include <iostream>				// For cout
+#include <unistd.h>				// For read
+#include <arpa/inet.h>			// For inet_ntoa
+#include <netdb.h>				// For gethostbyname
+#include <fstream>				// For ifstream
+#include "../../../include/header.hpp"
+
+
 
 #define PORT 8080		 // the port users will be connecting to
 #define BACKLOG 10		 // how many pending connections queue will hold
@@ -44,17 +44,19 @@ private:
 public:
 	Server();
 	~Server();
-	void Setup_Server();					  // Setup_Server function is used to setup the server
-	void getMyIpAddress();					  // getMyIpAddress function is used to get the ip address of the server
-	void Accept_Connection();				  // Accept_Connection function is used to accept a connection request from a client
-	void Read_Request_From_Client();		  // Read_From_Client function is used to read data from a client
-	void Send_Response_To_Client();			  // Send_Response_To_Client function is used to send a response to the client
-	void ReadHtmlFile();					  // ReadHtmlFile function is used to read the html file
-	std::string GetMIMEType(std::string key); // GetMimeType function is used to get the mime type of the html file
-	void MIME_types_init();					  // MIME_types_init function is used to initialize the map with the mime types
-	void Send_Error_Response();				  // Send_Error_Response function is used to send an error response to the client
-	void Send_Correct_Response();			  // Send_Correct_Response function is used to send a correct response to the client
-	void listen_to_multiple_clients();		  // listen_to_multiple_clients function is used to listen to multiple clients
+	void Setup_Server();						 // Setup_Server function is used to setup the server
+	void getMyIpAddress();						 // getMyIpAddress function is used to get the ip address of the server
+	void Accept_Connection();					 // Accept_Connection function is used to accept a connection request from a client
+	void Read_Request_From_Client();			 // Read_From_Client function is used to read data from a client
+	void Send_Response_To_Client();				 // Send_Response_To_Client function is used to send a response to the client
+	void ReadHtmlFile();						 // ReadHtmlFile function is used to read the html file
+	std::string GetMIMEType(std::string key);	 // GetMimeType function is used to get the mime type of the html file
+	void MIME_types_init();						 // MIME_types_init function is used to initialize the map with the mime types
+	void Send_Error_Response();					 // Send_Error_Response function is used to send an error response to the client
+	void get_matched_location_for_request_uri(); // Send_Correct_Response function is used to send a correct response to the client
+	void listen_to_multiple_clients();			 // listen_to_multiple_clients function is used to listen to multiple clients
+	void Check_file_existence();				 // Check_file_existence function is used to check if the file exists
+	void Send_Correct_Response();				 // Send_Correct_Response function is used to send a correct response to the client
 };
 
 #endif
