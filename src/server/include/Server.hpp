@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/06 17:37:25 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/08 09:27:16 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 #ifndef SERVER_HP
 #define SERVER_HPP
 
-class Server : public parseHttpRequest, public ServerConfigFile
+class Server : public parseHttpRequest
 {
 private:
 	int socket_fd_server;						   // socket_fd_server is the file descriptor of the server socket
@@ -40,6 +40,7 @@ private:
 	std::string sBuffer;						   // sBuffer is the buffer that will be used to store data as a string
 	std::string HtmlFile;						   // HtmlFile is the html file that will be sent to the client
 	std::map<std::string, std::string> MIME_types; // MIME_types is the map that will be used to store the mime types
+	int *port;
 
 public:
 	Server();
@@ -58,5 +59,7 @@ public:
 	void Check_file_existence();				 // Check_file_existence function is used to check if the file exists
 	void Send_Correct_Response();				 // Send_Correct_Response function is used to send a correct response to the client
 };
+
+void init_server(Server &server);
 
 #endif

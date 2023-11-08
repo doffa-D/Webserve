@@ -6,7 +6,7 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2023/11/06 17:52:19 by hdagdagu         ###   ########.fr        #
+#    Updated: 2023/11/08 09:26:54 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,6 +16,10 @@ NAME = WebServer
 OBJDIR = .objFiles
 
 SRC_DIR = src
+SRC_DIR1 = src1
+
+
+
 INCLUDE_DIR = include
 CONFIG_INCLUDE_DIR = $(SRC_DIR)/config/include
 EXCEPTION_INCLUDE_DIR = $(SRC_DIR)/exception/include
@@ -24,10 +28,22 @@ SERVER_INCLUDE_DIR = $(SRC_DIR)/server/include
 
 SRCS = main.cpp \
 		$(SRC_DIR)/server/src/Server.cpp \
+		$(SRC_DIR)/server/src/MIME_type.cpp \
 		$(SRC_DIR)/request/src/parseHttpRequest.cpp \
+		$(SRC_DIR)/request/src/request_status_code.cpp \
 		$(SRC_DIR)/config/src/ServerConfigFile.cpp \
-		$(SRC_DIR)/exception/src/exception.cpp 
-		
+		$(SRC_DIR)/exception/src/exception.cpp \
+		$(SRC_DIR)/server/src/init_server.cpp \
+		${SRC_DIR1}/Parser/Parser.cpp \
+		${SRC_DIR1}/Parser/Location.cpp \
+		${SRC_DIR1}/Models/GlobalModel.cpp \
+		${SRC_DIR1}/Models/ServerModel.cpp \
+		${SRC_DIR1}/Models/Data.cpp \
+		${SRC_DIR1}/Utils/String.cpp \
+		${SRC_DIR1}/Exception/ParsingException.cpp \
+		${SRC_DIR1}/Utils/ServerData.cpp \
+		${SRC_DIR1}/Utils/Logger.cpp
+
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 
 INCLUDES = -I$(INCLUDE_DIR) -I$(CONFIG_INCLUDE_DIR) -I$(EXCEPTION_INCLUDE_DIR) -I$(REQUEST_INCLUDE_DIR) -I$(SERVER_INCLUDE_DIR)
@@ -37,6 +53,8 @@ GREEN = \033[0;32m
 RED = \033[0;31m
 YELLOW = \033[0;33m
 NC = \033[0m
+
+all: ascii_art $(NAME)  
 
 ascii_art:
 	@echo "\n"
@@ -52,7 +70,6 @@ ascii_art:
 	@echo "$(RED)                      ░                               ░          $(NC)"
 	@echo "\n"
 
-all: ascii_art $(NAME)
 
 $(NAME): $(OBJS)
 	@echo "$(YELLOW)Linking object files to create executable $(NAME)$(NC)"
@@ -72,6 +89,10 @@ fclean: clean
 	@rm -f $(NAME)
 
 re: fclean all
+
+run: all
+	@echo "$(YELLOW)Running $(NAME)$(NC)"
+	@./$(NAME) config_file/default.conf
 
 .PHONY: all clean fclean re ascii_art
 
