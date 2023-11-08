@@ -6,7 +6,7 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2023/11/08 09:26:54 by hdagdagu         ###   ########.fr        #
+#    Updated: 2023/11/08 10:23:29 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,8 +18,6 @@ OBJDIR = .objFiles
 SRC_DIR = src
 SRC_DIR1 = src1
 
-
-
 INCLUDE_DIR = include
 CONFIG_INCLUDE_DIR = $(SRC_DIR)/config/include
 EXCEPTION_INCLUDE_DIR = $(SRC_DIR)/exception/include
@@ -27,22 +25,22 @@ REQUEST_INCLUDE_DIR = $(SRC_DIR)/request/include
 SERVER_INCLUDE_DIR = $(SRC_DIR)/server/include
 
 SRCS = main.cpp \
-		$(SRC_DIR)/server/src/Server.cpp \
-		$(SRC_DIR)/server/src/MIME_type.cpp \
-		$(SRC_DIR)/request/src/parseHttpRequest.cpp \
-		$(SRC_DIR)/request/src/request_status_code.cpp \
-		$(SRC_DIR)/config/src/ServerConfigFile.cpp \
-		$(SRC_DIR)/exception/src/exception.cpp \
-		$(SRC_DIR)/server/src/init_server.cpp \
-		${SRC_DIR1}/Parser/Parser.cpp \
-		${SRC_DIR1}/Parser/Location.cpp \
-		${SRC_DIR1}/Models/GlobalModel.cpp \
-		${SRC_DIR1}/Models/ServerModel.cpp \
-		${SRC_DIR1}/Models/Data.cpp \
-		${SRC_DIR1}/Utils/String.cpp \
-		${SRC_DIR1}/Exception/ParsingException.cpp \
-		${SRC_DIR1}/Utils/ServerData.cpp \
-		${SRC_DIR1}/Utils/Logger.cpp
+	$(SRC_DIR)/server/src/Server.cpp \
+	$(SRC_DIR)/server/src/MIME_type.cpp \
+	$(SRC_DIR)/request/src/parseHttpRequest.cpp \
+	$(SRC_DIR)/request/src/request_status_code.cpp \
+	$(SRC_DIR)/config/src/ServerConfigFile.cpp \
+	$(SRC_DIR)/exception/src/exception.cpp \
+	$(SRC_DIR)/server/src/init_server.cpp \
+	${SRC_DIR1}/Parser/Parser.cpp \
+	${SRC_DIR1}/Parser/Location.cpp \
+	${SRC_DIR1}/Models/GlobalModel.cpp \
+	${SRC_DIR1}/Models/ServerModel.cpp \
+	${SRC_DIR1}/Models/Data.cpp \
+	${SRC_DIR1}/Utils/String.cpp \
+	${SRC_DIR1}/Exception/ParsingException.cpp \
+	${SRC_DIR1}/Utils/ServerData.cpp \
+	${SRC_DIR1}/Utils/Logger.cpp
 
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 
@@ -71,6 +69,7 @@ ascii_art:
 	@echo "\n"
 
 
+
 $(NAME): $(OBJS)
 	@echo "$(YELLOW)Linking object files to create executable $(NAME)$(NC)"
 	@$(CXX) $(CFLAGS) $(INCLUDES) $^ -o $@
@@ -95,4 +94,3 @@ run: all
 	@./$(NAME) config_file/default.conf
 
 .PHONY: all clean fclean re ascii_art
-
