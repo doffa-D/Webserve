@@ -6,12 +6,12 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2023/11/08 10:23:29 by hdagdagu         ###   ########.fr        #
+#    Updated: 2023/11/09 17:01:11 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX = g++
-CFLAGS = -Wall -Werror -Wextra -std=c++98
+CFLAGS = -Wall -Werror -Wextra -std=c++98 #-fsanitize=address -g3
 NAME = WebServer
 OBJDIR = .objFiles
 
@@ -40,11 +40,11 @@ SRCS = main.cpp \
 	${SRC_DIR1}/Utils/String.cpp \
 	${SRC_DIR1}/Exception/ParsingException.cpp \
 	${SRC_DIR1}/Utils/ServerData.cpp \
-	${SRC_DIR1}/Utils/Logger.cpp
+
 
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 
-INCLUDES = -I$(INCLUDE_DIR) -I$(CONFIG_INCLUDE_DIR) -I$(EXCEPTION_INCLUDE_DIR) -I$(REQUEST_INCLUDE_DIR) -I$(SERVER_INCLUDE_DIR)
+INCLUDES = -I$(INCLUDE_DIR) -I$(CONFIG_INCLUDE_DIR) -I$(EXCEPTION_INCLUDE_DIR) -I$(REQUEST_INCLUDE_DIR) -I$(SERVER_INCLUDE_DIR) -I./src1/Includes
 
 # Color codes
 GREEN = \033[0;32m

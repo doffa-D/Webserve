@@ -1,9 +1,87 @@
 #include "Parser.hpp"
 
+/**
+ * @brief	Parser Default Constructor.
+*/
 Parser::Parser( void )
 {
 }
 
+/**
+ * @brief	Parser Parametraise Constructor.
+*/
+Parser::Parser(const String& _fileName) : fileName(_fileName)
+{
+	getFileContent();
+	checkSyntax();
+	splitContentIntoServers();
+	getFinalResualt();
+}
+
+/**
+ * @brief	Parser Copy Constructor.
+*/
+Parser::Parser(const Parser& copy)
+{
+	*this = copy;
+}
+
+/**
+ * @brief	Parser Desctructor.
+*/
+Parser::~Parser( void ) throw()
+{
+	fileContent.clear();
+	serversContents.clear();
+	servers.clear();
+}
+
+/**
+ * @brief	Parser assignment operator.
+ * @param	target the target you wanna to assign to current object.
+ * @return	refrance to current object.
+ * @exception	maybe throwing a bad_alloc exception.
+*/
+Parser& Parser::operator=(const Parser& target)
+{
+	if (this != &target)
+	{
+		fileName = target.fileName;
+		servers = target.servers;
+		fileContent = target.fileContent;
+		serversContents = target.serversContents;
+	}
+	return (*this);
+}
+
+/**
+ * @brief	Getter of vector of vector of String.
+ * @param	(none)
+ * @return	constant refrance vector of vector of String.
+ * @exception	no-throw exception.
+*/
+const std::vector<std::vector<String> >&	Parser::getServersContents( void ) const
+{
+	return (serversContents);
+}
+
+/**
+ * @brief	Getter of vector of Server Models.
+ * @param	(none)
+ * @return	constant refrance vector of Server Model.
+ * @exception	no-throw exception.
+*/
+const	std::vector<ServerModel>&	Parser::getServers( void ) const
+{
+	return (servers);
+}
+
+/**
+ * @brief	checking syntax errors like unclosed brackets or semicolon.
+ * @param	(none)
+ * @return 	(none)
+ * @exception	throw ParsingException if there is a syntax error.
+*/
 void	Parser::checkSyntax( void )
 {
 	int	openBrackets = 0;
@@ -42,112 +120,68 @@ void	Parser::checkSyntax( void )
 	if (openBrackets)
 	{
 		String message;
-		message.append("webserv: [emerg] unexpected end of file, expecting \"").append((openBrackets < 0) ? "{" : "}").append("\" in ").append(fileName);
+		message.append("webserv: [emerg] unexpected end of file, expecting \"");
+		message.append((openBrackets < 0) ? "{" : "}").append("\" in ").append(fileName);
 		message.append("\nwebserv: configuration file ").append(fileName).append(" test failed.");
 		throw (ParsingException(message));
 	}
 }
 
-Parser::Parser(String _fileName) : fileName(_fileName)
-{
-	getFileContent();
-	checkSyntax();
-	splitContentIntoServers();
-	getFinalResualt();
-}
-
-Parser::Parser(const Parser& copy)
-{
-	*this = copy;
-}
-
-Parser::~Parser( void )
-{
-	try
-	{
-		std::vector<ServerModel>::iterator b = servers.begin();
-		std::vector<ServerModel>::iterator e = servers.end();
-		while (b < e)
-		{
-			std::vector<Location*>::const_iterator locBegin = b->getLocation().begin();
-			std::vector<Location*>::const_iterator locEnd = b->getLocation().end();
-			while (locBegin < locEnd)
-			{
-				freeLocations(*locBegin);
-				delete *locBegin;
-				locBegin++;
-			}
-			b++;
-		}
-	}
-	catch (...)
-	{
-		std::cout << "catching Exception in Parser detructor(~Parser)." << std::endl;
-	}
-}
-
-Parser& Parser::operator=(const Parser& target)
-{
-	if (this != &target)
-	{
-		fileName = target.fileName;
-		servers = target.servers;
-		serversContents = target.serversContents;
-	}
-	return (*this);
-}
-
-const std::vector<std::vector<String> >&	Parser::getServersContents( void ) const
-{
-	return (serversContents);
-}
-
-const	std::vector<ServerModel>&	Parser::getServers( void ) const
-{
-	return (servers);
-}
-
+/**
+ * @brief	Split String into part Key and Value.
+ * @param	line	String to split.
+ * @return 	Data class that contains key and value.
+ * @exception	no-throw exception.
+*/
 Data	Parser::extractDataFromString(String& line)
 {
 	std::vector<String> vec = line.split();
-	std::vector<String>::iterator ib = vec.begin();
-	std::vector<String>::iterator ie = vec.end();
-	String	key = *ib;
+	String	key = vec.at(0);
 	String	value("");
-	while (++ib < ie)
-		value.append(" ").append(ib->trim(" \t;"));
-	return (Data(key, value));
+	for (std::vector<String>::size_type i = 1; i < vec.size(); i++)
+		value.append(" ").append(vec.at(i).trim(" \t;"));
+	return (Data(key, value.trim(" \t")));
 }
 
-void	Parser::printLocations(Location* locs)
+/**
+ * @brief	printing all Locations stored in Parser class.
+ * @param	locs	const Location class.
+ * @return	(none).
+ * @exception	no-throw exception.
+*/
+void	Parser::printLocations(const Location& locs)
 {
 	static String s;
-	if (!locs)
+	if (locs.getAllData().empty() == true)
 		return ;
-	std::cout << s << "Path : "<< locs->getPath() << std::endl;
-	std::vector<Data> vec = locs->getAllData();
-	std::vector<Data>::iterator iBegin = vec.begin();
-	std::vector<Data>::iterator iEnd = vec.end();
-	while (iBegin != iEnd)
-	{
-		std::cout << s << "\tKey = " << iBegin->getKey() << "  Value = " << iBegin->getValue() << std::endl;
-		iBegin++;
-	}
-	std::vector<Location*> *innerLoc = locs->getInnerLocation();
-	std::vector<Location*>::iterator b = innerLoc->begin();
-	std::vector<Location*>::iterator e = innerLoc->end();
-	while (b < e)
+	// printing Path of Location.
+	std::cout << s << "Path : " << locs.getPath() << std::endl;
+
+	// printing All data from GlobalModel (Key, Value).
+	std::vector<Data> vec = locs.getAllData();
+	for (std::vector<Location>::size_type i = 0; i < vec.size(); i++)
+		Data::printData(vec.at(i), s);
+
+	// printing All Location from GlobalModel (Key, Value).
+	std::vector<Location> innerLoc = locs.getInnerLocation();
+	for (std::vector<Location>::size_type i = 0; i < innerLoc.size(); i++)
 	{
 		s.append("\t");
-		printLocations(*b);
+		printLocations(innerLoc.at(i));
 		s.erase(s.length() - 1);
-		b++;
 	}
 }
 
-Location*	Parser::getLocations(std::vector<String>::iterator& begin, const std::vector<String>::iterator& end, String	path)
+/**
+ * @brief	Extract Location part from config file using recuresion.
+ * @param	begin	The start of iterator.
+ * @param	end		The end of iterator.
+ * @return	new Location that extact from the config.
+ * @exception	no-throw exception.
+*/
+Location	Parser::getLocations(std::vector<String>::iterator& begin, const std::vector<String>::iterator& end, String	path)
 {
-	std::vector<Location*>* newLocation = new std::vector<Location*>;
+	std::vector<Location> newLocation;
 	GlobalModel model;
 	while (begin < end)
 	{
@@ -159,17 +193,21 @@ Location*	Parser::getLocations(std::vector<String>::iterator& begin, const std::
 		if (!begin->compare(0, 9, "location "))
 		{
 			String _path = extractDataFromString(*begin).getValue();
-			newLocation->push_back(getLocations(++begin, end, _path.trim(" {")));
+			// maybe push_back throw an exception !!
+			newLocation.push_back(getLocations(++begin, end, _path.trim(" \t{")));
 		}
 		else
-		{
-			model.addData(extractDataFromString(*begin));
-			begin++;
-		}
+			model.addData(extractDataFromString(*(begin++)));
 	}
-	return (new Location(model, path, newLocation));
+	return (Location(model, path, newLocation));
 }
 
+/**
+ * @brief	Read file content unsing std::ifstream and store it in vector container (fileContent).
+ * @param	(none)
+ * @return	(none)
+ * @exception	throw ParsingException when failed to open file.
+*/
 void	Parser::getFileContent( void )
 {
 	String	tmp;
@@ -263,31 +301,13 @@ void	Parser::splitContentIntoServers( void )
 		serversContents.push_back(getServerConfig(begin, end));
 }
 
-
-void	Parser::freeLocations(Location* locs)
+void	Parser::printServerModel(const ServerModel& server)
 {
-	if (!locs)
-		return ;
-	std::vector<Location*> *innerLoc = locs->getInnerLocation();
-	std::vector<Location*>::iterator b = innerLoc->begin();
-	std::vector<Location*>::iterator e = innerLoc->end();
-	while (b < e)
-	{
-		freeLocations(*b);
-		delete *b;
-		*b = NULL;
-		b++;
-	}
-}
-
-void	Parser::printServerModel(ServerModel& server)
-{
-	std::vector<Location*>::const_iterator b = server.getLocation().begin();
-	std::vector<Location*>::const_iterator e = server.getLocation().end();
+	std::vector<Location>::const_iterator b = server.getLocation().begin();
+	std::vector<Location>::const_iterator e = server.getLocation().end();
 	while (b < e)
 	{
 		printLocations(*b);
-		freeLocations(*b);
 		b++;
 	}
 }

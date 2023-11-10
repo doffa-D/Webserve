@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/08 11:41:55 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/10 15:24:03 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,11 @@
 #include <netdb.h>					   // For gethostbyname
 #include <fstream>					   // For ifstream
 #include "../../../include/header.hpp" // in this header file we have all the libraries that we need
+#include <fcntl.h>
+
 
 #define PORT 8080		 // the port users will be connecting to
-#define BACKLOG 10		 // how many pending connections queue will hold
+#define BACKLOG 5		 // how many pending connections queue will hold
 #define BUFFER_SIZE 1024 // the size of the buffer that will be used to store data
 #define MAX_REQUEST_SIZE 1024
 
@@ -37,12 +39,13 @@ private:
 	int socket_fd_client;						   // socket_fd_client is the file descriptor of the client socket
 	int bytes_read;								   // bytes_read is the number of bytes read from the client
 	int Number_of_ports;
-	sockaddr_in address;			   // address is the address of the server socket
+	sockaddr_in address[FD_SETSIZE];			   // address is the address of the server socket
 	std::string ip_address;						   // ip_address is the ip address of the server
 	std::string sBuffer;						   // sBuffer is the buffer that will be used to store data as a string
 	std::string HtmlFile;						   // HtmlFile is the html file that will be sent to the client
 	std::map<std::string, std::string> MIME_types; // MIME_types is the map that will be used to store the mime types
 	Server();
+	char *argv;
 
 public:
 	Server(char *argv);
@@ -55,13 +58,16 @@ public:
 	void ReadHtmlFile();						 // ReadHtmlFile function is used to read the html file
 	std::string GetMIMEType(std::string key);	 // GetMimeType function is used to get the mime type of the html file
 	void MIME_types_init();						 // MIME_types_init function is used to initialize the map with the mime types
-	void Send_Error_Response();					 // Send_Error_Response function is used to send an error response to the client
+	void Send_Error_Response(int fd_client);					 // Send_Error_Response function is used to send an error response to the client
 	void get_matched_location_for_request_uri(); // Send_Correct_Response function is used to send a correct response to the client
 	void listen_to_multiple_clients();			 // listen_to_multiple_clients function is used to listen to multiple clients
-	void Check_file_existence();				 // Check_file_existence function is used to check if the file exists
+	void Check_file_existence(std::string path);				 // Check_file_existence function is used to check if the file exists
 	void Send_Correct_Response();				 // Send_Correct_Response function is used to send a correct response to the client
 	void set_ports(int ports, int index);		 // set_ports function is used to set the ports
 	void set_Number_of_ports(int Number_of_ports);
+	void get_server_by_hostname(std::string host,int fd_clien);
+	void find_file();
+	bool check_socket(int i);
 };
 
 void init_server(Server &server, char *argv);

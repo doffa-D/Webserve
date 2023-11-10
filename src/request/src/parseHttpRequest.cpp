@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 15:40:04 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/06 19:20:43 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/09 15:12:23 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void parseHttpRequest::parseRequest(std::string request)
     std::istringstream iss(line);
     iss >> Method >> URI >> Version;
     Check_Request_Status();
+    find_file(URI);
 
     while (std::getline(ss, line, '\n') && line != "\r")
     {
@@ -82,6 +83,8 @@ std::string parseHttpRequest::get_Header(std::string key)
     std::multimap<std::string, std::string>::iterator it = parsed_data.find(key);
     if (it != parsed_data.end())
     {
+        it->second[it->second.length() - 1] = '\0';
+
         return it->second;
     }
     return "";
@@ -101,13 +104,38 @@ void parseHttpRequest::set_status(std::string status)
     this->status = status;
 }
 
+void parseHttpRequest::find_file(std::string path)
+{
+    std::size_t found = path.find_last_of("/\\");
+    if(found == std::string::npos) // If no folder is found
+    {
+        folder = "/"; // Set folder to root as default
+        file = path; // Set file to the path
+    }
+    else // If a folder is found
+    {
+        folder = path.substr(0, found + 1); // Keep the slash
+        file = path.substr(found + 1);  // Extract the file
+    }
+}
+
+std::string parseHttpRequest::get_folder()
+{
+    return folder;
+}
+std::string parseHttpRequest::get_file()
+{
+    return file;
+}
+
 void parseHttpRequest::print_all_parseRequest()
 {
     std::cout << "==============================" << std::endl;
     std::cout << "Method: " << Method << std::endl;
     std::cout << "Version: " << Version << std::endl;
     std::cout << "URI: " << URI << std::endl;
-    std::cout << "Status: " << status << std::endl;
+    std::cout << "Status: " << status << ">"<<std::endl;
+    std::cout << "Hosts: " << get_Header("Host") << ">"<< std::endl;
     
     // std::map<std::string, std::string>::iterator it = parsed_data.begin();
     // while (it != parsed_data.end())

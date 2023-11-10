@@ -2,7 +2,7 @@
 # define PARSINGEXCEPTION_HPP
 
 #include <exception>
-#include "../Utils/String.hpp"
+#include "String.hpp"
 
 class ParsingException : public std::exception
 {

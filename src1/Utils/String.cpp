@@ -8,6 +8,10 @@ String::String(const char* str) : std::string(str)
 {
 }
 
+String::String(std::string str) : std::string(str)
+{
+}
+
 String::String(const String& str) : std::string(str)
 {
 }
@@ -31,7 +35,7 @@ bool	String::equal(const String& value) const
 
 bool	String::contains(const String& str) const
 {
-	if ((int)find(str) != -1)
+	if (find(str) != npos)
 		return (true);
 	return (false);
 }

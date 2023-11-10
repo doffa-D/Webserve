@@ -5,9 +5,8 @@
 #include <fstream>
 #include "Location.hpp"
 #include <cctype>
-#include "../Exception/ParsingException.hpp"
-#include "../Models/ServerModel.hpp"
-#include "../Utils/Logger.hpp"
+#include "ParsingException.hpp"
+#include "ServerModel.hpp"
 
 class Parser
 {
@@ -15,27 +14,28 @@ class Parser
 	std::vector<String>	fileContent;
 	std::vector<std::vector<String> >	serversContents;
 	std::vector<ServerModel> servers;
+
 	Parser( void );
 
 	public :
-		Parser(String _fileName);
+		Parser(const String& _fileName);
 		Parser(const Parser& copy);
-		~Parser( void );
+		~Parser( void ) throw();
 		Parser& operator=(const Parser& target);
 		const std::vector<std::vector<String> >& getServersContents( void ) const;
 		const	std::vector<ServerModel>&	getServers( void ) const;
-		void	printServerModel(ServerModel& server);
 		static std::vector<Data>	parseHeader(const String& header);
+		
+		void	printServerModel(const ServerModel& server);
 	
 	private :
 		Data	extractDataFromString(String& line);
-		void	 printLocations(Location* locs);
-		Location*	 getLocations(std::vector<String>::iterator& begin, const std::vector<String>::iterator& end, String	path);
+		void	 printLocations(const Location& locs);
+		Location	 getLocations(std::vector<String>::iterator& begin, const std::vector<String>::iterator& end, String	path);
 		void	 getFileContent( void );
-		std::vector<String>	 getServerConfig(std::vector<String>::iterator& iterBegin, const std::vector<String>::iterator& iterEnd);
+		std::vector<String>	 getServerConfig(std::vector<String>::iterator&, const std::vector<String>::iterator&);
 		void	parsingFile(std::vector<String> content);
 		void	splitContentIntoServers( void );
-		void	freeLocations(Location* locs);
 		void	getFinalResualt( void );
 		void	checkSyntax( void );
 };

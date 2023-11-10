@@ -3,55 +3,52 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <pthread.h>
 
-#define MAX_PORTS 5
-#define REQUEST "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
-#define REQUEST_LEN strlen(REQUEST)
+#define PORT1 8080
+#define PORT2 8081
+#define SERVER_IP "127.0.0.1"
+#define BUFFER_SIZE 1024
 
-void* send_request(void* arg) {
-    int port = *((int*)arg);
-    int sockfd;
-    struct sockaddr_in server_addr;
+int send_request(int port) {
+    int sock = 0;
+    struct sockaddr_in serv_addr;
 
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        perror("Error creating socket");
-        return NULL;
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        perror("socket creation failed");
+        return 1;
     }
 
-    memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    server_addr.sin_port = htons(port);
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(port);
 
-    if (connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Error connecting to server");
-        close(sockfd);
-        return NULL;
+    if (inet_pton(AF_INET, SERVER_IP, &serv_addr.sin_addr) <= 0) {
+        perror("Invalid address/ Address not supported");
+        return 1;
     }
 
-    // Send the request
-    if (send(sockfd, REQUEST, REQUEST_LEN, 0) < 0) {
-        perror("Error sending request");
-    } else {
-        printf("Request sent to port %d\n", port);
+    if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
+        perror("Connection Failed");
+        return 1;
     }
 
-    close(sockfd);
-    return NULL;
+    char message[] = "Hello from client!";
+    send(sock, message, strlen(message), 0);
+    printf("Request sent to port %d\n", port);
+
+    char buffer[BUFFER_SIZE] = {0};
+    recv(sock, buffer, BUFFER_SIZE, 0);
+    printf("Response from port %d: %s\n", port, buffer);
+
+    close(sock);
+    return 0;
 }
 
 int main() {
-    int ports[MAX_PORTS] = {80, 8090, 8080, 8040, 8010};
-    pthread_t threads[MAX_PORTS];
-
-    for (int i = 0; i < MAX_PORTS; i++) {
-        pthread_create(&threads[i], NULL, send_request, &ports[i]);
-    }
-
-    for (int i = 0; i < MAX_PORTS; i++) {
-        pthread_join(threads[i], NULL);
+    for (int i = 0; i < 4000; ++i) {
+        if(send_request(8081) == 1)
+            continue;
+        if(send_request(8080) == 1)
+            continue;
     }
 
     return 0;

@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 15:18:41 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/06 17:33:15 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/09 14:48:07 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ class parseHttpRequest : virtual public MY_exception
         std::string URI;                                     // URI is the URI of the request
         std::multimap<std::string, std::string> parsed_data; // parsed_data is the map that will be used to store the parsed data
         std::string status;                                  // status is the status of the request
+        std::string folder;                                  // folder is the folder that will be used to store the html files
+        std::string file;                                    // file is the file that will be used to store the html file
 
     public:
         parseHttpRequest();                     // this constructor is used to parse the request and store the parsed data in the map
@@ -44,6 +46,10 @@ class parseHttpRequest : virtual public MY_exception
         void set_status(std::string status);     // set_status function is used to set the status of the request
         void print_all_parseRequest();           // print_all function is used to print all the data in the map
         void Check_Request_Status();             // Check_Request_Status function is used to check the status of the request
+    	void find_file(std::string path);                         
+        std::string get_folder();                // get_folder function is used to get the folder that will be used to store the html files
+        std::string get_file();                  // get_file function is used to get the file that will be used to store the html file
+
 };
 
 #endif

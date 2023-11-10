@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:03:42 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/06 17:55:56 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/08 14:53:56 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@ bool parseHttpRequest::URI_check(std::string URI)
 
 void parseHttpRequest::Check_Request_Status()
 {
-    if (URI_check(URI) == false)
-        throw MY_exception::status_code_exception("400 Bad Request");
-    else if (URI.length() > 2048)
-        throw MY_exception::status_code_exception("414 Request-URI Too Long");
+    // if (URI_check(URI) == false)
+    //     throw MY_exception::status_code_exception("400 Bad Request");
+    // else if (URI.length() > 2048)
+    //     throw MY_exception::status_code_exception("414 Request-URI Too Long");
     // else if (Method == "POST")
     // {
     // if (get_Header("Content-Length") == "")

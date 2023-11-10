@@ -2,7 +2,8 @@
 #define DATA_HPP
 
 #include <iostream>
-#include "../Utils/String.hpp"
+#include "String.hpp"
+#include "Logger.hpp"
 
 class Data
 {

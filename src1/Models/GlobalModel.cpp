@@ -49,6 +49,23 @@ const std::vector<Data>&	GlobalModel::getAllData( void ) const
 }
 
 
+
+bool	GlobalModel::isExist(const Data& value)
+{
+	std::vector<Data>::const_iterator	iterBegin = data.begin();
+	std::vector<Data>::const_iterator	iterEnd = data.end();
+	while (iterBegin < iterEnd)
+	{
+		if (!iterBegin->getKey().compare(value.getKey()) \
+			&& !iterBegin->getValue().compare(value.getValue()))
+			return (true);
+		iterBegin++;
+	}
+	return (false);
+}
+
+
+
 void	GlobalModel::printGlobalModel(const GlobalModel& model, String &str)
 {
 	std::vector<Data>::const_iterator	ibegin = model.getAllData().begin();
