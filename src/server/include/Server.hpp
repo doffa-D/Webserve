@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/10 15:24:03 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/15 10:25:24 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ public:
 	void get_server_by_hostname(std::string host,int fd_clien);
 	void find_file();
 	bool check_socket(int i);
+	std::string read_full_request(int socket_fd);
 };
 
 void init_server(Server &server, char *argv);

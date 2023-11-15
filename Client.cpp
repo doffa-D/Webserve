@@ -6,7 +6,7 @@
 
 #define PORT1 8080
 #define PORT2 8081
-#define SERVER_IP "127.0.0.1"
+#define SERVER_IP "10.11.1.3"  // Changed IP address to the one provided
 #define BUFFER_SIZE 1024
 
 int send_request(int port) {
@@ -21,6 +21,7 @@ int send_request(int port) {
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(port);
 
+    // SERVER_IP is now set to the desired address
     if (inet_pton(AF_INET, SERVER_IP, &serv_addr.sin_addr) <= 0) {
         perror("Invalid address/ Address not supported");
         return 1;
@@ -44,11 +45,11 @@ int send_request(int port) {
 }
 
 int main() {
-    for (int i = 0; i < 4000; ++i) {
+    for (int i = 0; i < 500; ++i) {
         if(send_request(8081) == 1)
             continue;
-        if(send_request(8080) == 1)
-            continue;
+        // if(send_request(8080) == 1)
+        //     continue;
     }
 
     return 0;
