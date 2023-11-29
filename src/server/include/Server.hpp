@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/15 10:25:24 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/11/28 16:32:00 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <fstream>					   // For ifstream
 #include "../../../include/header.hpp" // in this header file we have all the libraries that we need
 #include <fcntl.h>
+#include <vector>
 
 
 #define PORT 8080		 // the port users will be connecting to

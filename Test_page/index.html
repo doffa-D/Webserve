@@ -1,1 +1,21 @@
-hello world
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+</head>
+<body>
+    <h1>File Upload</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <label for="file">Select a file:</label>
+        <input type="file" name="file" id="file" required>
+        <br>
+        <input type="submit" value="Upload File">
+    </form>
+    <video width="320" height="240" controls>
+        <source src="movie.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+</body>
+</html>
