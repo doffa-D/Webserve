@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/11/29 15:19:02 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/12 12:27:52 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,129 +51,210 @@ int hexToDecimal(const std::string hexString)
 	ss >> decimalValue;
 	return decimalValue;
 }
-std::string FileName(std::string filename)
+
+std::string extractFileName(const std::string &contentDisposition, size_t filenamePos)
 {
-	std::string name = "";
-	for (int i = filename.length() - 1; i >= 0; i--)
+
+	size_t startQuote = contentDisposition.find('"', filenamePos);
+	if (startQuote != std::string::npos)
 	{
-		if (filename[i] == '/')
-			break;
-		name += filename[i];
-	}
-	std::reverse(name.begin(), name.end());
-	return name;
-}
-std::string extractFileName(const std::string& contentDisposition) {
-    size_t filenamePos = contentDisposition.find("filename=");
-    if (filenamePos != std::string::npos) {
-        size_t startQuote = contentDisposition.find('"', filenamePos);
-        if (startQuote != std::string::npos) {
-            size_t endQuote = contentDisposition.find('"', startQuote + 1);
-            if (endQuote != std::string::npos) {
-                return contentDisposition.substr(startQuote + 1, endQuote - startQuote - 1);
-            }
-        }
-    }
-
-    return "";
-}
-
-
-std::vector<std::string> split_request(std::string full_request, std::string boundary)
-{
-	std::vector<std::string> parts;
-	size_t start = 0;
-	size_t end = full_request.find(boundary);
-	while (end != std::string::npos)
-	{
-		parts.push_back(full_request.substr(start, end - start));
-		start = end + boundary.length();
-		end = full_request.find(boundary, start);
-	}
-
-	parts.push_back(full_request.substr(start, end));
-
-	for (std::vector<std::string>::iterator it = parts.begin(); it != parts.end(); ++it)
-	{
-		size_t filenamePos = (*it).find("filename=");
-		if (filenamePos != std::string::npos)
+		size_t endQuote = contentDisposition.find('"', startQuote + 1);
+		if (endQuote != std::string::npos)
 		{
-			std::string filename = extractFileName(*it);
-            std::cout << "File Name: " << filename << std::endl;
-			size_t firstNewline = (*it).find("\r\n\r\n\r\n", filenamePos - 2);
-			if (filenamePos != std::string::npos)
+			return contentDisposition.substr(startQuote + 1, endQuote - startQuote - 1);
+		}
+	}
+
+	return "";
+}
+
+void saveFile(std::string body, size_t filenamePos)
+{
+	// std::cout << body << std::endl;
+	if (filenamePos != std::string::npos)
+	{
+		std::string filename = extractFileName(body, filenamePos);
+		// std::cout << "filename: " << filename << std::endl;
+		size_t firstContentPos = body.find("\r\n\r\n", filenamePos + 10);
+		if (firstContentPos == std::string::npos)
+		{
+			size_t endContentPos = body.find("\r\n", firstContentPos + 4);
+			// std::cout << &body[endContentPos + 4] << std::endl;
+			if (endContentPos != std::string::npos)
 			{
-				size_t secondNewline = (*it).find("\r\n", firstNewline + 5);
-				if (secondNewline != std::string::npos)
+				std::cout << "hello" << std::endl;
+				std::ofstream file(filename.c_str());
+				if (file.is_open())
 				{
-					int read_size = hexToDecimal((*it).substr(firstNewline + 5, secondNewline - firstNewline - 5));
-					std::ofstream file(filename.c_str());
-					 if (file.is_open()) {
-						file << (*it).substr(secondNewline + 2, read_size);
-
-						file.close();
-
-					} 
-					// std::cout << "=>" << (*it).substr(secondNewline + 2, read_size) << "<=" << std::endl;
+					file << body.substr(firstContentPos + 4, endContentPos - firstContentPos - 4);
+					file.close();
 				}
 			}
 		}
 	}
+	exit(0);
+}
+#include <stdio.h>
+void split_request(Client &client)
+{
+	std::string header;
+	std::string body;
+	size_t bodyStart = client.buffer.find("\r\n\r\n");
+	if (bodyStart != std::string::npos)
+	{
+		header = client.buffer.substr(0, bodyStart);
+		body = client.buffer.substr(bodyStart + 2);
+		// std::cout << header << std::endl
+	}
 
-	return parts;
+	std::string boundary = "--" + client.fisrtboundaryValue;
+	size_t pos = body.find(boundary);
+	std::vector<std::string> parts;
+	while (pos != std::string::npos)
+	{
+		size_t nextPos = body.find(boundary, pos + boundary.length() + 2);
+		std::string part = body.substr(pos + boundary.length() + 2, nextPos - pos - boundary.length() - 2);
+		parts.push_back(part);
+		pos = nextPos;
+	}
+
+	for (size_t i = 0; i < parts.size(); ++i)
+	{
+		size_t filenamePos = parts[i].find("filename=");
+		if (filenamePos != std::string::npos)
+		{
+			saveFile(parts[i], filenamePos);
+		}
+		else
+		{
+			header += "\r\n\r\n";
+			header += parts[i];
+		}
+	}
+	std::cout << header << ">" << std::endl;
+	return;
 }
 
-std::string Server::read_full_request(int socket_fd)
+void ContentLength(std::string request, Client &Client)
 {
-	char buffer[BUFFER_SIZE + 1];
+	std::string content = "Content-Length: ";
+	size_t pos = request.find(content);
+	if (pos != std::string::npos)
+	{
+		std::string substring = request.substr(pos + content.length());
+		size_t end = substring.find_first_not_of("0123456789");
+		std::string length = substring.substr(0, end);
+		Client.contentLength = std::stoi(length);
+		Client.startFContent = request.find("\r\n\r\n") + 4;
+	}
+}
+
+std::string Server::read_full_request(int socket_fd, fd_set &current_sockets)
+{
+	char buffer[BUFFER_SIZE];
 	std::string full_request;
-	bool is_post = false;
-	std::string boundaryValue;
-	// size_t start = 0;
+	int client_index = -1;
+	// bool has_finished = false;
+
+	for (size_t i = 0; i < clients.size(); i++)
+	{
+		if (clients[i].fd == socket_fd)
+		{
+			client_index = static_cast<int>(i);
+			break;
+		}
+	}
 
 	while (true)
 	{
 		int valread = recv(socket_fd, buffer, BUFFER_SIZE, 0);
-		std::cout << buffer << std::endl;
-		std::string body(buffer);
-
-		if (body.find("POST") != std::string::npos && !is_post)
-		{
-			size_t contentTypePos = body.find("Content-Type:");
-			if (contentTypePos != std::string::npos)
-			{
-				size_t boundaryPos = body.find("boundary=", contentTypePos);
-				if (boundaryPos != std::string::npos)
-				{
-					size_t boundaryEnd = body.find("\r\n", boundaryPos);
-					boundaryValue = body.substr(boundaryPos + 9, boundaryEnd - (boundaryPos + 9));
-					is_post = true;
-				}
-			}
-		}
-		else if(full_request.find("GET") != std::string::npos)
-		{
-			if(valread < BUFFER_SIZE || valread <= 0)
-			{
-				std::cout << "==============================" << std::endl;
-				break;
-			}
-		}
 
 		if (valread > 0)
 		{
 			buffer[valread] = '\0';
-			full_request.append(buffer, buffer + valread);
-			size_t lastBoundaryPos = full_request.rfind("--" + boundaryValue + "--");
-			if (lastBoundaryPos != std::string::npos && is_post)
+			std::string body(buffer, valread);
+			if (client_index == -1)
 			{
-				break;
+				Client newClient;
+				newClient.fd = socket_fd;
+				newClient.fisrtboundaryValue = "";
+				newClient.lastboundaryValue = "";
+				newClient.isFile = false;
+				size_t contentTypePos = body.find("Content-Type:");
+				ContentLength(body, newClient);
+				if (contentTypePos != std::string::npos)
+				{
+					size_t boundaryPos = body.find("boundary=", contentTypePos);
+					if (boundaryPos != std::string::npos)
+					{
+						size_t start = body.find("\r\n", boundaryPos);
+						newClient.fisrtboundaryValue = body.substr(boundaryPos + 9, start - (boundaryPos + 9));
+						newClient.lastboundaryValue = "--" + newClient.fisrtboundaryValue + "--";
+					}
+				}
+				size_t contentLengthPos = body.find("Transfer-Encoding: chunked");
+				if (contentLengthPos != std::string::npos)
+					newClient.isChunked = true;
+				else
+					newClient.isChunked = false;
+				clients.push_back(newClient);
+				client_index = static_cast<int>(clients.size()) - 1;
+			}
+
+			clients[client_index].buffer.append(body);
+			// std::cout << "==> " << body << std::endl;
+			if (!clients[client_index].lastboundaryValue.empty())
+			{
+				clients[client_index].bytes_read += valread;
+				if (clients[client_index].isChunked)
+				{
+				}
+				{
+					if (clients[client_index].bytes_read - clients[client_index].startFContent == clients[client_index].contentLength)
+					{
+						std::cout << "this is not chunked" << std::endl;
+						// std::cout << "==> " << clients[client_index].buffer << std::endl;
+						split_request(clients[client_index]);
+						// clients.erase(clients.begin() + client_index);
+						close(socket_fd);
+						FD_CLR(socket_fd, &current_sockets);
+					}
+				}
+			}
+			else
+			{
+				std::string htmlResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+				htmlResponse += "<!DOCTYPE html>\n";
+				htmlResponse += "<html lang=\"en\">\n";
+				htmlResponse += "  <head>\n";
+				htmlResponse += "    <meta charset=\"UTF-8\" />\n";
+				htmlResponse += "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
+				htmlResponse += "    <title>File Upload</title>\n";
+				htmlResponse += "  </head>\n";
+				htmlResponse += "  <body>\n";
+				htmlResponse += "    <h1>File Upload</h1>\n";
+				htmlResponse += "    <form\n";
+				htmlResponse += "      action=\"/upload\"\n";
+				htmlResponse += "      method=\"post\"\n";
+				htmlResponse += "      enctype=\"multipart/form-data\"\n";
+				htmlResponse += "    >\n";
+				htmlResponse += "      <label for=\"file\">Select a file:</label>\n";
+				htmlResponse += "      <input type=\"file\" name=\"file\" id=\"file\" required />\n";
+				htmlResponse += "      <br />\n";
+				htmlResponse += "      <input type=\"submit\" value=\"Upload File\" />\n";
+				htmlResponse += "    </form>\n";
+				htmlResponse += "  </body>\n";
+				htmlResponse += "</html>\n";
+
+				write(socket_fd, htmlResponse.c_str(), htmlResponse.size());
+				(void)current_sockets;
+				// clients.erase(clients.begin() + client_index);
+				close(socket_fd);
+				FD_CLR(socket_fd, &current_sockets);
 			}
 		}
-		memset(buffer, 0, BUFFER_SIZE + 1);
+		break;
 	}
-	// std::cout << full_request << std::endl;
-	// std::vector<std::string> part = split_request(full_request, "--" + boundaryValue);
 	return full_request;
 }
 
@@ -216,23 +297,10 @@ void Server::listen_to_multiple_clients()
 				}
 				else
 				{
-					// Reading the full request
-					std::string full_request = read_full_request(i);
-
-						set_status("404 Not Found");
-						Send_Error_Response(i); 
-					// Process the received request
-					if (!full_request.empty())
-					{
-						// parseRequest(full_request.c_str()); // Implement your request parsing logic
-						// Implement your error response logic
-												// printf("Received data: %s %d\n", full_request.c_str(), id++);
-												// std::cout << "Received data: " << full_request.c_str() << std::endl;
-												// std::cout << "==============================" << std::endl;
-					}
-
-					close(i);
-					FD_CLR(i, &current_sockets);
+					read_full_request(i, current_sockets);
+					// close(i);
+					// FD_CLR(i, &current_sockets);
+					// read_full_request(i, current_sockets);
 				}
 			}
 		}
@@ -309,41 +377,40 @@ void Server::getMyIpAddress()
 
 void Server::Send_Error_Response(int fd_client)
 {
-    std::ifstream file("/Users/hdagdagu/Desktop/Webserve/Test_page/index.html");
-    std::string message_body = "";
+	std::ifstream file("/Users/hdagdagu/Desktop/Webserve/Test_page/index.html");
+	std::string message_body = "";
 
-    if (file.is_open())
-    {
-        std::string line;
-        while (getline(file, line))
-        {
-            message_body += line;
-        }
+	if (file.is_open())
+	{
+		std::string line;
+		while (getline(file, line))
+		{
+			message_body += line;
+		}
 
-        file.close(); // Close the file after reading its content
-    }
-    else
-    {
-        // Handle file open error
-        perror("Error opening file");
-        return;
-    }
+		file.close(); // Close the file after reading its content
+	}
+	else
+	{
+		// Handle file open error
+		perror("Error opening file");
+		return;
+	}
 
-    std::string header = get_Version() + " " + get_status() + "\r\n"
-                         "Content-Type: text/html\r\n"
-                         "Content-Length: " + std::to_string(message_body.length()) + "\r\n\r\n";
+	std::string header = get_Version() + " " + get_status() + "\r\n"
+															  "Content-Type: text/html\r\n"
+															  "Content-Length: " +
+						 std::to_string(message_body.length()) + "\r\n\r\n";
 
-    std::string full_message = header + message_body;
-	std::cout << full_message << std::endl;
-	
-    if (send(fd_client, full_message.c_str(), full_message.length(), 0) < 0)
-    {
-        // Handle send error, possibly with additional cleanup or error reporting
-        perror("Send failed");
-        return;
-    }
+	std::string full_message = header + message_body;
+
+	if (send(fd_client, full_message.c_str(), full_message.length(), 0) < 0)
+	{
+		// Handle send error, possibly with additional cleanup or error reporting
+		perror("Send failed");
+		return;
+	}
 }
-
 
 // void Server::Send_Error_Response(int fd_client)
 // {

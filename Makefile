@@ -6,7 +6,7 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2023/11/09 17:01:11 by hdagdagu         ###   ########.fr        #
+#    Updated: 2023/12/11 12:42:28 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -93,4 +93,8 @@ run: all
 	@echo "$(YELLOW)Running $(NAME)$(NC)"
 	@./$(NAME) config_file/default.conf
 
+
+watch:
+	@python3 watch.py
+	
 .PHONY: all clean fclean re ascii_art
