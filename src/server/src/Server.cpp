@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/12 12:27:52 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/12 13:13:04 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,25 +70,20 @@ std::string extractFileName(const std::string &contentDisposition, size_t filena
 
 void saveFile(std::string body, size_t filenamePos)
 {
-	// std::cout << body << std::endl;
 	if (filenamePos != std::string::npos)
 	{
 		std::string filename = extractFileName(body, filenamePos);
-		// std::cout << "filename: " << filename << std::endl;
-		size_t firstContentPos = body.find("\r\n\r\n", filenamePos + 10);
-		if (firstContentPos == std::string::npos)
+		filename = "/goinfre/hdagdagu/test/" + filename;
+		size_t firstContentPos = body.find("\r\n\r\n", filenamePos + 9);
+		if (firstContentPos != std::string::npos)
 		{
-			size_t endContentPos = body.find("\r\n", firstContentPos + 4);
-			// std::cout << &body[endContentPos + 4] << std::endl;
-			if (endContentPos != std::string::npos)
+			std::ofstream file(filename.c_str());
+			if (file.is_open())
 			{
-				std::cout << "hello" << std::endl;
-				std::ofstream file(filename.c_str());
-				if (file.is_open())
-				{
-					file << body.substr(firstContentPos + 4, endContentPos - firstContentPos - 4);
-					file.close();
-				}
+				std::cout << "file is open" << std::endl;
+				file << body.substr(firstContentPos + 4);
+				file.close();
+				std::cout << "file is closed" << std::endl;
 			}
 		}
 	}
