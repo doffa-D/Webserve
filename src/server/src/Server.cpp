@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/12 13:13:04 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/13 19:10:06 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,65 @@ void saveFile(std::string body, size_t filenamePos)
 			}
 		}
 	}
-	exit(0);
+	// exit(0);
 }
 #include <stdio.h>
+
+std::string removeHixa(std::string body)
+{
+	std::string result = "";
+	std::stringstream iss(body);
+	std::string line;
+	int i = 0;
+	size_t fisrtContent = body.find("\r\n\r\n") + 4;
+	result = body.substr(0, fisrtContent);
+	for (; std::getline(iss, line);)
+	{
+
+		if (line.length() == 1)
+			i++;
+
+		if (i == 2)
+		{
+			std::getline(iss, line);
+			size_t pos = body.find(line);
+			if (pos != std::string::npos)
+			{
+				size_t pos2 = body.rfind("\r\n\r\n\r\n");
+				if (pos2 != std::string::npos)
+				{
+					size_t pos3 = body.find("\r\n", pos2 - 8);
+					if (pos3 != std::string::npos)
+					{
+						size_t pos2 = body.find("filename=");
+						if (pos2 != std::string::npos)
+						{
+							std::string filename = extractFileName(body, pos2);
+							filename = "/goinfre/hdagdagu/test/" + filename;
+							std::ofstream file(filename.c_str());
+							if (file.is_open())
+							{
+
+								file << body.substr(pos + line.length() + 1, pos3 - pos - line.length());
+								file.close();
+							}
+						}
+						else
+						{
+							result += body.substr(pos + line.length() + 1, pos3 - pos - line.length());
+							std::cout << result << std::endl;
+							return result;
+						}
+					}
+					return result;
+				}
+			}
+			break;
+		}
+	}
+	return "";
+}
+
 void split_request(Client &client)
 {
 	std::string header;
@@ -101,7 +157,6 @@ void split_request(Client &client)
 		body = client.buffer.substr(bodyStart + 2);
 		// std::cout << header << std::endl
 	}
-
 	std::string boundary = "--" + client.fisrtboundaryValue;
 	size_t pos = body.find(boundary);
 	std::vector<std::string> parts;
@@ -126,7 +181,8 @@ void split_request(Client &client)
 			header += parts[i];
 		}
 	}
-	std::cout << header << ">" << std::endl;
+	std::cout << header << std::endl;
+	exit(0);
 	return;
 }
 
@@ -163,7 +219,7 @@ std::string Server::read_full_request(int socket_fd, fd_set &current_sockets)
 	while (true)
 	{
 		int valread = recv(socket_fd, buffer, BUFFER_SIZE, 0);
-
+		// std::cout << valread << std::endl;
 		if (valread > 0)
 		{
 			buffer[valread] = '\0';
@@ -173,8 +229,10 @@ std::string Server::read_full_request(int socket_fd, fd_set &current_sockets)
 				Client newClient;
 				newClient.fd = socket_fd;
 				newClient.fisrtboundaryValue = "";
+				newClient.header = "";
 				newClient.lastboundaryValue = "";
 				newClient.isFile = false;
+				newClient.bytes_read = 0;
 				size_t contentTypePos = body.find("Content-Type:");
 				ContentLength(body, newClient);
 				if (contentTypePos != std::string::npos)
@@ -192,25 +250,82 @@ std::string Server::read_full_request(int socket_fd, fd_set &current_sockets)
 					newClient.isChunked = true;
 				else
 					newClient.isChunked = false;
+
+				size_t start = body.find("\r\n\r\n");
+				if (start != std::string::npos)
+				{
+					newClient.header = body.substr(0, start + 4);
+					newClient.start = start + 4;
+				}
+				else
+					newClient.start = 0;
+
 				clients.push_back(newClient);
 				client_index = static_cast<int>(clients.size()) - 1;
 			}
-
 			clients[client_index].buffer.append(body);
-			// std::cout << "==> " << body << std::endl;
 			if (!clients[client_index].lastboundaryValue.empty())
 			{
 				clients[client_index].bytes_read += valread;
 				if (clients[client_index].isChunked)
 				{
+					size_t searchLength = std::min(static_cast<size_t>(10), clients[client_index].bytes_read);
+					std::string substring = clients[client_index].buffer.substr(clients[client_index].bytes_read - searchLength, searchLength);
+					size_t foundPos = substring.rfind("\r\n0\r\n");
+					if (foundPos != std::string::npos)
+					{
+
+						std::string body;
+						size_t startPos = clients[client_index].start;
+						size_t endPos = clients[client_index].bytes_read;
+
+						while (startPos < endPos)
+						{
+							// Read the chunk size
+							size_t sizePos = clients[client_index].buffer.find("\r\n", startPos);
+							if (sizePos == std::string::npos)
+							{
+								// Handle error, invalid chunk format
+								break;
+							}
+
+							std::string chunkSizeHex = clients[client_index].buffer.substr(startPos, sizePos - startPos);
+							int chunkSize = std::stoi(chunkSizeHex, 0, 16);
+
+							// Move to the beginning of the chunk data
+							startPos = sizePos + 2; // Skip "\r\n"
+
+							// Read the chunk
+							if (startPos + chunkSize <= endPos)
+							{
+								std::string chunkData = clients[client_index].buffer.substr(startPos, chunkSize);
+								body += chunkData;
+
+								// Move to the next chunk
+								startPos += chunkSize + 2; // Skip the chunk data and "\r\n"
+							}
+							else
+							{
+								// Not enough data for the complete chunk, wait for more data
+								break;
+							}
+						}
+						// std::cout << body << std::endl;
+						// Update the start position for the next read
+						clients[client_index].start = startPos;
+						clients[client_index].buffer.clear();
+						clients[client_index].buffer = clients[client_index].header + body;
+						// std::cout << clients[client_index].header << std::endl;
+						split_request(clients[client_index]);
+						exit(0);
+					}
 				}
 				{
 					if (clients[client_index].bytes_read - clients[client_index].startFContent == clients[client_index].contentLength)
 					{
-						std::cout << "this is not chunked" << std::endl;
-						// std::cout << "==> " << clients[client_index].buffer << std::endl;
+						std::cout << clients[client_index].buffer << std::endl;
+						exit(0);
 						split_request(clients[client_index]);
-						// clients.erase(clients.begin() + client_index);
 						close(socket_fd);
 						FD_CLR(socket_fd, &current_sockets);
 					}
@@ -231,9 +346,11 @@ std::string Server::read_full_request(int socket_fd, fd_set &current_sockets)
 				htmlResponse += "    <form\n";
 				htmlResponse += "      action=\"/upload\"\n";
 				htmlResponse += "      method=\"post\"\n";
-				htmlResponse += "      enctype=\"multipart/form-data\"\n";
+				htmlResponse += "      enctype=\"application/x-www-form-urlencoded\"\n";
 				htmlResponse += "    >\n";
 				htmlResponse += "      <label for=\"file\">Select a file:</label>\n";
+				htmlResponse += "      <input type=\"file\" name=\"file\" id=\"file\" required />\n";
+				htmlResponse += "      <input type=\"file\" name=\"file\" id=\"file\" required />\n";
 				htmlResponse += "      <input type=\"file\" name=\"file\" id=\"file\" required />\n";
 				htmlResponse += "      <br />\n";
 				htmlResponse += "      <input type=\"submit\" value=\"Upload File\" />\n";

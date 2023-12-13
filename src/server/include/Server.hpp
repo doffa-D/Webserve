@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/10 11:23:00 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/13 17:53:00 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ struct Client
 	size_t endFile;
 	std::vector<std::string> parts;
 	bool isFile;
+	std::string header;
 };
 
 class Server : public parseHttpRequest
