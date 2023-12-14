@@ -1,0 +1,452 @@
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 3.81
+# Copyright (C) 2006  Free Software Foundation, Inc.
+# This is free software; see the source for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+# This program built for i386-apple-darwin11.3.0
+
+# Make data base, printed on Wed Dec 13 19:26:26 2023
+
+# Variables
+
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# environment
+VSCODE_CRASH_REPORTER_PROCESS_TYPE = extensionHost
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# makefile (from `Makefile', line 47)
+INCLUDES = -I$(INCLUDE_DIR) -I$(CONFIG_INCLUDE_DIR) -I$(EXCEPTION_INCLUDE_DIR) -I$(REQUEST_INCLUDE_DIR) -I$(SERVER_INCLUDE_DIR) -I./src1/Includes
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# automatic
+@F = $(notdir $@)
+# makefile
+CURDIR := /Users/hdagdagu/Desktop/Webserve
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-us","osLocale":"en","availableLanguages":{},"_languagePackSupport":true}
+# environment
+_ = /usr/bin/make
+# makefile (from `Makefile', line 14)
+CFLAGS = -Wall -Werror -Wextra -std=c++98 
+# makefile (from `Makefile', line 1)
+MAKEFILE_LIST :=  Makefile
+# makefile (from `Makefile', line 23)
+EXCEPTION_INCLUDE_DIR = $(SRC_DIR)/exception/include
+# makefile (from `Makefile', line 27)
+SRCS = main.cpp $(SRC_DIR)/server/src/Server.cpp $(SRC_DIR)/server/src/MIME_type.cpp $(SRC_DIR)/request/src/parseHttpRequest.cpp $(SRC_DIR)/request/src/request_status_code.cpp $(SRC_DIR)/config/src/ServerConfigFile.cpp $(SRC_DIR)/exception/src/exception.cpp $(SRC_DIR)/server/src/init_server.cpp ${SRC_DIR1}/Parser/Parser.cpp ${SRC_DIR1}/Parser/Location.cpp ${SRC_DIR1}/Models/GlobalModel.cpp ${SRC_DIR1}/Models/ServerModel.cpp ${SRC_DIR1}/Models/Data.cpp ${SRC_DIR1}/Utils/String.cpp ${SRC_DIR1}/Exception/ParsingException.cpp ${SRC_DIR1}/Utils/ServerData.cpp 
+# environment
+DEBUG = WARN
+# makefile (from `Makefile', line 45)
+OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
+# environment
+VSCODE_CWD = /
+# environment
+PATH = /Users/hdagdagu/.brew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki:/Applications/Visual Studio Code.app/Contents/Resources/app/bin
+# environment
+LSCOLORS = Gxfxcxdxbxegedabagacad
+# makefile (from `Makefile', line 21)
+INCLUDE_DIR = include
+# environment
+LaunchInstanceID = DC47DE3C-74B3-4DED-9028-A220D38F50BC
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# default
+.FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
+# environment
+LS_COLORS = di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43
+# environment
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.9C5GVvRLbG/Listeners
+# automatic
+%F = $(notdir $%)
+# environment
+HOMEBREW_TEMP = /tmp/hdagdagu/Homebrew/Temp
+# environment
+PWD = /Users/hdagdagu/Desktop/Webserve
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# makefile (from `Makefile', line 50)
+GREEN = \033[0;32m
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+HOME = /Users/hdagdagu
+# default
+MAKEFILEPATH := /Applications/Xcode.app/Contents/Developer/Makefiles
+# environment
+VSCODE_CODE_CACHE_PATH = /Users/hdagdagu/Library/Application Support/Code/CachedData/695af097c7bd098fbf017ce3ac85e09bbc5dda06
+# environment
+LOGNAME = hdagdagu
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# makefile (from `Makefile', line 24)
+REQUEST_INCLUDE_DIR = $(SRC_DIR)/request/include
+# environment
+ZSH = /Users/hdagdagu/.oh-my-zsh
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+XPC_FLAGS = 0x0
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := all
+# environment
+HOMEBREW_CACHE = /tmp/hdagdagu/Homebrew/Caches
+# environment
+SHLVL = 1
+# default
+MAKE_VERSION := 3.81
+# environment
+USER = hdagdagu
+# makefile
+.DEFAULT_GOAL := all
+# makefile (from `Makefile', line 15)
+NAME = WebServer
+# environment
+LESS = -R
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# default
+MAKE_COMMAND := /Applications/Xcode.app/Contents/Developer/usr/bin/make
+# makefile (from `Makefile', line 53)
+NC = \033[0m
+# default
+.VARIABLES := 
+# environment
+TMPDIR = /var/folders/zz/zyxvpxvq6csfxvn_n000cb2m0032rn/T/
+# automatic
+*F = $(notdir $*)
+# environment
+VSCODE_IPC_HOOK = /Users/hdagdagu/Library/Application Support/Code/1.79-main.sock
+# environment
+MallocNanoZone = 0
+# makefile (from `Makefile', line 51)
+RED = \033[0;31m
+# makefile
+MAKEFLAGS = Rrqp
+# environment
+MFLAGS = -Rrqp
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+XPC_SERVICE_NAME = com.apple.xpc.launchd.oneshot.0x10000001.Electron
+# makefile (from `Makefile', line 25)
+SERVER_INCLUDE_DIR = $(SRC_DIR)/server/include
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# makefile (from `Makefile', line 52)
+YELLOW = \033[0;33m
+# automatic
++F = $(notdir $+)
+# makefile (from `Makefile', line 22)
+CONFIG_INCLUDE_DIR = $(SRC_DIR)/config/include
+# environment
+__CF_USER_TEXT_ENCODING = 0x18B15:0x0:0x0
+# environment
+COMMAND_MODE = unix2003
+# default
+MAKEFILES := 
+# makefile (from `Makefile', line 18)
+SRC_DIR = src
+# automatic
+<F = $(notdir $<)
+# makefile (from `Makefile', line 16)
+OBJDIR = .objFiles
+# makefile (from `Makefile', line 13)
+CXX = g++
+# environment
+PAGER = less
+# environment
+LC_ALL = C
+# environment
+SECURITYSESSIONID = 186a8
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# default
+.INCLUDE_DIRS = /usr/local/include
+# makefile (from `Makefile', line 19)
+SRC_DIR1 = src1
+# environment
+MAKELEVEL := 0
+# environment
+LANG = C
+# environment
+VSCODE_PID = 5988
+# variable set hash-table stats:
+# Load=86/1024=8%, Rehash=0, Collisions=6/153=4%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 16777225, inode 16474002): 15 files, no impossibilities.
+
+# 15 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+.objFiles/%.o: %.cpp
+#  commands to execute (from `Makefile', line 78):
+	@echo "$(GREEN)Compiling $< and generating object file $@$(NC)"
+	@mkdir -p $(dir $@)
+	@$(CXX) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	
+
+# 1 implicit rules, 0 (0.0%) terminal.
+
+# Files
+
+# Not a target:
+.objFiles/main.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.objFiles/src1/Utils/ServerData.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+all: ascii_art WebServer
+#  Phony target (prerequisite of .PHONY).
+#  Command-line target.
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/22=0%
+
+ascii_art:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  Implicit/static pattern stem: `'
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := ascii_art
+# automatic
+# % := 
+# automatic
+# * := 
+# automatic
+# + := 
+# automatic
+# | := 
+# automatic
+# < := 
+# automatic
+# ^ := 
+# automatic
+# ? := 
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=1/30=3%
+#  commands to execute (from `Makefile', line 58):
+	@echo "\n"
+	@echo "$(RED) █     █░▓█████  ▄▄▄▄     ██████ ▓█████  ██▀███   ██▒   █▓▓█████ $(NC)"
+	@echo "$(RED)▓█░ █ ░█░▓█   ▀ ▓█████▄ ▒██    ▒ ▓█   ▀ ▓██ ▒ ██▒▓██░   █▒▓█   ▀ $(NC)"
+	@echo "$(RED)▒█░ █ ░█ ▒███   ▒██▒ ▄██░ ▓██▄   ▒███   ▓██ ░▄█ ▒ ▓██  █▒░▒███   $(NC)"
+	@echo "$(RED)░█░ █ ░█ ▒▓█  ▄ ▒██░█▀    ▒   ██▒▒▓█  ▄ ▒██▀▀█▄    ▒██ █░░▒▓█  ▄ $(NC)"
+	@echo "$(RED)░░██▒██▓ ░▒████▒░▓█  ▀█▓▒██████▒▒░▒████▒░██▓ ▒██▒   ▒▀█░  ░▒████▒$(NC)"
+ 
+	@echo "$(RED)░ ▓░▒ ▒  ░░ ▒░ ░░▒▓███▀▒▒ ▒▓▒ ▒ ░░░ ▒░ ░░ ▒▓ ░▒▓░   ░ ▐░  ░░ ▒░ ░$(NC)"
+	@echo "$(RED)  ▒ ░ ░   ░ ░  ░▒░▒   ░ ░ ░▒  ░ ░ ░ ░  ░  ░▒ ░ ▒░   ░ ░░   ░ ░  ░$(NC)"
+	@echo "$(RED)  ░   ░     ░    ░    ░ ░  ░  ░     ░     ░░   ░      ░░     ░   $(NC)"
+	@echo "$(RED)    ░       ░  ░ ░            ░     ░  ░   ░           ░     ░  ░$(NC)"
+	@echo "$(RED)                      ░                               ░          $(NC)"
+	@echo "\n"
+	
+
+.PHONY: all clean fclean re ascii_art
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.objFiles/src1/Parser/Parser.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+WebServer: .objFiles/main.o .objFiles/src/server/src/Server.o .objFiles/src/server/src/MIME_type.o .objFiles/src/request/src/parseHttpRequest.o .objFiles/src/request/src/request_status_code.o .objFiles/src/config/src/ServerConfigFile.o .objFiles/src/exception/src/exception.o .objFiles/src/server/src/init_server.o .objFiles/src1/Parser/Parser.o .objFiles/src1/Parser/Location.o .objFiles/src1/Models/GlobalModel.o .objFiles/src1/Models/ServerModel.o .objFiles/src1/Models/Data.o .objFiles/src1/Utils/String.o .objFiles/src1/Exception/ParsingException.o .objFiles/src1/Utils/ServerData.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 74):
+	@echo "$(YELLOW)Linking object files to create executable $(NAME)$(NC)"
+	@$(CXX) $(CFLAGS) $(INCLUDES) $^ -o $@
+	
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.objFiles/src1/Parser/Location.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2023-12-11 12:42:28
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+.objFiles/src1/Models/GlobalModel.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.objFiles/src/server/src/MIME_type.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.objFiles/src1/Models/ServerModel.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.objFiles/src/config/src/ServerConfigFile.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.objFiles/src/server/src/init_server.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+fclean: clean
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 87):
+	@echo "$(RED)Removing executable $(NAME)$(NC)"
+	@rm -f $(NAME)
+	
+
+watch:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 98):
+	@python3 watch.py
+	
+
+# Not a target:
+.objFiles/src1/Models/Data.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.objFiles/src/request/src/request_status_code.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+re: fclean all
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+
+run: all
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 93):
+	@echo "$(YELLOW)Running $(NAME)$(NC)"
+	@./$(NAME) config_file/default.conf
+	
+
+clean:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 83):
+	@echo "$(RED)Cleaning up object files$(NC)"
+	@rm -rf $(OBJDIR)
+	
+
+# Not a target:
+.objFiles/src1/Utils/String.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.objFiles/src/request/src/parseHttpRequest.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.objFiles/src/server/src/Server.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.objFiles/src1/Exception/ParsingException.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.objFiles/src/exception/src/exception.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# files hash-table stats:
+# Load=28/1024=3%, Rehash=0, Collisions=0/69=0%
+# VPATH Search Paths
+
+# No `vpath' search paths.
+
+# No general (`VPATH' variable) search path.
+
+# # of strings in strcache: 1
+# # of strcache buffers: 1
+# strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
+# strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
+
+# Finished Make data base on Wed Dec 13 19:26:26 2023
+
+ 

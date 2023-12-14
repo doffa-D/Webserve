@@ -6,12 +6,12 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2023/12/11 12:42:28 by hdagdagu         ###   ########.fr        #
+#    Updated: 2023/12/14 09:19:38 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX = g++
-CFLAGS = -Wall -Werror -Wextra -std=c++98 #-fsanitize=address -g3
+CFLAGS = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g3
 NAME = WebServer
 OBJDIR = .objFiles
 

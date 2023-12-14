@@ -1,0 +1,67 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Users/hdagdagu/Desktop/Webserve'
+echo "\n"
+echo "\033[0;31m █     █░▓█████  ▄▄▄▄     ██████ ▓█████  ██▀███   ██▒   █▓▓█████ \033[0m"
+echo "\033[0;31m▓█░ █ ░█░▓█   ▀ ▓█████▄ ▒██    ▒ ▓█   ▀ ▓██ ▒ ██▒▓██░   █▒▓█   ▀ \033[0m"
+echo "\033[0;31m▒█░ █ ░█ ▒███   ▒██▒ ▄██░ ▓██▄   ▒███   ▓██ ░▄█ ▒ ▓██  █▒░▒███   \033[0m"
+echo "\033[0;31m░█░ █ ░█ ▒▓█  ▄ ▒██░█▀    ▒   ██▒▒▓█  ▄ ▒██▀▀█▄    ▒██ █░░▒▓█  ▄ \033[0m"
+echo "\033[0;31m░░██▒██▓ ░▒████▒░▓█  ▀█▓▒██████▒▒░▒████▒░██▓ ▒██▒   ▒▀█░  ░▒████▒\033[0m"
+echo "\033[0;31m░ ▓░▒ ▒  ░░ ▒░ ░░▒▓███▀▒▒ ▒▓▒ ▒ ░░░ ▒░ ░░ ▒▓ ░▒▓░   ░ ▐░  ░░ ▒░ ░\033[0m"
+echo "\033[0;31m  ▒ ░ ░   ░ ░  ░▒░▒   ░ ░ ░▒  ░ ░ ░ ░  ░  ░▒ ░ ▒░   ░ ░░   ░ ░  ░\033[0m"
+echo "\033[0;31m  ░   ░     ░    ░    ░ ░  ░  ░     ░     ░░   ░      ░░     ░   \033[0m"
+echo "\033[0;31m    ░       ░  ░ ░            ░     ░  ░   ░           ░     ░  ░\033[0m"
+echo "\033[0;31m                      ░                               ░          \033[0m"
+echo "\n"
+echo "\033[0;32mCompiling main.cpp and generating object file .objFiles/main.o\033[0m"
+mkdir -p .objFiles/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c main.cpp -o .objFiles/main.o
+echo "\033[0;32mCompiling src/server/src/Server.cpp and generating object file .objFiles/src/server/src/Server.o\033[0m"
+mkdir -p .objFiles/src/server/src/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src/server/src/Server.cpp -o .objFiles/src/server/src/Server.o
+echo "\033[0;32mCompiling src/server/src/MIME_type.cpp and generating object file .objFiles/src/server/src/MIME_type.o\033[0m"
+mkdir -p .objFiles/src/server/src/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src/server/src/MIME_type.cpp -o .objFiles/src/server/src/MIME_type.o
+echo "\033[0;32mCompiling src/request/src/parseHttpRequest.cpp and generating object file .objFiles/src/request/src/parseHttpRequest.o\033[0m"
+mkdir -p .objFiles/src/request/src/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src/request/src/parseHttpRequest.cpp -o .objFiles/src/request/src/parseHttpRequest.o
+echo "\033[0;32mCompiling src/request/src/request_status_code.cpp and generating object file .objFiles/src/request/src/request_status_code.o\033[0m"
+mkdir -p .objFiles/src/request/src/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src/request/src/request_status_code.cpp -o .objFiles/src/request/src/request_status_code.o
+echo "\033[0;32mCompiling src/config/src/ServerConfigFile.cpp and generating object file .objFiles/src/config/src/ServerConfigFile.o\033[0m"
+mkdir -p .objFiles/src/config/src/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src/config/src/ServerConfigFile.cpp -o .objFiles/src/config/src/ServerConfigFile.o
+echo "\033[0;32mCompiling src/exception/src/exception.cpp and generating object file .objFiles/src/exception/src/exception.o\033[0m"
+mkdir -p .objFiles/src/exception/src/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src/exception/src/exception.cpp -o .objFiles/src/exception/src/exception.o
+echo "\033[0;32mCompiling src/server/src/init_server.cpp and generating object file .objFiles/src/server/src/init_server.o\033[0m"
+mkdir -p .objFiles/src/server/src/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src/server/src/init_server.cpp -o .objFiles/src/server/src/init_server.o
+echo "\033[0;32mCompiling src1/Parser/Parser.cpp and generating object file .objFiles/src1/Parser/Parser.o\033[0m"
+mkdir -p .objFiles/src1/Parser/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src1/Parser/Parser.cpp -o .objFiles/src1/Parser/Parser.o
+echo "\033[0;32mCompiling src1/Parser/Location.cpp and generating object file .objFiles/src1/Parser/Location.o\033[0m"
+mkdir -p .objFiles/src1/Parser/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src1/Parser/Location.cpp -o .objFiles/src1/Parser/Location.o
+echo "\033[0;32mCompiling src1/Models/GlobalModel.cpp and generating object file .objFiles/src1/Models/GlobalModel.o\033[0m"
+mkdir -p .objFiles/src1/Models/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src1/Models/GlobalModel.cpp -o .objFiles/src1/Models/GlobalModel.o
+echo "\033[0;32mCompiling src1/Models/ServerModel.cpp and generating object file .objFiles/src1/Models/ServerModel.o\033[0m"
+mkdir -p .objFiles/src1/Models/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src1/Models/ServerModel.cpp -o .objFiles/src1/Models/ServerModel.o
+echo "\033[0;32mCompiling src1/Models/Data.cpp and generating object file .objFiles/src1/Models/Data.o\033[0m"
+mkdir -p .objFiles/src1/Models/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src1/Models/Data.cpp -o .objFiles/src1/Models/Data.o
+echo "\033[0;32mCompiling src1/Utils/String.cpp and generating object file .objFiles/src1/Utils/String.o\033[0m"
+mkdir -p .objFiles/src1/Utils/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src1/Utils/String.cpp -o .objFiles/src1/Utils/String.o
+echo "\033[0;32mCompiling src1/Exception/ParsingException.cpp and generating object file .objFiles/src1/Exception/ParsingException.o\033[0m"
+mkdir -p .objFiles/src1/Exception/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src1/Exception/ParsingException.cpp -o .objFiles/src1/Exception/ParsingException.o
+echo "\033[0;32mCompiling src1/Utils/ServerData.cpp and generating object file .objFiles/src1/Utils/ServerData.o\033[0m"
+mkdir -p .objFiles/src1/Utils/
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes -c src1/Utils/ServerData.cpp -o .objFiles/src1/Utils/ServerData.o
+echo "\033[0;33mLinking object files to create executable WebServer\033[0m"
+ 
+g++ -Wall -Werror -Wextra -std=c++98  -Iinclude -Isrc/config/include -Isrc/exception/include -Isrc/request/include -Isrc/server/include -I./src1/Includes .objFiles/main.o .objFiles/src/server/src/Server.o .objFiles/src/server/src/MIME_type.o .objFiles/src/request/src/parseHttpRequest.o .objFiles/src/request/src/request_status_code.o .objFiles/src/config/src/ServerConfigFile.o .objFiles/src/exception/src/exception.o .objFiles/src/server/src/init_server.o .objFiles/src1/Parser/Parser.o .objFiles/src1/Parser/Location.o .objFiles/src1/Models/GlobalModel.o .objFiles/src1/Models/ServerModel.o .objFiles/src1/Models/Data.o .objFiles/src1/Utils/String.o .objFiles/src1/Exception/ParsingException.o .objFiles/src1/Utils/ServerData.o -o WebServer
+make: Leaving directory `/Users/hdagdagu/Desktop/Webserve'
+ 
