@@ -6,7 +6,7 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2023/12/14 09:19:38 by hdagdagu         ###   ########.fr        #
+#    Updated: 2023/12/14 10:54:14 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,8 @@ SRCS = main.cpp \
 	$(SRC_DIR)/config/src/ServerConfigFile.cpp \
 	$(SRC_DIR)/exception/src/exception.cpp \
 	$(SRC_DIR)/server/src/init_server.cpp \
+	$(SRC_DIR)/server/src/Upload.cpp \
+	$(SRC_DIR)/server/src/request.cpp \
 	${SRC_DIR1}/Parser/Parser.cpp \
 	${SRC_DIR1}/Parser/Location.cpp \
 	${SRC_DIR1}/Models/GlobalModel.cpp \

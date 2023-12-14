@@ -6,22 +6,12 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/13 17:53:00 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/14 11:22:47 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <sys/socket.h>				   // For socket functions
-#include <netinet/in.h>				   // For sockaddr_in
-#include <cstdlib>					   // For exit() and EXIT_FAILURE
-#include <iostream>					   // For cout
-#include <unistd.h>					   // For read
-#include <arpa/inet.h>				   // For inet_ntoa
-#include <netdb.h>					   // For gethostbyname
-#include <fstream>					   // For ifstream
+// For ifstream
 #include "../../../include/header.hpp" // in this header file we have all the libraries that we need
-#include <fcntl.h>
-#include <vector>
-#include <string>
 
 #define PORT 8080			  // the port users will be connecting to
 #define BACKLOG 5			  // how many pending connections queue will hold
@@ -37,7 +27,7 @@ struct Client
 	std::string fisrtboundaryValue;
 	std::string lastboundaryValue;
 	std::string buffer;
-	size_t contentLength;
+	long double contentLength;
 	size_t start;
 	size_t bytes_read;
 	bool isChunked;
@@ -64,6 +54,7 @@ private:
 	Server();
 	char *argv;
 	std::vector<Client> clients;
+	// Upload upload;
 
 public:
 	Server(char *argv);
@@ -86,8 +77,12 @@ public:
 	void get_server_by_hostname(std::string host, int fd_clien);
 	void find_file();
 	bool check_socket(int i);
-	// bool read_full_request(int socket_fd, fd_set &current_sockets);
 	std::string read_full_request(int socket_fd, fd_set &current_sockets);
+	int find_clinet(int socket_fd);
+	void create_client(std::string body, int socket_fd);
+	void handle_chunked_data(int client_index);
+	void handle_non_chunked_data();
+
 	void get_method(std::string request);
 };
 
