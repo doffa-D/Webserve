@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/14 12:54:29 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/14 15:49:43 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ void saveFile(std::string body, size_t filenamePos)
 	if (filenamePos != std::string::npos)
 	{
 		std::string filename = extractFileName(body, filenamePos);
+		std::cout << "file name: " << filename << std::endl;
 		filename = "/goinfre/hdagdagu/test/" + filename;
 		size_t firstContentPos = body.find("\r\n\r\n", filenamePos + 9);
 		if (firstContentPos != std::string::npos)
@@ -80,10 +81,10 @@ void saveFile(std::string body, size_t filenamePos)
 			std::ofstream file(filename.c_str());
 			if (file.is_open())
 			{
-				std::cout << "file is open" << std::endl;
+				// std::cout << "file is open" << std::endl;
 				file << body.substr(firstContentPos + 4);
 				file.close();
-				std::cout << "file is closed" << std::endl;
+				// std::cout << "file is closed" << std::endl;
 			}
 		}
 	}
@@ -143,12 +144,38 @@ void ContentLength(std::string request, Client &Client)
 	}
 }
 
-std::string Server::read_full_request(int socket_fd, fd_set &current_sockets)
+std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read,fd_set &fd_set_write)
 {
 	char buffer[BUFFER_SIZE + 1];
 	std::string full_request;
 	int client_index = -1;
 	// bool has_finished = false;
+
+
+	std::string htmlResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+	htmlResponse += "<!DOCTYPE html>\n";
+	htmlResponse += "<html lang=\"en\">\n";
+	htmlResponse += "  <head>\n";
+	htmlResponse += "    <meta charset=\"UTF-8\" />\n";
+	htmlResponse += "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
+	htmlResponse += "    <title>File Upload</title>\n";
+	htmlResponse += "  </head>\n";
+	htmlResponse += "  <body>\n";
+	htmlResponse += "    <h1>File Upload</h1>\n";
+	htmlResponse += "    <form\n";
+	htmlResponse += "      action=\"/upload\"\n";
+	htmlResponse += "      method=\"post\"\n";
+	htmlResponse += "      enctype=\"multipart/form-data\"\n";
+	htmlResponse += "    >\n";
+	htmlResponse += "      <label for=\"file\">Select a file:</label>\n";
+	htmlResponse += "      <input type=\"file\" name=\"file\" id=\"file\" required />\n";
+	htmlResponse += "      <br />\n";
+	htmlResponse += "      <input type=\"submit\" value=\"Upload File\" />\n";
+	htmlResponse += "    </form>\n";
+	htmlResponse += "  </body>\n";
+	htmlResponse += "</html>\n";
+
+
 
 	for (size_t i = 0; i < clients.size(); i++)
 	{
@@ -161,6 +188,14 @@ std::string Server::read_full_request(int socket_fd, fd_set &current_sockets)
 	// std::cout << "client_index: " << client_index << std::endl;
 
 	int valread = recv(socket_fd, buffer, BUFFER_SIZE, 0);
+	if(valread <= 0)
+	{
+		std::cout << "valread: " << valread << std::endl;
+		close(socket_fd);
+		FD_CLR(socket_fd, &fd_set_Read);
+		clients.erase(clients.begin() + client_index);
+		return "";
+	}
 	// std::cout << valread << std::endl;
 	if (valread > 0)
 	{
@@ -208,7 +243,8 @@ std::string Server::read_full_request(int socket_fd, fd_set &current_sockets)
 		clients[client_index].buffer.append(body);
 		if (!clients[client_index].lastboundaryValue.empty())
 		{
-			std::cout << "hi from POST" << std::endl;
+			// std::cout << "hi from POST" << std::endl;
+
 			clients[client_index].bytes_read += valread;
 			if (clients[client_index].isChunked)
 			{
@@ -259,10 +295,9 @@ std::string Server::read_full_request(int socket_fd, fd_set &current_sockets)
 					clients[client_index].buffer = clients[client_index].header + body;
 					split_request(clients[client_index]);
 					close(socket_fd);
-					FD_CLR(socket_fd, &current_sockets);
+					FD_CLR(socket_fd, &fd_set_Read);
 					std::string request = clients[client_index].buffer;
 					clients.erase(clients.begin() + client_index);
-
 					return request;
 				}
 			}
@@ -271,47 +306,23 @@ std::string Server::read_full_request(int socket_fd, fd_set &current_sockets)
 				{
 					split_request(clients[client_index]);
 					close(socket_fd);
-					FD_CLR(socket_fd, &current_sockets);
+					FD_CLR(socket_fd, &fd_set_Read);
+					FD_SET(socket_fd, &fd_set_write);
 					std::string request = clients[client_index].buffer;
 					clients.erase(clients.begin() + client_index);
-
 					return request;
 				}
 			}
 		}
 		else
 		{
-			std::cout << "hi from GET" << std::endl;
-			std::string htmlResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
-			htmlResponse += "<!DOCTYPE html>\n";
-			htmlResponse += "<html lang=\"en\">\n";
-			htmlResponse += "  <head>\n";
-			htmlResponse += "    <meta charset=\"UTF-8\" />\n";
-			htmlResponse += "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
-			htmlResponse += "    <title>File Upload</title>\n";
-			htmlResponse += "  </head>\n";
-			htmlResponse += "  <body>\n";
-			htmlResponse += "    <h1>File Upload</h1>\n";
-			htmlResponse += "    <form\n";
-			htmlResponse += "      action=\"/upload\"\n";
-			htmlResponse += "      method=\"post\"\n";
-			htmlResponse += "      enctype=\"multipart/form-data\"\n";
-			htmlResponse += "    >\n";
-			htmlResponse += "      <label for=\"file\">Select a file:</label>\n";
-			htmlResponse += "      <input type=\"file\" name=\"file\" id=\"file\" required />\n";
-			htmlResponse += "      <br />\n";
-			htmlResponse += "      <input type=\"submit\" value=\"Upload File\" />\n";
-			htmlResponse += "    </form>\n";
-			htmlResponse += "  </body>\n";
-			htmlResponse += "</html>\n";
-
 			write(socket_fd, htmlResponse.c_str(), htmlResponse.size());
-			// (void)current_sockets;
+			// (void)fd_set_Read;
 			close(socket_fd);
-			FD_CLR(socket_fd, &current_sockets);
+			FD_CLR(socket_fd, &fd_set_Read);
+			FD_SET(socket_fd, &fd_set_write);
 			std::string request = clients[client_index].buffer;
 			clients.erase(clients.begin() + client_index);
-
 			return request;
 		}
 	}
@@ -321,18 +332,22 @@ std::string Server::read_full_request(int socket_fd, fd_set &current_sockets)
 
 void Server::listen_to_multiple_clients()
 {
-	fd_set current_sockets, ready_sockets;
-	FD_ZERO(&current_sockets);
+	std::string request = "";
+	fd_set fd_set_Read, Tmp_fd_set_Read;
+	fd_set fd_set_write, Tmp_fd_set_write;
+	(void)Tmp_fd_set_write;
+	FD_ZERO(&fd_set_Read);
+	FD_ZERO(&fd_set_write);
 
 	for (int i = 0; i < Number_of_ports; i++)
 	{
-		FD_SET(socket_fd_server[i], &current_sockets);
+		FD_SET(socket_fd_server[i], &fd_set_Read);
 	}
 
 	while (true)
 	{
-		ready_sockets = current_sockets;
-		if (select(FD_SETSIZE, &ready_sockets, NULL, NULL, NULL) < 0)
+		Tmp_fd_set_Read = fd_set_Read;
+		if (select(FD_SETSIZE, &Tmp_fd_set_Read, NULL, NULL, NULL) < 0)
 		{
 			perror("Error in select");
 			exit(1);
@@ -340,7 +355,7 @@ void Server::listen_to_multiple_clients()
 
 		for (int i = 0; i < FD_SETSIZE; ++i)
 		{
-			if (FD_ISSET(i, &ready_sockets))
+			if (FD_ISSET(i, &Tmp_fd_set_Read))
 			{
 				if (check_socket(i) == true)
 				{
@@ -353,15 +368,21 @@ void Server::listen_to_multiple_clients()
 					else
 					{
 						fcntl(socket_fd_client, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
-						FD_SET(socket_fd_client, &current_sockets);
+						FD_SET(socket_fd_client, &fd_set_Read);
 					}
 				}
 				else
 				{
-					std::string request = read_full_request(i, current_sockets);
-					if (!request.empty())
-						std::cout << request << std::endl;
+					request = read_full_request(i, fd_set_Read,fd_set_write);
+					// if (!request.empty())
+					// 	std::cout << request << std::endl;
 				}
+			}
+			else if(FD_ISSET(i, &fd_set_write))
+			{
+				if (!request.empty())
+					std::cout << "hi from write" << std::endl;
+					// std::cout << request << std::endl;
 			}
 		}
 	}
@@ -405,7 +426,7 @@ void Server::Setup_Server(int port_index)
 		exit(EXIT_FAILURE);
 	}
 	fcntl(socket_fd_server[port_index], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
-	std::cout << "Listening on port " << Ports[port_index] << std::endl;
+	// std::cout << "Listening on port " << Ports[port_index] << std::endl;
 }
 
 void Server::Accept_Connection(int port_index)

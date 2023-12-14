@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/14 11:22:47 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/14 15:32:17 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ public:
 	void get_server_by_hostname(std::string host, int fd_clien);
 	void find_file();
 	bool check_socket(int i);
-	std::string read_full_request(int socket_fd, fd_set &current_sockets);
+	std::string read_full_request(int socket_fd, fd_set &fd_set_Read,fd_set &fd_set_write);
 	int find_clinet(int socket_fd);
 	void create_client(std::string body, int socket_fd);
 	void handle_chunked_data(int client_index);
