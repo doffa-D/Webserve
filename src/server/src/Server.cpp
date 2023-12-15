@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/14 15:49:43 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/15 10:42:47 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ Server::Server(char *argv)
 	getMyIpAddress();
 	for (int i = 0; i < Number_of_ports; i++)
 		Setup_Server(i);		  // Setup_Server function is used to setup the server
-	listen_to_multiple_clients(); // listen_to_multiple_clients function is used to listen to multiple clients
+	listen_to_multiple_clients(); // listen_to_multiple_clients function is used to listen to multiple clients_request
 }
 
 bool Server::check_socket(int i)
@@ -138,48 +138,65 @@ void ContentLength(std::string request, Client &Client)
 		std::string substring = request.substr(pos + content.length());
 		size_t end = substring.find_first_not_of("0123456789");
 		std::string length = substring.substr(0, end);
-		// Client.contentLength = std::stoi(length);
 		Client.contentLength = std::strtold(length.c_str(), NULL);
 		Client.startFContent = request.find("\r\n\r\n") + 4;
 	}
 }
 
-std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read,fd_set &fd_set_write)
+int SendTracker::getFd()
+{
+	return this->fd;
+}
+
+void SendTracker::setFd(int fd)
+{
+	this->fd = fd;
+}
+
+// bool SendTracker::writeNextChunk()
+// {
+// 	if (this->chunkSize_ >= this->response.length())
+// 		return false;
+// 	size_t Remaining = this->response.length() - this->chunkSize_;
+// 	size_t chunkSize = std::min(this->chunkSize_, Remaining);
+// 	std::string chunk = this->response.substr(this->currentPosition_, chunkSize);
+// 	write(this->fd, chunk.c_str(), chunk.length());
+
+// 	this->currentPosition_ += chunkSize;
+// 	return true;
+// }
+
+// bool Server::send_full_response(int socket_fd, fd_set &fd_set_write)
+// {
+// 	int client_index = -1;
+// 	for (size_t i = 0; i < clients_respont.size(); i++)
+// 	{
+// 		if (clients_respont[i].getFd() == socket_fd)
+// 		{
+// 			client_index = static_cast<int>(i);
+// 			break;
+// 		}
+// 	}
+
+// 	if (client_index == -1)
+// 	{
+// 		SendTracker newClient;
+// 		newClient.setFd(socket_fd);
+// 		clients_respont.push_back(newClient);
+// 		client_index = static_cast<int>(clients_respont.size()) - 1;
+// 	}
+// }
+
+std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set &fd_set_write)
 {
 	char buffer[BUFFER_SIZE + 1];
 	std::string full_request;
 	int client_index = -1;
 	// bool has_finished = false;
 
-
-	std::string htmlResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
-	htmlResponse += "<!DOCTYPE html>\n";
-	htmlResponse += "<html lang=\"en\">\n";
-	htmlResponse += "  <head>\n";
-	htmlResponse += "    <meta charset=\"UTF-8\" />\n";
-	htmlResponse += "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
-	htmlResponse += "    <title>File Upload</title>\n";
-	htmlResponse += "  </head>\n";
-	htmlResponse += "  <body>\n";
-	htmlResponse += "    <h1>File Upload</h1>\n";
-	htmlResponse += "    <form\n";
-	htmlResponse += "      action=\"/upload\"\n";
-	htmlResponse += "      method=\"post\"\n";
-	htmlResponse += "      enctype=\"multipart/form-data\"\n";
-	htmlResponse += "    >\n";
-	htmlResponse += "      <label for=\"file\">Select a file:</label>\n";
-	htmlResponse += "      <input type=\"file\" name=\"file\" id=\"file\" required />\n";
-	htmlResponse += "      <br />\n";
-	htmlResponse += "      <input type=\"submit\" value=\"Upload File\" />\n";
-	htmlResponse += "    </form>\n";
-	htmlResponse += "  </body>\n";
-	htmlResponse += "</html>\n";
-
-
-
-	for (size_t i = 0; i < clients.size(); i++)
+	for (size_t i = 0; i < clients_request.size(); i++)
 	{
-		if (clients[i].fd == socket_fd)
+		if (clients_request[i].fd == socket_fd)
 		{
 			client_index = static_cast<int>(i);
 			break;
@@ -188,12 +205,12 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read,fd_set 
 	// std::cout << "client_index: " << client_index << std::endl;
 
 	int valread = recv(socket_fd, buffer, BUFFER_SIZE, 0);
-	if(valread <= 0)
+	if (valread <= 0)
 	{
 		std::cout << "valread: " << valread << std::endl;
 		close(socket_fd);
 		FD_CLR(socket_fd, &fd_set_Read);
-		clients.erase(clients.begin() + client_index);
+		clients_request.erase(clients_request.begin() + client_index);
 		return "";
 	}
 	// std::cout << valread << std::endl;
@@ -237,38 +254,38 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read,fd_set 
 			else
 				newClient.start = 0;
 
-			clients.push_back(newClient);
-			client_index = static_cast<int>(clients.size()) - 1;
+			clients_request.push_back(newClient);
+			client_index = static_cast<int>(clients_request.size()) - 1;
 		}
-		clients[client_index].buffer.append(body);
-		if (!clients[client_index].lastboundaryValue.empty())
+		clients_request[client_index].buffer.append(body);
+		if (!clients_request[client_index].lastboundaryValue.empty())
 		{
 			// std::cout << "hi from POST" << std::endl;
 
-			clients[client_index].bytes_read += valread;
-			if (clients[client_index].isChunked)
+			clients_request[client_index].bytes_read += valread;
+			if (clients_request[client_index].isChunked)
 			{
-				size_t searchLength = std::min(static_cast<size_t>(10), clients[client_index].bytes_read);
-				std::string substring = clients[client_index].buffer.substr(clients[client_index].bytes_read - searchLength, searchLength);
+				size_t searchLength = std::min(static_cast<size_t>(10), clients_request[client_index].bytes_read);
+				std::string substring = clients_request[client_index].buffer.substr(clients_request[client_index].bytes_read - searchLength, searchLength);
 				size_t foundPos = substring.rfind("\r\n0\r\n");
 				if (foundPos != std::string::npos)
 				{
 
 					std::string body;
-					size_t startPos = clients[client_index].start;
-					size_t endPos = clients[client_index].bytes_read;
+					size_t startPos = clients_request[client_index].start;
+					size_t endPos = clients_request[client_index].bytes_read;
 
 					while (startPos < endPos)
 					{
 						// Read the chunk size
-						size_t sizePos = clients[client_index].buffer.find("\r\n", startPos);
+						size_t sizePos = clients_request[client_index].buffer.find("\r\n", startPos);
 						if (sizePos == std::string::npos)
 						{
 							// Handle error, invalid chunk format
 							break;
 						}
 
-						std::string chunkSizeHex = clients[client_index].buffer.substr(startPos, sizePos - startPos);
+						std::string chunkSizeHex = clients_request[client_index].buffer.substr(startPos, sizePos - startPos);
 						// int chunkSize = std::stoi(chunkSizeHex, 0, 16);
 						int chunkSize = std::strtold(chunkSizeHex.c_str(), NULL);
 
@@ -278,7 +295,7 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read,fd_set 
 						// Read the chunk
 						if (startPos + chunkSize <= endPos)
 						{
-							std::string chunkData = clients[client_index].buffer.substr(startPos, chunkSize);
+							std::string chunkData = clients_request[client_index].buffer.substr(startPos, chunkSize);
 							body += chunkData;
 
 							// Move to the next chunk
@@ -290,39 +307,36 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read,fd_set 
 							break;
 						}
 					}
-					clients[client_index].start = startPos;
-					clients[client_index].buffer.clear();
-					clients[client_index].buffer = clients[client_index].header + body;
-					split_request(clients[client_index]);
-					close(socket_fd);
+					clients_request[client_index].start = startPos;
+					clients_request[client_index].buffer.clear();
+					clients_request[client_index].buffer = clients_request[client_index].header + body;
+					split_request(clients_request[client_index]);
 					FD_CLR(socket_fd, &fd_set_Read);
-					std::string request = clients[client_index].buffer;
-					clients.erase(clients.begin() + client_index);
+					FD_SET(socket_fd, &fd_set_write);
+
+					std::string request = clients_request[client_index].buffer;
+					clients_request.erase(clients_request.begin() + client_index);
 					return request;
 				}
 			}
 			{
-				if (clients[client_index].bytes_read - clients[client_index].startFContent == clients[client_index].contentLength)
+				if (clients_request[client_index].bytes_read - clients_request[client_index].startFContent == clients_request[client_index].contentLength)
 				{
-					split_request(clients[client_index]);
-					close(socket_fd);
+					split_request(clients_request[client_index]);
 					FD_CLR(socket_fd, &fd_set_Read);
 					FD_SET(socket_fd, &fd_set_write);
-					std::string request = clients[client_index].buffer;
-					clients.erase(clients.begin() + client_index);
+					std::string request = clients_request[client_index].buffer;
+					clients_request.erase(clients_request.begin() + client_index);
 					return request;
 				}
 			}
 		}
 		else
 		{
-			write(socket_fd, htmlResponse.c_str(), htmlResponse.size());
-			// (void)fd_set_Read;
-			close(socket_fd);
 			FD_CLR(socket_fd, &fd_set_Read);
 			FD_SET(socket_fd, &fd_set_write);
-			std::string request = clients[client_index].buffer;
-			clients.erase(clients.begin() + client_index);
+			std::string request = clients_request[client_index].buffer;
+			clients_request.erase(clients_request.begin() + client_index);
 			return request;
 		}
 	}
@@ -332,6 +346,29 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read,fd_set 
 
 void Server::listen_to_multiple_clients()
 {
+	std::string htmlResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+	htmlResponse += "<!DOCTYPE html>\n";
+	htmlResponse += "<html lang=\"en\">\n";
+	htmlResponse += "  <head>\n";
+	htmlResponse += "    <meta charset=\"UTF-8\" />\n";
+	htmlResponse += "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
+	htmlResponse += "    <title>File Upload</title>\n";
+	htmlResponse += "  </head>\n";
+	htmlResponse += "  <body>\n";
+	htmlResponse += "    <h1>File Upload</h1>\n";
+	htmlResponse += "    <form\n";
+	htmlResponse += "      action=\"/upload\"\n";
+	htmlResponse += "      method=\"post\"\n";
+	htmlResponse += "      enctype=\"multipart/form-data\"\n";
+	htmlResponse += "    >\n";
+	htmlResponse += "      <label for=\"file\">Select a file:</label>\n";
+	htmlResponse += "      <input type=\"file\" name=\"file\" id=\"file\" required />\n";
+	htmlResponse += "      <br />\n";
+	htmlResponse += "      <input type=\"submit\" value=\"Upload File\" />\n";
+	htmlResponse += "    </form>\n";
+	htmlResponse += "  </body>\n";
+	htmlResponse += "</html>\n";
+
 	std::string request = "";
 	fd_set fd_set_Read, Tmp_fd_set_Read;
 	fd_set fd_set_write, Tmp_fd_set_write;
@@ -373,16 +410,18 @@ void Server::listen_to_multiple_clients()
 				}
 				else
 				{
-					request = read_full_request(i, fd_set_Read,fd_set_write);
-					// if (!request.empty())
-					// 	std::cout << request << std::endl;
+					request = read_full_request(i, fd_set_Read, fd_set_write);
 				}
 			}
-			else if(FD_ISSET(i, &fd_set_write))
+			if (FD_ISSET(i, &fd_set_write))
 			{
 				if (!request.empty())
-					std::cout << "hi from write" << std::endl;
-					// std::cout << request << std::endl;
+				{
+					std::cout << "request: " << request << std::endl;
+					write(i, htmlResponse.c_str(), htmlResponse.size());
+				}
+				FD_CLR(i, &fd_set_write);
+				close(i);
 			}
 		}
 	}

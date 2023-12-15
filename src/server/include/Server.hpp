@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/14 15:32:17 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/15 10:33:31 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,24 @@ struct Client
 	std::string header;
 };
 
+class SendTracker
+{
+private:
+	int fd;
+	std::string port;
+	std::string response;
+	size_t currentPosition_;
+	size_t chunkSize_;
+
+public:
+	SendTracker() : response(""), currentPosition_(0), chunkSize_(0) {}
+	void setFd(int fd);
+	int getFd();
+	void setPort(std::string port);
+	std::string getPort();
+	bool writeNextChunk();
+};
+
 class Server : public parseHttpRequest
 {
 private:
@@ -53,7 +71,8 @@ private:
 	std::map<std::string, std::string> MIME_types; // MIME_types is the map that will be used to store the mime types
 	Server();
 	char *argv;
-	std::vector<Client> clients;
+	std::vector<Client> clients_request;
+	// std::vector<SendTracker> clients_respont;
 	// Upload upload;
 
 public:
@@ -77,12 +96,12 @@ public:
 	void get_server_by_hostname(std::string host, int fd_clien);
 	void find_file();
 	bool check_socket(int i);
-	std::string read_full_request(int socket_fd, fd_set &fd_set_Read,fd_set &fd_set_write);
+	std::string read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set &fd_set_write);
 	int find_clinet(int socket_fd);
 	void create_client(std::string body, int socket_fd);
 	void handle_chunked_data(int client_index);
 	void handle_non_chunked_data();
-
+	// bool send_full_response(int socket_fd, fd_set &fd_set_write);
 	void get_method(std::string request);
 };
 
