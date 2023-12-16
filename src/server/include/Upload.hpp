@@ -6,13 +6,14 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 09:48:02 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/14 11:07:45 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/16 15:39:51 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "../../../include/header.hpp"
+
 struct request
 {
     int fd;

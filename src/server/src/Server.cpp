@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/16 15:30:29 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/16 15:48:53 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,69 +141,6 @@ void ContentLength(std::string request, Client &Client)
 		Client.contentLength = std::strtold(length.c_str(), NULL);
 		Client.startFContent = request.find("\r\n\r\n") + 4;
 	}
-}
-
-int SendTracker::getFd()
-{
-	return this->fd;
-}
-
-void SendTracker::setFd(int fd)
-{
-	this->fd = fd;
-}
-
-bool SendTracker::writeNextChunk()
-{
-	if (this->has_finished == true)
-	{
-
-		ssize_t bytesWritten = 0;
-		bytesWritten += send(this->fd, response.c_str(), response.length(), 0);
-		if (bytesWritten > -1)
-		{
-			this->bytesWritten_ += bytesWritten;
-		}
-
-		if (this->bytesWritten_ < static_cast<ssize_t>(response.length()))
-		{
-			this->has_finished = false;
-			return false;
-		}
-		else if (this->bytesWritten_ >= static_cast<ssize_t>(response.length()))
-		{
-			this->has_finished = true;
-			return true;
-		}
-	}
-	else if (this->has_finished == false)
-	{
-		ssize_t bytesWritten = 0;
-		std::string res(&response[this->bytesWritten_], response.length() - this->bytesWritten_);
-
-		bytesWritten += send(this->fd, res.c_str(), res.length(), 0);
-		if (bytesWritten > -1)
-		{
-			this->bytesWritten_ += bytesWritten;
-		}
-		std::cout << "this is the second time " << this->bytesWritten_ << "  " << response.length() << std::endl;
-		if (this->bytesWritten_ < static_cast<ssize_t>(response.length()))
-		{
-			this->has_finished = false;
-			return false;
-		}
-		else if (this->bytesWritten_ >= static_cast<ssize_t>(response.length()))
-		{
-			std::cout << this->bytesWritten_ << " " << response.length() << std::endl;
-
-			std::cout << "Data sent successfully" << std::endl;
-			// exit(0);
-
-			this->has_finished = true;
-			return true;
-		}
-	}
-	return false;
 }
 
 int Server::find_clinet_response(std::vector<SendTracker> &clients_respont, int socket_fd)
@@ -413,20 +350,54 @@ std::string readFileContent(const std::string &filePath)
 void Server::listen_to_multiple_clients()
 {
 
-	std::string filePath = "/goinfre/hdagdagu/vv.mp4";
+	std::string htmlResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+	htmlResponse += "<!DOCTYPE html>\n";
+	htmlResponse += "<html lang=\"en\">\n";
+	htmlResponse += "  <head>\n";
+	htmlResponse += "    <meta charset=\"UTF-8\" />\n";
+	htmlResponse += "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
+	htmlResponse += "    <title>Text File Content</title>\n";
+	htmlResponse += "    <style>\n";
+	htmlResponse += "      .square {\n";
+	htmlResponse += "        width: 600px; /* Set your desired width */\n";
+	htmlResponse += "        height: 1000px; /* Set your desired height */\n";
+	htmlResponse += "        border: 2px solid #000; /* Set border style and color */\n";
+	htmlResponse += "        padding: 10px; /* Add padding for better readability */\n";
+	htmlResponse += "        overflow: auto; /* Add scrollbars if content overflows */\n";
+	htmlResponse += "      }\n";
+	htmlResponse += "    </style>\n";
+	htmlResponse += "  </head>\n";
+	htmlResponse += "  <body>\n";
+	htmlResponse += "    <h1>Text File Content</h1>\n";
 
-	std::ifstream fileStream(filePath, std::ios::in | std::ios::binary);
+	// Read the content of the text file
+	std::string textFilePath = "/goinfre/hdagdagu/500k.txt";
+	std::string fileContent = readFileContent(textFilePath);
 
-	// Read the contents of the file into a string
-	std::string fileContent((std::istreambuf_iterator<char>(fileStream)),
-							std::istreambuf_iterator<char>());
-
-	// Generate the HTTP response with appropriate headers
-	std::string htmlResponse = "HTTP/1.1 200 OK\r\n";
-	htmlResponse += "Content-Type: application/octet-stream\r\n";
-	htmlResponse += "Content-Disposition: attachment; filename=\"vv.mp4\"\r\n";
-	htmlResponse += "Content-Length: " + std::to_string(fileContent.size()) + "\r\n\r\n";
+	// Include the file content in the HTML response within a square
+	htmlResponse += "    <div class=\"square\">\n";
+	htmlResponse += "      <pre>\n";
 	htmlResponse += fileContent;
+	htmlResponse += "      </pre>\n";
+	htmlResponse += "    </div>\n";
+
+	htmlResponse += "  </body>\n";
+	htmlResponse += "</html>\n";
+
+	// std::string filePath = "/goinfre/hdagdagu/vv.mp4";
+
+	// std::ifstream fileStream(filePath, std::ios::in | std::ios::binary);
+
+	// // Read the contents of the file into a string
+	// std::string fileContent((std::istreambuf_iterator<char>(fileStream)),
+	// 						std::istreambuf_iterator<char>());
+
+	// // Generate the HTTP response with appropriate headers
+	// std::string htmlResponse = "HTTP/1.1 200 OK\r\n";
+	// htmlResponse += "Content-Type: application/octet-stream\r\n";
+	// htmlResponse += "Content-Disposition: attachment; filename=\"vv.mp4\"\r\n";
+	// htmlResponse += "Content-Length: " + std::to_string(fileContent.size()) + "\r\n\r\n";
+	// htmlResponse += fileContent;
 
 	std::string request = "";
 	fd_set fd_set_Read, Tmp_fd_set_Read;
