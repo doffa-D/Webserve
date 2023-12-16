@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/15 10:42:47 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/16 15:30:29 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,39 +153,92 @@ void SendTracker::setFd(int fd)
 	this->fd = fd;
 }
 
-// bool SendTracker::writeNextChunk()
-// {
-// 	if (this->chunkSize_ >= this->response.length())
-// 		return false;
-// 	size_t Remaining = this->response.length() - this->chunkSize_;
-// 	size_t chunkSize = std::min(this->chunkSize_, Remaining);
-// 	std::string chunk = this->response.substr(this->currentPosition_, chunkSize);
-// 	write(this->fd, chunk.c_str(), chunk.length());
+bool SendTracker::writeNextChunk()
+{
+	if (this->has_finished == true)
+	{
 
-// 	this->currentPosition_ += chunkSize;
-// 	return true;
-// }
+		ssize_t bytesWritten = 0;
+		bytesWritten += send(this->fd, response.c_str(), response.length(), 0);
+		if (bytesWritten > -1)
+		{
+			this->bytesWritten_ += bytesWritten;
+		}
 
-// bool Server::send_full_response(int socket_fd, fd_set &fd_set_write)
-// {
-// 	int client_index = -1;
-// 	for (size_t i = 0; i < clients_respont.size(); i++)
-// 	{
-// 		if (clients_respont[i].getFd() == socket_fd)
-// 		{
-// 			client_index = static_cast<int>(i);
-// 			break;
-// 		}
-// 	}
+		if (this->bytesWritten_ < static_cast<ssize_t>(response.length()))
+		{
+			this->has_finished = false;
+			return false;
+		}
+		else if (this->bytesWritten_ >= static_cast<ssize_t>(response.length()))
+		{
+			this->has_finished = true;
+			return true;
+		}
+	}
+	else if (this->has_finished == false)
+	{
+		ssize_t bytesWritten = 0;
+		std::string res(&response[this->bytesWritten_], response.length() - this->bytesWritten_);
 
-// 	if (client_index == -1)
-// 	{
-// 		SendTracker newClient;
-// 		newClient.setFd(socket_fd);
-// 		clients_respont.push_back(newClient);
-// 		client_index = static_cast<int>(clients_respont.size()) - 1;
-// 	}
-// }
+		bytesWritten += send(this->fd, res.c_str(), res.length(), 0);
+		if (bytesWritten > -1)
+		{
+			this->bytesWritten_ += bytesWritten;
+		}
+		std::cout << "this is the second time " << this->bytesWritten_ << "  " << response.length() << std::endl;
+		if (this->bytesWritten_ < static_cast<ssize_t>(response.length()))
+		{
+			this->has_finished = false;
+			return false;
+		}
+		else if (this->bytesWritten_ >= static_cast<ssize_t>(response.length()))
+		{
+			std::cout << this->bytesWritten_ << " " << response.length() << std::endl;
+
+			std::cout << "Data sent successfully" << std::endl;
+			// exit(0);
+
+			this->has_finished = true;
+			return true;
+		}
+	}
+	return false;
+}
+
+int Server::find_clinet_response(std::vector<SendTracker> &clients_respont, int socket_fd)
+{
+	int client_index = -1;
+	for (size_t i = 0; i < clients_respont.size(); i++)
+	{
+		if (clients_respont[i].getFd() == socket_fd)
+		{
+			client_index = static_cast<int>(i);
+			break;
+		}
+	}
+	return client_index;
+}
+
+bool Server::send_full_response(int socket_fd, std::string respont)
+{
+	int client_index = find_clinet_response(clients_respont, socket_fd);
+	bool respont_status;
+	if (client_index == -1)
+	{
+		SendTracker newClient(respont);
+		newClient.setFd(socket_fd);
+		clients_respont.push_back(newClient);
+		client_index = static_cast<int>(clients_respont.size()) - 1;
+	}
+	respont_status = clients_respont[client_index].writeNextChunk();
+	if (respont_status == true)
+	{
+		clients_respont.erase(clients_respont.begin() + client_index);
+	}
+
+	return respont_status;
+}
 
 std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set &fd_set_write)
 {
@@ -344,35 +397,41 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set
 	return "";
 }
 
+std::string readFileContent(const std::string &filePath)
+{
+	std::ifstream fileStream(filePath);
+	if (!fileStream.is_open())
+	{
+		return ""; // Handle file not found or other errors
+	}
+
+	std::ostringstream contentStream;
+	contentStream << fileStream.rdbuf();
+	return contentStream.str();
+}
+
 void Server::listen_to_multiple_clients()
 {
-	std::string htmlResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
-	htmlResponse += "<!DOCTYPE html>\n";
-	htmlResponse += "<html lang=\"en\">\n";
-	htmlResponse += "  <head>\n";
-	htmlResponse += "    <meta charset=\"UTF-8\" />\n";
-	htmlResponse += "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
-	htmlResponse += "    <title>File Upload</title>\n";
-	htmlResponse += "  </head>\n";
-	htmlResponse += "  <body>\n";
-	htmlResponse += "    <h1>File Upload</h1>\n";
-	htmlResponse += "    <form\n";
-	htmlResponse += "      action=\"/upload\"\n";
-	htmlResponse += "      method=\"post\"\n";
-	htmlResponse += "      enctype=\"multipart/form-data\"\n";
-	htmlResponse += "    >\n";
-	htmlResponse += "      <label for=\"file\">Select a file:</label>\n";
-	htmlResponse += "      <input type=\"file\" name=\"file\" id=\"file\" required />\n";
-	htmlResponse += "      <br />\n";
-	htmlResponse += "      <input type=\"submit\" value=\"Upload File\" />\n";
-	htmlResponse += "    </form>\n";
-	htmlResponse += "  </body>\n";
-	htmlResponse += "</html>\n";
+
+	std::string filePath = "/goinfre/hdagdagu/vv.mp4";
+
+	std::ifstream fileStream(filePath, std::ios::in | std::ios::binary);
+
+	// Read the contents of the file into a string
+	std::string fileContent((std::istreambuf_iterator<char>(fileStream)),
+							std::istreambuf_iterator<char>());
+
+	// Generate the HTTP response with appropriate headers
+	std::string htmlResponse = "HTTP/1.1 200 OK\r\n";
+	htmlResponse += "Content-Type: application/octet-stream\r\n";
+	htmlResponse += "Content-Disposition: attachment; filename=\"vv.mp4\"\r\n";
+	htmlResponse += "Content-Length: " + std::to_string(fileContent.size()) + "\r\n\r\n";
+	htmlResponse += fileContent;
 
 	std::string request = "";
 	fd_set fd_set_Read, Tmp_fd_set_Read;
 	fd_set fd_set_write, Tmp_fd_set_write;
-	(void)Tmp_fd_set_write;
+	// (void)Tmp_fd_set_write;
 	FD_ZERO(&fd_set_Read);
 	FD_ZERO(&fd_set_write);
 
@@ -384,7 +443,9 @@ void Server::listen_to_multiple_clients()
 	while (true)
 	{
 		Tmp_fd_set_Read = fd_set_Read;
-		if (select(FD_SETSIZE, &Tmp_fd_set_Read, NULL, NULL, NULL) < 0)
+		Tmp_fd_set_write = fd_set_write;
+
+		if (select(FD_SETSIZE, &Tmp_fd_set_Read, &Tmp_fd_set_write, NULL, NULL) < 0)
 		{
 			perror("Error in select");
 			exit(1);
@@ -413,15 +474,19 @@ void Server::listen_to_multiple_clients()
 					request = read_full_request(i, fd_set_Read, fd_set_write);
 				}
 			}
-			if (FD_ISSET(i, &fd_set_write))
+			if (FD_ISSET(i, &Tmp_fd_set_write))
 			{
+				// std::cout << "im ready to send " << indx++ << std::endl;
 				if (!request.empty())
 				{
-					std::cout << "request: " << request << std::endl;
-					write(i, htmlResponse.c_str(), htmlResponse.size());
+					if (send_full_response(i, htmlResponse) == true)
+					{
+
+						FD_CLR(i, &fd_set_write);
+						// FD_SET(i, &fd_set_Read);
+						close(i);
+					}
 				}
-				FD_CLR(i, &fd_set_write);
-				close(i);
 			}
 		}
 	}
@@ -442,7 +507,7 @@ void Server::Setup_Server(int port_index)
 	}
 
 	int opt = 1;
-	if (setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+	if (setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1 || setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt)) == -1)
 	{
 		std::cout << "Failed to set socket options for port " << Ports[port_index] << std::endl;
 		exit(EXIT_FAILURE);
@@ -468,16 +533,6 @@ void Server::Setup_Server(int port_index)
 	// std::cout << "Listening on port " << Ports[port_index] << std::endl;
 }
 
-void Server::Accept_Connection(int port_index)
-{
-	socklen_t address_length = sizeof(address);
-	if ((socket_fd_client = accept(socket_fd_server[port_index], (struct sockaddr *)&address, &address_length)) == -1)
-	{
-		std::cout << "Failed to grab connection on port " << Ports[port_index] << std::endl;
-		exit(EXIT_FAILURE);
-	}
-}
-
 void Server::getMyIpAddress()
 {
 	char buffer[1024];
@@ -493,84 +548,4 @@ void Server::getMyIpAddress()
 		}
 	}
 	return;
-}
-
-void Server::Send_Error_Response(int fd_client)
-{
-	std::ifstream file("/Users/hdagdagu/Desktop/Webserve/Test_page/index.html");
-	std::string message_body = "";
-
-	if (file.is_open())
-	{
-		std::string line;
-		while (getline(file, line))
-		{
-			message_body += line;
-		}
-
-		file.close(); // Close the file after reading its content
-	}
-	else
-	{
-		// Handle file open error
-		perror("Error opening file");
-		return;
-	}
-
-	std::string header = get_Version() + " " + get_status() + "\r\n"
-															  "Content-Type: text/html\r\n"
-															  "Content-Length: " +
-						 std::to_string(message_body.length()) + "\r\n\r\n";
-
-	std::string full_message = header + message_body;
-
-	if (send(fd_client, full_message.c_str(), full_message.length(), 0) < 0)
-	{
-		// Handle send error, possibly with additional cleanup or error reporting
-		perror("Send failed");
-		return;
-	}
-}
-
-// void Server::Send_Error_Response(int fd_client)
-// {
-// 	// Read the image file into a string
-// 	std::ifstream image_file("/Users/hdagdagu/Desktop/Webserve/hdagdagu.jpeg", std::ios::binary);
-// 	std::string image_data((std::istreambuf_iterator<char>(image_file)), std::istreambuf_iterator<char>());
-
-// 	// Set the appropriate Content-Type header for an image (e.g., JPEG)
-// 	std::string header = get_Version() + " " + get_status() + "\r\n"
-// 															  "Content-Type: image/jpeg\r\n"
-// 															  "Content-Length: " +
-// 						 std::to_string(image_data.length()) + "\r\n\r\n";
-
-// 	// Combine the header and image data
-// 	std::string full_message = header + image_data;
-
-// 	// Send the response
-// 	if (send(fd_client, full_message.c_str(), full_message.length(), 0) < 0)
-// 	{
-// 		std::cerr << "Send failed" << std::endl;
-// 		// Handle send error, possibly with additional cleanup or error reporting
-// 		return;
-// 	}
-// }
-
-void Server::Check_file_existence(std::string path)
-{
-	std::string filename = path;
-	std::fstream file;
-	file.open(filename.c_str(), std::ios::in); // Open file in read mode
-
-	if (file.is_open())
-	{
-		file.close();
-	}
-	else
-	{
-		std::cout << "test" << std::endl;
-
-		MY_exception e("404 Not Found");
-		throw e;
-	}
 }

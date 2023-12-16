@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/15 10:33:31 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/16 11:57:25 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,16 +42,14 @@ class SendTracker
 {
 private:
 	int fd;
-	std::string port;
 	std::string response;
-	size_t currentPosition_;
-	size_t chunkSize_;
+	ssize_t bytesWritten_;
+	bool has_finished;
 
 public:
-	SendTracker() : response(""), currentPosition_(0), chunkSize_(0) {}
+	SendTracker(std::string Response) : response(Response), bytesWritten_(0), has_finished(true) {}
 	void setFd(int fd);
 	int getFd();
-	void setPort(std::string port);
 	std::string getPort();
 	bool writeNextChunk();
 };
@@ -72,7 +70,7 @@ private:
 	Server();
 	char *argv;
 	std::vector<Client> clients_request;
-	// std::vector<SendTracker> clients_respont;
+	std::vector<SendTracker> clients_respont;
 	// Upload upload;
 
 public:
@@ -101,8 +99,9 @@ public:
 	void create_client(std::string body, int socket_fd);
 	void handle_chunked_data(int client_index);
 	void handle_non_chunked_data();
-	// bool send_full_response(int socket_fd, fd_set &fd_set_write);
+	bool send_full_response(int socket_fd, std::string respont);
 	void get_method(std::string request);
+	int find_clinet_response(std::vector<SendTracker> &clients_respont, int socket_fd);
 };
 
 void init_server(Server &server, char *argv);
