@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/16 16:54:24 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/19 16:49:23 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -371,7 +371,7 @@ void Server::listen_to_multiple_clients()
 	htmlResponse += "    <h1>Text File Content</h1>\n";
 
 	// Read the content of the text file
-	std::string textFilePath = "/goinfre/hdagdagu/500k.txt";
+	std::string textFilePath = "/goinfre/hdagdagu/600k.txt";
 	std::string fileContent = readFileContent(textFilePath);
 
 	// Include the file content in the HTML response within a square
@@ -445,11 +445,12 @@ void Server::listen_to_multiple_clients()
 					request = read_full_request(i, fd_set_Read, fd_set_write);
 				}
 			}
-			if (FD_ISSET(i, &Tmp_fd_set_write))
+			else if (FD_ISSET(i, &Tmp_fd_set_write))
 			{
 				// std::cout << "im ready to send " << indx++ << std::endl;
 				if (!request.empty())
 				{
+					std::cout << request << std::endl;
 					if (send_full_response(i, htmlResponse) == true)
 					{
 
