@@ -6,18 +6,17 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/16 15:39:28 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/20 11:51:14 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // For ifstream
 #include "../../../include/header.hpp" // in this header file we have all the libraries that we need
 
-#define PORT 8080			  // the port users will be connecting to
-#define BACKLOG 5			  // how many pending connections queue will hold
-#define BUFFER_SIZE 1024	  // the size of the buffer that will be used to store data
-#define MAX_REQUEST_SIZE 4096 // the size of the buffer that will be used to store data
-
+#define PORT 8080		 // the port users will be connecting to
+#define BACKLOG 5		 // how many pending connections queue will hold
+#define BUFFER_SIZE 1024 // the size of the buffer that will be used to store data
+						 
 #ifndef SERVER_HP
 #define SERVER_HPP
 struct Client
@@ -37,8 +36,6 @@ struct Client
 	bool isFile;
 	std::string header;
 };
-
-
 
 class Server : public parseHttpRequest
 {

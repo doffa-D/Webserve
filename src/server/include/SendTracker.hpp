@@ -6,13 +6,15 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/16 15:38:24 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/16 15:41:57 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/20 12:19:02 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "../../../include/header.hpp" // in this header file we have all the libraries that we need
+#define SEND_BUFFER_SIZE 4096
+// #include <algorithm>
 
 class SendTracker
 {

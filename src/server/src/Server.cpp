@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/19 16:49:23 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/24 11:07:33 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,10 @@ void saveFile(std::string body, size_t filenamePos)
 			std::ofstream file(filename.c_str());
 			if (file.is_open())
 			{
-				// std::cout << "file is open" << std::endl;
+				std::cout << "file is open" << std::endl;
 				file << body.substr(firstContentPos + 4);
 				file.close();
-				// std::cout << "file is closed" << std::endl;
+				std::cout << "file is closed" << std::endl;
 			}
 		}
 	}
@@ -195,9 +195,10 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set
 	// std::cout << "client_index: " << client_index << std::endl;
 
 	int valread = recv(socket_fd, buffer, BUFFER_SIZE, 0);
+	// std::cout << "valread: " << valread << std::endl;
+	// exit(0);
 	if (valread <= 0)
 	{
-		std::cout << "valread: " << valread << std::endl;
 		close(socket_fd);
 		FD_CLR(socket_fd, &fd_set_Read);
 		clients_request.erase(clients_request.begin() + client_index);
@@ -260,47 +261,47 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set
 				size_t foundPos = substring.rfind("\r\n0\r\n");
 				if (foundPos != std::string::npos)
 				{
+					// std::cout << "hello" << std::endl;
+					// std::string body;
+					// size_t startPos = clients_request[client_index].start;
+					// size_t endPos = clients_request[client_index].bytes_read;
 
-					std::string body;
-					size_t startPos = clients_request[client_index].start;
-					size_t endPos = clients_request[client_index].bytes_read;
+					// while (startPos < endPos)
+					// {
+					// 	// Read the chunk size
+					// 	size_t sizePos = clients_request[client_index].buffer.find("\r\n", startPos);
+					// 	if (sizePos == std::string::npos)
+					// 	{
+					// 		// Handle error, invalid chunk format
+					// 		break;
+					// 	}
 
-					while (startPos < endPos)
-					{
-						// Read the chunk size
-						size_t sizePos = clients_request[client_index].buffer.find("\r\n", startPos);
-						if (sizePos == std::string::npos)
-						{
-							// Handle error, invalid chunk format
-							break;
-						}
+					// 	std::string chunkSizeHex = clients_request[client_index].buffer.substr(startPos, sizePos - startPos);
+					// 	// int chunkSize = std::stoi(chunkSizeHex, 0, 16);
+					// 	int chunkSize = std::strtold(chunkSizeHex.c_str(), NULL);
 
-						std::string chunkSizeHex = clients_request[client_index].buffer.substr(startPos, sizePos - startPos);
-						// int chunkSize = std::stoi(chunkSizeHex, 0, 16);
-						int chunkSize = std::strtold(chunkSizeHex.c_str(), NULL);
+					// 	// Move to the beginning of the chunk data
+					// 	startPos = sizePos + 2; // Skip "\r\n"
 
-						// Move to the beginning of the chunk data
-						startPos = sizePos + 2; // Skip "\r\n"
+					// 	// Read the chunk
+					// 	if (startPos + chunkSize <= endPos)
+					// 	{
+					// 		std::string chunkData = clients_request[client_index].buffer.substr(startPos, chunkSize);
+					// 		body += chunkData;
 
-						// Read the chunk
-						if (startPos + chunkSize <= endPos)
-						{
-							std::string chunkData = clients_request[client_index].buffer.substr(startPos, chunkSize);
-							body += chunkData;
-
-							// Move to the next chunk
-							startPos += chunkSize + 2; // Skip the chunk data and "\r\n"
-						}
-						else
-						{
-							// Not enough data for the complete chunk, wait for more data
-							break;
-						}
-					}
-					clients_request[client_index].start = startPos;
-					clients_request[client_index].buffer.clear();
-					clients_request[client_index].buffer = clients_request[client_index].header + body;
-					split_request(clients_request[client_index]);
+					// 		// Move to the next chunk
+					// 		startPos += chunkSize + 2; // Skip the chunk data and "\r\n"
+					// 	}
+					// 	else
+					// 	{
+					// 		// Not enough data for the complete chunk, wait for more data
+					// 		break;
+					// 	}
+					// }
+					// clients_request[client_index].start = startPos;
+					// clients_request[client_index].buffer.clear();
+					// clients_request[client_index].buffer = clients_request[client_index].header + body;
+					// split_request(clients_request[client_index]);
 					FD_CLR(socket_fd, &fd_set_Read);
 					FD_SET(socket_fd, &fd_set_write);
 
@@ -312,7 +313,7 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set
 			{
 				if (clients_request[client_index].bytes_read - clients_request[client_index].startFContent == clients_request[client_index].contentLength)
 				{
-					split_request(clients_request[client_index]);
+					// split_request(clients_request[client_index]);
 					FD_CLR(socket_fd, &fd_set_Read);
 					FD_SET(socket_fd, &fd_set_write);
 					std::string request = clients_request[client_index].buffer;
@@ -323,11 +324,15 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set
 		}
 		else
 		{
-			FD_CLR(socket_fd, &fd_set_Read);
-			FD_SET(socket_fd, &fd_set_write);
-			std::string request = clients_request[client_index].buffer;
-			clients_request.erase(clients_request.begin() + client_index);
-			return request;
+			size_t pos = clients_request[client_index].buffer.find("\r\n\r\n");
+			if (pos != std::string::npos)
+			{
+				FD_CLR(socket_fd, &fd_set_Read);
+				FD_SET(socket_fd, &fd_set_write);
+				std::string request = clients_request[client_index].buffer;
+				clients_request.erase(clients_request.begin() + client_index);
+				return request;
+			}
 		}
 	}
 
@@ -371,7 +376,7 @@ void Server::listen_to_multiple_clients()
 	htmlResponse += "    <h1>Text File Content</h1>\n";
 
 	// Read the content of the text file
-	std::string textFilePath = "/goinfre/hdagdagu/600k.txt";
+	std::string textFilePath = "/goinfre/hdagdagu/80k.txt";
 	std::string fileContent = readFileContent(textFilePath);
 
 	// Include the file content in the HTML response within a square
@@ -447,17 +452,39 @@ void Server::listen_to_multiple_clients()
 			}
 			else if (FD_ISSET(i, &Tmp_fd_set_write))
 			{
-				// std::cout << "im ready to send " << indx++ << std::endl;
 				if (!request.empty())
 				{
-					std::cout << request << std::endl;
-					if (send_full_response(i, htmlResponse) == true)
-					{
 
-						FD_CLR(i, &fd_set_write);
-						// FD_SET(i, &fd_set_Read);
-						close(i);
+					size_t pos = request.find("GET");
+					if (pos != std::string::npos)
+					{
+						std::cout << "hi from GET" << std::endl;
+						std::string htmlResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+						htmlResponse += "<!DOCTYPE html>\n";
+						htmlResponse += "<html lang=\"en\">\n";
+						htmlResponse += "  <head>\n";
+						htmlResponse += "    <meta charset=\"UTF-8\" />\n";
+						htmlResponse += "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
+						htmlResponse += "    <title>File Upload</title>\n";
+						htmlResponse += "  </head>\n";
+						htmlResponse += "  <body>\n";
+						htmlResponse += "    <h1>File Upload</h1>\n";
+						htmlResponse += "    <form\n";
+						htmlResponse += "      action=\"/upload\"\n";
+						htmlResponse += "      method=\"post\"\n";
+						htmlResponse += "      enctype=\"multipart/form-data\"\n";
+						htmlResponse += "    >\n";
+						htmlResponse += "      <label for=\"file\">Select a file:</label>\n";
+						htmlResponse += "      <input type=\"file\" name=\"file\" id=\"file\" required />\n";
+						htmlResponse += "      <br />\n";
+						htmlResponse += "      <input type=\"submit\" value=\"Upload File\" />\n";
+						htmlResponse += "    </form>\n";
+						htmlResponse += "  </body>\n";
+						htmlResponse += "</html>\n";
+						write(i, htmlResponse.c_str(), htmlResponse.size());
 					}
+					FD_CLR(i, &fd_set_write);
+					close(i);
 				}
 			}
 		}

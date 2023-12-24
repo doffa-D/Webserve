@@ -7,7 +7,7 @@ from watchdog.events import FileSystemEventHandler
 
 class CodeChangeHandler(FileSystemEventHandler):
     def on_any_event(self, event):
-        if event.is_directory or not (event.src_path.endswith(".cpp") or event.src_path.endswith(".hpp")):
+        if event.is_directory or not event.src_path.endswith(".cpp"):
             return
         print("Changes detected in {}".format(event.src_path))
         compile_and_run()

@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:24:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/16 15:39:23 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2023/12/23 14:41:46 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 #include "../src/request/include/parseHttpRequest.hpp"
 #include "../src/server/include/Upload.hpp"
 #include "../src/server/include/SendTracker.hpp"
+#include "../src/server/include/cgi.hpp"
 
 // ======================== //
 #include "../src1/Includes/Location.hpp"
