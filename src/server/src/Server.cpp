@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/01/10 12:00:00 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/01/10 12:20:10 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,7 +251,7 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set
 		clients_request[client_index].buffer.append(body);
 		if (!clients_request[client_index].lastboundaryValue.empty())
 		{
-			// std::cout << "hi from POST" << std::endl;
+			std::cout << "hi from POST" << std::endl;
 
 			clients_request[client_index].bytes_read += valread;
 			if (clients_request[client_index].isChunked)
@@ -310,10 +310,11 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set
 					return request;
 				}
 			}
+			else
 			{
 				if (clients_request[client_index].bytes_read - clients_request[client_index].startFContent == clients_request[client_index].contentLength)
 				{
-					// split_request(clients_request[client_index]);
+					split_request(clients_request[client_index]);
 					FD_CLR(socket_fd, &fd_set_Read);
 					FD_SET(socket_fd, &fd_set_write);
 					std::string request = clients_request[client_index].buffer;
@@ -376,7 +377,7 @@ void Server::listen_to_multiple_clients()
 	htmlResponse += "    <h1>Text File Content</h1>\n";
 
 	// Read the content of the text file
-	std::string textFilePath = "/goinfre/hdagdagu/80k.txt";
+	std::string textFilePath = "/goinfre/hdagdagu/600k.txt";
 	std::string fileContent = readFileContent(textFilePath);
 
 	// Include the file content in the HTML response within a square
@@ -454,38 +455,11 @@ void Server::listen_to_multiple_clients()
 			{
 				if (!request.empty())
 				{
-					// hnaa
-					std::cout << request << std::endl;
-					size_t pos = request.find("GET");
-					if (pos != std::string::npos)
+					if (send_full_response(i, htmlResponse) == true)
 					{
-						std::cout << "hi from GET" << std::endl;
-						std::string htmlResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
-						htmlResponse += "<!DOCTYPE html>\n";
-						htmlResponse += "<html lang=\"en\">\n";
-						htmlResponse += "  <head>\n";
-						htmlResponse += "    <meta charset=\"UTF-8\" />\n";
-						htmlResponse += "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
-						htmlResponse += "    <title>File Upload</title>\n";
-						htmlResponse += "  </head>\n";
-						htmlResponse += "  <body>\n";
-						htmlResponse += "    <h1>File Upload</h1>\n";
-						htmlResponse += "    <form\n";
-						htmlResponse += "      action=\"/upload\"\n";
-						htmlResponse += "      method=\"post\"\n";
-						htmlResponse += "      enctype=\"multipart/form-data\"\n";
-						htmlResponse += "    >\n";
-						htmlResponse += "      <label for=\"file\">Select a file:</label>\n";
-						htmlResponse += "      <input type=\"file\" name=\"file\" id=\"file\" required />\n";
-						htmlResponse += "      <br />\n";
-						htmlResponse += "      <input type=\"submit\" value=\"Upload File\" />\n";
-						htmlResponse += "    </form>\n";
-						htmlResponse += "  </body>\n";
-						htmlResponse += "</html>\n";
-						write(i, htmlResponse.c_str(), htmlResponse.size());
+						FD_CLR(i, &fd_set_write);
+						close(i);
 					}
-					FD_CLR(i, &fd_set_write);
-					close(i);
 				}
 			}
 		}

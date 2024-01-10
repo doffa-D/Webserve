@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/16 15:40:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/20 12:18:59 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/01/10 12:18:21 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,11 @@ bool SendTracker::writeNextChunk()
     {
 
         ssize_t bytesWritten = 0;
-        bytesWritten += send(this->fd, response.c_str(), SEND_BUFFER_SIZE, 0);
+        size_t byt = response.length() - this->bytesWritten_;
+        size_t size_to_send = std::min(static_cast<size_t>(SEND_BUFFER_SIZE), byt);
+
+        std::string res(&response[this->bytesWritten_], size_to_send);
+        bytesWritten += send(this->fd, res.c_str(), size_to_send, 0);
         if (bytesWritten > -1)
         {
             this->bytesWritten_ += bytesWritten;
