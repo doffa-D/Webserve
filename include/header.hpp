@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:24:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/23 14:41:46 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/01/10 11:20:38 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include <fcntl.h>      // For open
 #include <vector>       // For vector
 #include <string>       // For string
+#include <map>          // For map
 
 // ======================== //
 #include "../src/exception/include/exception.hpp"

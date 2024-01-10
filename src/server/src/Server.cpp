@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2023/12/24 11:07:33 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/01/10 11:24:40 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,47 +261,47 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set
 				size_t foundPos = substring.rfind("\r\n0\r\n");
 				if (foundPos != std::string::npos)
 				{
-					// std::cout << "hello" << std::endl;
-					// std::string body;
-					// size_t startPos = clients_request[client_index].start;
-					// size_t endPos = clients_request[client_index].bytes_read;
+					std::cout << "hello" << std::endl;
+					std::string body;
+					size_t startPos = clients_request[client_index].start;
+					size_t endPos = clients_request[client_index].bytes_read;
 
-					// while (startPos < endPos)
-					// {
-					// 	// Read the chunk size
-					// 	size_t sizePos = clients_request[client_index].buffer.find("\r\n", startPos);
-					// 	if (sizePos == std::string::npos)
-					// 	{
-					// 		// Handle error, invalid chunk format
-					// 		break;
-					// 	}
+					while (startPos < endPos)
+					{
+						// Read the chunk size
+						size_t sizePos = clients_request[client_index].buffer.find("\r\n", startPos);
+						if (sizePos == std::string::npos)
+						{
+							// Handle error, invalid chunk format
+							break;
+						}
 
-					// 	std::string chunkSizeHex = clients_request[client_index].buffer.substr(startPos, sizePos - startPos);
-					// 	// int chunkSize = std::stoi(chunkSizeHex, 0, 16);
-					// 	int chunkSize = std::strtold(chunkSizeHex.c_str(), NULL);
+						std::string chunkSizeHex = clients_request[client_index].buffer.substr(startPos, sizePos - startPos);
+						// int chunkSize = std::stoi(chunkSizeHex, 0, 16);
+						int chunkSize = std::strtold(chunkSizeHex.c_str(), NULL);
 
-					// 	// Move to the beginning of the chunk data
-					// 	startPos = sizePos + 2; // Skip "\r\n"
+						// Move to the beginning of the chunk data
+						startPos = sizePos + 2; // Skip "\r\n"
 
-					// 	// Read the chunk
-					// 	if (startPos + chunkSize <= endPos)
-					// 	{
-					// 		std::string chunkData = clients_request[client_index].buffer.substr(startPos, chunkSize);
-					// 		body += chunkData;
+						// Read the chunk
+						if (startPos + chunkSize <= endPos)
+						{
+							std::string chunkData = clients_request[client_index].buffer.substr(startPos, chunkSize);
+							body += chunkData;
 
-					// 		// Move to the next chunk
-					// 		startPos += chunkSize + 2; // Skip the chunk data and "\r\n"
-					// 	}
-					// 	else
-					// 	{
-					// 		// Not enough data for the complete chunk, wait for more data
-					// 		break;
-					// 	}
-					// }
-					// clients_request[client_index].start = startPos;
-					// clients_request[client_index].buffer.clear();
-					// clients_request[client_index].buffer = clients_request[client_index].header + body;
-					// split_request(clients_request[client_index]);
+							// Move to the next chunk
+							startPos += chunkSize + 2; // Skip the chunk data and "\r\n"
+						}
+						else
+						{
+							// Not enough data for the complete chunk, wait for more data
+							break;
+						}
+					}
+					clients_request[client_index].start = startPos;
+					clients_request[client_index].buffer.clear();
+					clients_request[client_index].buffer = clients_request[client_index].header + body;
+					split_request(clients_request[client_index]);
 					FD_CLR(socket_fd, &fd_set_Read);
 					FD_SET(socket_fd, &fd_set_write);
 
@@ -454,7 +454,8 @@ void Server::listen_to_multiple_clients()
 			{
 				if (!request.empty())
 				{
-
+					// hnaa
+					std::cout << request << std::endl;
 					size_t pos = request.find("GET");
 					if (pos != std::string::npos)
 					{
