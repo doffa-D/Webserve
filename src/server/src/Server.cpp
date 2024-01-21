@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/01/10 12:20:10 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/01/21 10:53:14 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,7 +251,7 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set
 		clients_request[client_index].buffer.append(body);
 		if (!clients_request[client_index].lastboundaryValue.empty())
 		{
-			std::cout << "hi from POST" << std::endl;
+			std::cout << "this is chuncked" << " hi from POST" << std::endl;
 
 			clients_request[client_index].bytes_read += valread;
 			if (clients_request[client_index].isChunked)
@@ -277,8 +277,7 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set
 						}
 
 						std::string chunkSizeHex = clients_request[client_index].buffer.substr(startPos, sizePos - startPos);
-						// int chunkSize = std::stoi(chunkSizeHex, 0, 16);
-						int chunkSize = std::strtold(chunkSizeHex.c_str(), NULL);
+						int chunkSize = std::stoi(chunkSizeHex, 0, 16);
 
 						// Move to the beginning of the chunk data
 						startPos = sizePos + 2; // Skip "\r\n"
@@ -301,6 +300,9 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set
 					clients_request[client_index].start = startPos;
 					clients_request[client_index].buffer.clear();
 					clients_request[client_index].buffer = clients_request[client_index].header + body;
+
+					// std::cout << clients_request[client_index].buffer << std::endl;
+					// exit(0);
 					split_request(clients_request[client_index]);
 					FD_CLR(socket_fd, &fd_set_Read);
 					FD_SET(socket_fd, &fd_set_write);
@@ -312,6 +314,8 @@ std::string Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set
 			}
 			else
 			{
+				std::cout << "this not chuncked" << " hi from POST" << std::endl;
+
 				if (clients_request[client_index].bytes_read - clients_request[client_index].startFContent == clients_request[client_index].contentLength)
 				{
 					split_request(clients_request[client_index]);
@@ -449,12 +453,13 @@ void Server::listen_to_multiple_clients()
 				else
 				{
 					request = read_full_request(i, fd_set_Read, fd_set_write);
-				}
+					}
 			}
 			else if (FD_ISSET(i, &Tmp_fd_set_write))
 			{
 				if (!request.empty())
 				{
+					std::cout << "request: " << request << std::endl;
 					if (send_full_response(i, htmlResponse) == true)
 					{
 						FD_CLR(i, &fd_set_write);
