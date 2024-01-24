@@ -1,0 +1,51 @@
+==========> Server[0] <==========
+server name: [kchaouki.com ert erg]
+host: [127.0.0.1]
+ports: 
+	4545
+	455
+root: [test]
+alias: []
+index: 
+	test1.html
+try_files: 
+autoindex: [0]
+client_max_body_size: [10737418240000000]
+error_log: [./logs/error_log.log]
+access_log: [./logs/access_log.log]
+error_pages: 
+	300: hossam.html
+	401: hossam.html
+	404: hossam.html
+allowed_methods: 
+	POST
+	DELETE
+locations: 
+=====================>path: /web/web2
+root: [locaaaaaa]
+alias: []
+index: 
+	dfdfdf.html
+try_files: 
+autoindex: [0]
+client_max_body_size: [1048576]
+error_log: [/dir1/dir2/karim_log.log]
+access_log: [./logs/access_log.log]
+error_pages: 
+allowed_methods: 
+	GET
+=====================>
+=====================>path: /web
+root: [locaaaaaa]
+alias: []
+index: 
+	dfdfdf.html
+try_files: 
+autoindex: [1]
+client_max_body_size: [1048576]
+error_log: [/dir1/dir2/karim_log.log]
+access_log: [./logs/access_log.log]
+error_pages: 
+allowed_methods: 
+	GET
+=====================>

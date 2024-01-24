@@ -17,6 +17,31 @@ Parser::~Parser() {}
 Parser::Parser(const Parser& _copy) {*this = _copy;}
 std::vector<Server> Parser::getServers() const {return (servers);}
 
+
+char	*ft_strnstr(const char *str1, const char *str2, size_t len)
+{
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	if (str2[i] == '\0')
+		return ((char *)str1);
+	if (len == 0)
+		return (0);
+	while (str1[i] && i < len)
+	{
+		j = 0;
+		while (str1[i + j] == str2[j] && i + j < len)
+		{
+			if (str2[j + 1] == '\0')
+				return (((char *)&str1[i]));
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
+
 void	Parser::fileValideDirectives()
 {
 	validDirectives.push_back("server_name");
@@ -85,7 +110,7 @@ void	Parser::fillLocationDirective(Server& server, Location& old_location, ListS
 {
 	string	path = str_utils::trim(it->substr(str_utils::find_first_of(*it, " \t"), it->length()));
 
-	if (befor != "" && !strnstr(path.c_str(), befor.c_str(), befor.length()))
+	if (befor != "" && !ft_strnstr(path.c_str(), befor.c_str(), befor.length()))
 		throw CustomException("location \"" + path + "\" is outside location \"" + befor + "\"");
 
 	if (*(++it) != "{")

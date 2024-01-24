@@ -13,6 +13,8 @@
 #pragma once
 
 #include "Server.hpp"
+#include <cstring>
+#include <string.h>
 
 class	Parser
 {
