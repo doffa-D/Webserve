@@ -14,6 +14,7 @@
 
 #include "StringExtensions.hpp"
 #include "CustomException.hpp"
+#include <cstdlib>
 
 class CommonDirectives
 {
