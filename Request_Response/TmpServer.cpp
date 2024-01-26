@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:35:32 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/01/25 21:35:46 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/01/26 10:40:57 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "Request.hpp"
 #include "Response.hpp"
 
-int portno = 81;
+int portno = 80;
 
 void error(std::string msg)
 {
@@ -22,8 +22,11 @@ void error(std::string msg)
 	exit(1);
 }
 
-void server()
+void server(const std::string& fileName)
 {
+
+	Parser parser(fileName);
+	
 	int sockfd, newsockfd, n;
 	struct sockaddr_in serv_add, cli_add;
 	socklen_t clilen;
@@ -62,7 +65,7 @@ void server()
 		// request.getReqLine().PrintReqLine();
 		// request.PrintHttp_Header();
 		Response	response;
-		response.ft_Response(newsockfd, request);
+		response.ft_Response(newsockfd, request, parser);
 		//  response
 		// request.~Request();
 	}

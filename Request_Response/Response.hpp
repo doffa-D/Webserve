@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/01/25 17:27:27 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/01/26 17:50:40 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 #include "../ConfigParsing/StringExtensions.hpp"
 #include <unistd.h>
 #include <sys/socket.h>
+#include "../ConfigParsing/Parser.hpp"
+#include "../ConfigParsing/StringExtensions.hpp"
+
 
 class ResponseLine
 {
@@ -24,6 +27,7 @@ class ResponseLine
 		std::string HttpVersion;
 		std::string Status_Code;
 		std::string	Status_Message;
+		std::string Eroor_Page;
 	public:
 		ResponseLine();
 		~ResponseLine();
@@ -73,8 +77,9 @@ class Response
 		void	setResBody(std::string resbody);
 		void	setResPath(std::string respath);
 		
-		void	ft_Response(int clientSocket, Request& Req);
+		void	ft_Response(int clientSocket, Request& Req, Parser& parser);
 		std::string	Fill_Response();
+		std::string	Error_HmlPage(const std::string& stat_code, const std::string& stat_msg);
 		// std::string ReadFile();
 		~Response();
 };

@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/01/25 17:37:18 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/01/26 17:59:10 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,12 @@ void	Response::setResPath(std::string respath)
 	ResPath = respath;
 }
 
+std::string	Response::Error_HmlPage(const std::string& stat_code, const std::string& stat_msg)
+{
+	std::string	Error_Page = "error " + stat_code + "  " + stat_msg + " \n";
+	return Error_Page;
+}
+
 std::string	ReadFile(std::string&	ResPath)
 {
 	std::cout << "---->        " << ResPath << std::endl;
@@ -165,20 +171,23 @@ std::string	Response::Fill_Response()
     return response;
 }
 
+std::string root = "./Resources";
 
-void	Response::ft_Response(int clientSocket, Request& Req)
+void	Response::ft_Response(int clientSocket, Request& Req, Parser& parser)
 {
+	std::cout << parser.getDefaultServer().getRoot() << std::endl;
+	// Check File
 	if(Req.getReferer() == 0)
     {
-		setResPath(Req.getReqLine().getPath()  + "./Resources/index.html");
+		setResPath(root + Req.getReqLine().getPath()  + "index.html");
 		std::cout << " ===>  " << Req.getReqLine().getPath() << std::endl;
 	}
-
-	std::string response =  Fill_Response();
+	
+	std::string response = Fill_Response();
 	// std::cout << "\n---------------------Respone ---------------------------\n";
 	// std::cout << response << std::endl;
 	// std::cout << "\n--------------------- ======= ---------------------------\n";
 	send(clientSocket, response.c_str(), response.size(), 0);
 
-	close(clientSocket);
+	// close(clientSocket);
 }

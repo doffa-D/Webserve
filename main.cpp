@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 11:19:31 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/25 11:55:59 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/01/26 10:27:49 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int main(int ac, char **av)
 	{
 		// Parser parser(av[1]);
 		// std::cout <<  parser.getServers()[0].getServerName() << std::endl;
-		server();
+		server(av[1]);
 		// parser.dump();
 	}
 	catch (CustomException ce)
