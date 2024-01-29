@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 11:19:31 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/24 16:59:08 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/01/27 18:06:06 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,12 @@
 
 int main(int ac, char **av)
 {
-	if (ac != 2)
-		return (std::cout << "Usage: \n\t./webserv [configuration file]" << std::endl, 1);
 	try
 	{
-		Parser parser(av[1]);
+		Parser parser(ac, av);
+		Server ser = parser.getServerbyHost("loc.alh.os.t:80");
+		if (ser.isNull())
+			(void)ser;//do somthiong
 		parser.dump();
 	}
 	catch (CustomException ce)

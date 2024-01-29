@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/24 17:00:42 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/01/29 19:33:30 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,32 +15,6 @@
 Parser::Parser(){}
 Parser::~Parser() {}
 Parser::Parser(const Parser& _copy) {*this = _copy;}
-std::vector<Server> Parser::getServers() const {return (servers);}
-
-
-char	*ft_strnstr(const char *str1, const char *str2, size_t len)
-{
-	size_t	i;
-	size_t	j;
-
-	i = 0;
-	if (str2[i] == '\0')
-		return ((char *)str1);
-	if (len == 0)
-		return (0);
-	while (str1[i] && i < len)
-	{
-		j = 0;
-		while (str1[i + j] == str2[j] && i + j < len)
-		{
-			if (str2[j + 1] == '\0')
-				return (((char *)&str1[i]));
-			j++;
-		}
-		i++;
-	}
-	return (0);
-}
 
 void	Parser::fileValideDirectives()
 {
@@ -58,7 +32,7 @@ void	Parser::fileValideDirectives()
     validDirectives.push_back("index");
     validDirectives.push_back("alias");
     validDirectives.push_back("try_files");
-    /* validDirectives.push_back("include");*/
+    validDirectives.push_back("include");
 }
 
 bool	Parser::isValideDirective(const string& _directive)
@@ -72,15 +46,34 @@ bool	Parser::isValideDirective(const string& _directive)
 
 bool	Parser::isValideForLocation(const string& key)
 {
-	string validDirectives[11] = {"root", "try_files", "index",
+	string validDirectives[12] = {"root", "try_files", "index",
 								 "location", "alias", "allowed_method",
 								 "autoindex", "client_max_body_size", 
-								 "error_log", "access_log", "error_pages"};
-	for (size_t i = 0; i < 11; i++)
+								 "error_log", "access_log", "error_pages",
+								 "include"};
+	for (size_t i = 0; i < 12; i++)
 		if (key == validDirectives[i])
 			return (true);
 	return (false);
 }
+
+void	parseMimeTypes(CommonDirectives& common, const string& filePath)
+{
+	string line;
+	std::ifstream mimeTypeFile(filePath.c_str());
+	if (mimeTypeFile.fail())
+		throw CustomException("Failed to open file!!", filePath);
+	while (std::getline(mimeTypeFile, line, '\n'))
+	{
+		str_utils::trim(line);
+		if (line.empty())
+			continue ;
+		string	key = line.substr(0, str_utils::find_first_of(line, " \t"));
+		string	value = str_utils::trim(line.substr(str_utils::find_first_of(line, " \t"), line.length()));
+		common.addMimeType(key, value);
+	}
+}
+
 
 void	fillCommonDirectives(CommonDirectives& common, const string& key, const string& value)
 {
@@ -104,21 +97,21 @@ void	fillCommonDirectives(CommonDirectives& common, const string& key, const str
 		common.addErrorPage(value);
 	else if (key == "allowed_method")
 		common.setAllowedMethod(value);
+	else if (key == "include")
+		parseMimeTypes(common, value);
 }
 
-void	Parser::fillLocationDirective(Server& server, Location& old_location, ListString_iter& it, const string& befor)
+void	Parser::fillLocationDirective(Server& server, CommonDirectives& old_location, ListString_iter& it, const string& befor)
 {
 	string	path = str_utils::trim(it->substr(str_utils::find_first_of(*it, " \t"), it->length()));
 
-	if (befor != "" && !ft_strnstr(path.c_str(), befor.c_str(), befor.length()))
+	if (befor != "" && !strnstr(path.c_str(), befor.c_str(), befor.length()))
 		throw CustomException("location \"" + path + "\" is outside location \"" + befor + "\"");
 
 	if (*(++it) != "{")
 		throw CustomException("Directive \"location\" has no opening \"{\"");
 	++it;
-	Location location;
-	if (old_location.getRoot() != "NULL")
-		location = old_location;
+	Location location(old_location);
 
 	for (;it != tokens.end() && *it != "}";)
 	{
@@ -160,9 +153,7 @@ void	Parser::fillDirectives(Server& server, ListString_iter& it, bool& ok)
 	if (key == "server_name")
 		server.setServerName(value);
 	else if (key == "host")
-		server.setHost(value);
-	else if (key == "include")
-		(void)key; //handle include
+		server.setIpAddress(value);
 	else if (key == "listen")
 		ok = (ok == false) ? server.AddPort(value) : server.AddPort(value);
 	else
@@ -182,14 +173,12 @@ void	Parser::fillServerData(ListString_iter& it)
 		if (isValideDirective(key))
 		{
 			if (key == "location")
-			{
-				Location l;
-				l.setRoot("NULL");
-				fillLocationDirective(server, l, it, "");
-			}
+				fillLocationDirective(server, server, it, "");
 			else
 			{
 				fillDirectives(server, it, hasDefualtTage);
+				if (it == tokens.end())
+					throw CustomException("unexpected end of file, expecting \";\" or \"}\"");
 				it++;
 				if (*it == "}")
 					throw CustomException("unexpected \"}\"");
@@ -237,29 +226,64 @@ void	Parser::analyzer()
 void	Parser::tokenizer() 
 {
 	string line;
-	for (size_t i = 0; i < dataToParse.size();i++)
+	size_t i = 0;
+	while (i < dataToParse.size())
 	{
 		if (!strchr(";{}", dataToParse[i]))
-			line += dataToParse[i];
-		else
 		{
-			if (!str_utils::hasSpaceOnly(line))
-				tokens.push_back(str_utils::trim(line));
-			line.clear();
-			line += dataToParse[i];
-			tokens.push_back(line);
-			line.clear();
+			while (i < dataToParse.size() && !strchr(";{}", dataToParse[i]))
+			{
+				if (strchr("\"\'", dataToParse[i]))
+				{
+					string s = strchr("\"\'", dataToParse[i]);
+					if (i < dataToParse.size()) line += dataToParse[i++];
+					while (i < dataToParse.size() && dataToParse[i] != s[0]) line += dataToParse[i++];
+					if (i < dataToParse.size()) line += dataToParse[i++];
+				}
+				else
+					line += dataToParse[i++];
+			}
 		}
+		else
+			line += dataToParse[i++];
+		if (!str_utils::hasSpaceOnly(line))
+			tokens.push_back(str_utils::trim(line));
+		line.clear();
 	}
 }
 
-Parser::Parser(const string& fileName)
+void	checkFiles(CommonDirectives common)
 {
-	fileValideDirectives();
-	string line;
+	if (common.getAccessLog() != ACCESS_LOG)
+			if (str_utils::createFile(common.getAccessLog()))
+				throw CustomException("open() \"" + common.getAccessLog() + "\" failed (No such file or directory)");
+	if (common.getErrorLog() != ERROR_LOG)
+		if (str_utils::createFile(common.getErrorLog()))
+			throw CustomException("open() \"" + common.getErrorLog() + "\" failed (No such file or directory)");
+}
 
+void	Parser::createFiles()
+{
+	std::vector<Server>::iterator it = servers.begin();
+	for (; it != servers.end();it++)
+	{
+		checkFiles(*it);
+		Locations locations = it->getLocations();
+		Locations::iterator it2 = locations.begin();
+		for (;it2 != locations.end();it2++)
+			checkFiles(it2->second);
+	}
+}
+
+Parser::Parser(int ac, char**av)
+{
+	string fileName = av[1];
+	string line;
+	if (ac != 2)
+		throw CustomException("Usage: \n\t./webserv [configuration file]");
 	if (!str_utils::endsWith(fileName, ".conf"))
 		throw CustomException("File must end with [.conf] extension!!", fileName);
+	fileValideDirectives();
 	std::ifstream configFile(fileName.c_str());
 	if (configFile.fail())
 		throw CustomException("Failed to open file!!", fileName);
@@ -275,6 +299,7 @@ Parser::Parser(const string& fileName)
 	}
 	tokenizer();
 	analyzer();
+	createFiles();
 }
 
 Parser& Parser::operator=(const Parser& _assignment)
@@ -284,13 +309,42 @@ Parser& Parser::operator=(const Parser& _assignment)
 	return (*this);
 }
 
-Server Parser::getDefaultServer() const
+std::vector<Server>	Parser::getServers() const {return (servers);}
+Server				Parser::getServerbyHost(const string& _host)
 {
-	if (servers.size())
-		return (servers.front());
-	throw CustomException("No Server Found!!");
+	VecString		split = str_utils::split(_host, ':');
+	int				port = str_utils::to_int(split[1]); 
+	unsigned int	ip;
+	Server s = Server::createNullObject();
+	if (split[0] == "localhost")
+		ip = str_utils::ip(127, 0, 0, 1);
+	else
+	{
+		VecString	ip_values = str_utils::split(split[0], '.');
+		if (ip_values.size() != 4)
+			return (s);
+		ip = str_utils::ip(str_utils::to_int(ip_values[0]),
+						   str_utils::to_int(ip_values[1]),
+						   str_utils::to_int(ip_values[2]),
+						   str_utils::to_int(ip_values[3]));
+	}
+	std::vector<Server>::iterator it = servers.begin();
+	for (;it != servers.end();it++)
+	{
+		VecInt ports = it->getPorts();
+		if (it->getIpAddress() == ip && find(ports.begin(), ports.end(), port) != ports.end())
+			return (*it);
+	}
+	return (s);
 }
 
+Server				Parser::getDefaultServer() const
+{
+	Server s = Server::createNullObject();
+	if (servers.size())
+		return (servers.front());
+	return (s);
+}
 
 
 
@@ -327,16 +381,14 @@ void	printCommonDirectives(const CommonDirectives& common)
 	cout << "root: [" << common.getRoot() << "]" << endl;
 	cout << "alias: [" << common.getAlias() << "]" << endl;
 	cout << "index: " << endl;
-	VecString indexes = common.getAllIndexes();
-	VecString_iter it1 = indexes.begin();
-	for (; it1 != indexes.end();it1++)
-		cout << "\t" << *it1 << endl;
+	VecString indexes = common.getIndexes();
+	for (VecString_iter it = indexes.begin(); it != indexes.end();it++)
+		cout << "\t" << *it << endl;
 
 	cout << "try_files: " << endl;
-	VecString tryFiles = common.getAllTryFiles();
-	VecString_iter it2 = tryFiles.begin();
-	for (; it2 != tryFiles.end();it2++)
-		cout << "\t" << *it2 << endl;
+	VecString tryFiles = common.getTryFiles();
+	for (VecString_iter it = tryFiles.begin(); it != tryFiles.end();it++)
+		cout << "\t" << *it << endl;
 
 	cout << "autoindex: [" << common.getAutoIndex() << "]" << endl;
 	cout << "client_max_body_size: [" << common.getClientMaxBodySize() << "]" << endl;
@@ -345,15 +397,18 @@ void	printCommonDirectives(const CommonDirectives& common)
 
 	cout << "error_pages: " << endl;
 	MapIntString errorPages = common.getErrorPages();
-	MapIntString_iter it3 = errorPages.begin();
-	for (; it3 != errorPages.end();it3++)
-		cout << "\t" << it3->first << ": " << it3->second << endl;
+	for (MapIntString_iter it= errorPages.begin(); it!= errorPages.end();it++)
+		cout << "\t" << it->first << ": " << it->second << endl;
 
 	cout << "allowed_methods: " << endl;
 	VecString allowedMethods = common.getAllowedMethods();
-	VecString_iter it4 = allowedMethods.begin();
-	for (; it4 != allowedMethods.end();it4++)
-		cout << "\t" << *it4 << endl;
+	for (VecString_iter it = allowedMethods.begin(); it != allowedMethods.end();it++)
+		cout << "\t" << *it << endl;
+
+	cout << "types: " << endl;
+	MapStringString types = common.getMimeTypes();
+	for (MapStringString_iter it = types.begin(); it != types.end();it++)
+		cout << "\t" << it->first << ": " << it->second << endl;
 }
 
 void	printLocation(Locations locations)
@@ -362,9 +417,9 @@ void	printLocation(Locations locations)
 	cout << "locations: " << endl;
 	for (;it != locations.end();it++)
 	{
-		cout << "=====================>path: " << it->first << endl;
+		cout << "---------------->path: " << it->first << endl;
 		printCommonDirectives(it->second);
-		cout << "=====================>" << endl;
+		cout << "<----------------" << endl;
 	}
 }
 
@@ -373,9 +428,9 @@ void	Parser::dump()
 	std::vector<Server>::iterator it = servers.begin();
 	for (int i = 0; it != servers.end();it++)
 	{
-		cout << "==========> Server[" << i << "] <==========" << endl;
+		cout << "==========================> Server[" << i << "] <==========================" << endl;
 		cout << "server name: [" << it->getServerName() << "]" << endl;
-		cout << "host: [" << it->getHost() << "]" << endl;
+		cout << "host: [" << it->getIpAddress() << "]" << endl;
 		printPorts(it->getPorts());
 		printCommonDirectives(*it);
 		printLocation(it->getLocations());

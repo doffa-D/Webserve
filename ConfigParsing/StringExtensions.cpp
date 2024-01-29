@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 08:10:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/24 12:35:55 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/01/29 18:46:35 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,4 +97,60 @@ string	str_utils::to_string(int value)
 	std::stringstream ss;
 	ss << value;
 	return (ss.str());
+}
+
+unsigned int	str_utils::ip(int n1, int n2, int n3, int n4)
+{
+	return (n4 << 24 | n3 << 16 | n2 << 8 | n1);
+}
+
+int	str_utils::to_int(const string& value)
+{
+	double ret = strtod(value.c_str(), NULL);
+	return (ret);
+}
+
+bool	str_utils::createFile(const string& fileName)
+{
+	if (open(fileName.c_str(), O_CREAT | O_WRONLY | O_APPEND, 0644) != -1)
+		return (false);
+	return (true);
+}
+
+string	str_utils::remove_quotes(const string& str)
+{
+	string out = str;
+	if ((out[0] == '\"' && out[out.length() - 1] == '\"') ||
+		(out[0] == '\'' && out[out.length() - 1] == '\''))
+	{
+		out.erase(0, 1);
+		out.erase(out.length() - 1, 1);
+	}
+	return (out);
+}
+
+VecString str_utils::proSplit(const string& toSplit)
+{
+	string _toSplit;
+	size_t i = 0;
+	while (i < toSplit.length())
+	{
+		if (strchr("\'\"", toSplit[i]))
+		{
+			string s = strchr("\'\"", toSplit[i]);
+			_toSplit += toSplit[i++];
+			while (i < toSplit.length() && s[0] != toSplit[i])
+				_toSplit += toSplit[i++];
+			if (i < toSplit.length())
+				_toSplit += toSplit[i++];
+		}
+		else if (toSplit[i] == ' ' || toSplit[i] == '\t')
+		{
+			_toSplit += '\x07';
+			i++;
+		}
+		else
+			_toSplit += toSplit[i++];
+	}
+	return (split(_toSplit, '\x07'));
 }

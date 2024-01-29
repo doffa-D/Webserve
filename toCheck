@@ -1,0 +1,8 @@
+
+(ok) handle ==> inet_addr("10.12.9.4") 
+(ok) handle error_page ==> nginx: [emerg] value "299" must be between 300 and 599 in /goinfre/kchaouki/homebrew/etc/nginx/nginx.conf:13
+(ok) get server by fucking host
+(ok) open all created files
+(ok) check for dup values
+(ok) handle quotes only for value
+(nop) handle root under location
