@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:35:32 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/01/26 10:40:57 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/01/30 15:34:59 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "Request.hpp"
 #include "Response.hpp"
 
-int portno = 80;
+// int portno = 83;
 
 void error(std::string msg)
 {
@@ -22,9 +22,8 @@ void error(std::string msg)
 	exit(1);
 }
 
-void server(const std::string& fileName)
+void server(const std::string& fileName, int portno)
 {
-
 	Parser parser(fileName);
 	
 	int sockfd, newsockfd, n;
@@ -39,6 +38,15 @@ void server(const std::string& fileName)
 	serv_add.sin_addr.s_addr = INADDR_ANY;
 	// serv_add.sin_addr.s_addr = inet_addr("127.0.0.1");
 	serv_add.sin_port = htons(portno);
+	int on = 1;
+	int rc = setsockopt(sockfd, SOL_SOCKET,  SO_REUSEADDR,
+                   (char *)&on, sizeof(on));
+    if (rc < 0)
+    {
+        perror("setsockopt() failed");
+        close(sockfd);
+        exit(-1);
+    }
 	
 	if(bind(sockfd, (struct sockaddr *) &serv_add, sizeof(serv_add)) < 0)
 		error("Binding Failed .\n");
@@ -61,7 +69,7 @@ void server(const std::string& fileName)
 		
 		Request request;
 		request.Parse_Request(httpRequest);
-
+		// std::cout << httpRequest << std::endl;
 		// request.getReqLine().PrintReqLine();
 		// request.PrintHttp_Header();
 		Response	response;

@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/01/25 15:10:44 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/01/30 15:21:40 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,10 +149,11 @@ void	Request::Parse_Request(std::string& HttpRequest)
 			// Remove leading and trailing whitespaces from key and value
 			// but is useless remove leading and trailing whitespaces because in nginx it's possible serve
 			// file with spaces or tab
-            key.erase(0, key.find_first_not_of(" \t"));
-            key.erase(key.find_last_not_of(" \t") + 1);
-            value.erase(0, value.find_first_not_of(" \t"));
-            value.erase(value.find_last_not_of(" \t") + 1);
+            key.erase(0, key.find_first_not_of(" \t\r"));
+            key.erase(key.find_last_not_of(" \t\r") + 1);
+            value.erase(0, value.find_first_not_of(" \t\r"));
+            value.erase(value.find_last_not_of(" \t\r") + 1);
+			
 			// Store in the Vector
 			Header.push_back(std::make_pair(key, value));
 		}

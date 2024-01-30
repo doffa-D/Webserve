@@ -3,27 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 11:19:31 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/30 11:58:18 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/01/27 18:06:06 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./ConfigParsing2/Parser.hpp"
-#include "./ConfigParsing2/StringExtensions.hpp"
-#include "./Request_Response/TmpServer.hpp"
+#include "Parser.hpp"
+#include "StringExtensions.hpp"
 
 int main(int ac, char **av)
 {
-	if (ac != 3)
-		return (std::cout << "Usage: \n\t./webserv [configuration file]" << std::endl, 1);
 	try
 	{
-		// Parser parser(av[1]);
-		// std::cout <<  parser.getServers()[0].getServerName() << std::endl;
-		server(av[1], atoi(av[2]));
-		// parser.dump();
+		Parser parser(ac, av);
+		Server ser = parser.getServerbyHost("loc.alh.os.t:80");
+		if (ser.isNull())
+			(void)ser;//do somthiong
+		parser.dump();
 	}
 	catch (CustomException ce)
 	{

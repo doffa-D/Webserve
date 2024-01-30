@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/01/26 17:50:40 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/01/30 11:42:31 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 #include "Request.hpp"
 #include <fstream>
-#include "../ConfigParsing/StringExtensions.hpp"
+#include "../ConfigParsing2/StringExtensions.hpp"
 #include <unistd.h>
 #include <sys/socket.h>
-#include "../ConfigParsing/Parser.hpp"
-#include "../ConfigParsing/StringExtensions.hpp"
+#include "../ConfigParsing2/Parser.hpp"
+#include "../ConfigParsing2/StringExtensions.hpp"
 
 
 class ResponseLine
@@ -27,7 +27,7 @@ class ResponseLine
 		std::string HttpVersion;
 		std::string Status_Code;
 		std::string	Status_Message;
-		std::string Eroor_Page;
+		// std::string Eroor_Page;
 	public:
 		ResponseLine();
 		~ResponseLine();
