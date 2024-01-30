@@ -6,13 +6,13 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:15:25 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/29 16:25:05 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/01/30 16:10:20 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Location.hpp"
 
-Location::Location() : CommonDirectives("/", "index.html", "", "", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG), nullObject(false) {}
+Location::Location() : CommonDirectives("/", "index.html", "", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG), nullObject(false) {}
 Location::~Location() {}
 Location::Location(const Location& _copy) : CommonDirectives(_copy) {*this = _copy;}
 Location::Location(const CommonDirectives& _copy) : CommonDirectives(_copy) {}

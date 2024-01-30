@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/29 19:33:30 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/01/30 16:11:11 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ void	Parser::fileValideDirectives()
     validDirectives.push_back("location");
     validDirectives.push_back("root");
     validDirectives.push_back("index");
-    validDirectives.push_back("alias");
     validDirectives.push_back("try_files");
     validDirectives.push_back("include");
 }
@@ -83,8 +82,6 @@ void	fillCommonDirectives(CommonDirectives& common, const string& key, const str
 		common.setIndex(value);
 	else if (key == "try_files")
 		common.setTryFiles(value);
-	else if (key == "alias")
-		common.setAlias(value);
 	else if (key == "autoindex")
 		common.setAutoIndex(value);
 	else if (key == "client_max_body_size")
@@ -309,33 +306,35 @@ Parser& Parser::operator=(const Parser& _assignment)
 	return (*this);
 }
 
-std::vector<Server>	Parser::getServers() const {return (servers);}
-Server				Parser::getServerbyHost(const string& _host)
+Server                Parser::getServerbyHost(const string& _host)
 {
-	VecString		split = str_utils::split(_host, ':');
-	int				port = str_utils::to_int(split[1]); 
-	unsigned int	ip;
-	Server s = Server::createNullObject();
-	if (split[0] == "localhost")
-		ip = str_utils::ip(127, 0, 0, 1);
-	else
-	{
-		VecString	ip_values = str_utils::split(split[0], '.');
-		if (ip_values.size() != 4)
-			return (s);
-		ip = str_utils::ip(str_utils::to_int(ip_values[0]),
-						   str_utils::to_int(ip_values[1]),
-						   str_utils::to_int(ip_values[2]),
-						   str_utils::to_int(ip_values[3]));
-	}
-	std::vector<Server>::iterator it = servers.begin();
-	for (;it != servers.end();it++)
-	{
-		VecInt ports = it->getPorts();
-		if (it->getIpAddress() == ip && find(ports.begin(), ports.end(), port) != ports.end())
-			return (*it);
-	}
-	return (s);
+    int			port = 80;
+    VecString	split = str_utils::split(_host, ':');
+    if(split.size() == 2)
+        port = str_utils::to_int(split[1]);
+    unsigned int	ip;
+    Server s = Server::createNullObject();
+    if (split[0] == "localhost")
+        ip = str_utils::ip(127, 0, 0, 1);
+    else
+    {
+        VecString    ip_values = str_utils::split(split[0], '.');
+        if (ip_values.size() != 4)
+            return (s);
+        ip = str_utils::ip(str_utils::to_int(ip_values[0]),
+                           str_utils::to_int(ip_values[1]),
+                           str_utils::to_int(ip_values[2]),
+                           str_utils::to_int(ip_values[3]));
+    }
+    std::vector<Server>::iterator it = servers.begin();
+    for (;it != servers.end();it++)
+    {
+        VecInt ports = it->getPorts();
+        // ila kane 3aks waslat 127.0.0.1 o 7na fi confile mdfinine server_name so khas server_name it7awl 127.0.0.1
+        if (it->getIpAddress() == ip && find(ports.begin(), ports.end(), port) != ports.end())
+            return (*it);
+    }
+    return (s);
 }
 
 Server				Parser::getDefaultServer() const
@@ -379,7 +378,6 @@ void	printPorts(std::vector<int> ports)
 void	printCommonDirectives(const CommonDirectives& common)
 {
 	cout << "root: [" << common.getRoot() << "]" << endl;
-	cout << "alias: [" << common.getAlias() << "]" << endl;
 	cout << "index: " << endl;
 	VecString indexes = common.getIndexes();
 	for (VecString_iter it = indexes.begin(); it != indexes.end();it++)

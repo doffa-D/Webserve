@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/29 19:31:56 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/01/30 16:08:00 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ CommonDirectives& CommonDirectives::operator=(const CommonDirectives& _assignmen
 		root = _assignment.root;
 		index = _assignment.index;
 		try_files = _assignment.try_files;
-		alias = _assignment.alias;
 		allowed_methods = _assignment.allowed_methods;
 		autoindex = _assignment.autoindex;
 		client_max_body_size = _assignment.client_max_body_size;
@@ -30,26 +29,25 @@ CommonDirectives& CommonDirectives::operator=(const CommonDirectives& _assignmen
 		access_log = _assignment.access_log;
 		error_pages = _assignment.error_pages;
 		mimeTypes = _assignment.mimeTypes;
-		for (int i = 0; i < 6; ++i)
+		for (int i = 0; i < 8; ++i)
         	check[i] = 0;
 	}
 	return (*this);
 }
 
 CommonDirectives::CommonDirectives(const string& _root, const string& _index,
-								   const string& _try_files, const string& _alias,
+								   const string& _try_files,
 								   const bool& _autoindex , const long& _client_max_body_size,
 								   const string& _error_log, const string& _access_log)
 {
 	root = _root;
 	index = _index;
 	try_files = _try_files;
-	alias = _alias;
 	autoindex = _autoindex;
 	client_max_body_size = _client_max_body_size;
 	error_log = _error_log;
 	access_log = _access_log;
-	for (int i = 0; i < 6; ++i)
+	for (int i = 0; i < 8; ++i)
         check[i] = 0;
 }
 
@@ -65,9 +63,22 @@ void	CommonDirectives::setRoot(const string& _root)
 	check[0] = 1;
 }
 
-void	CommonDirectives::setIndex(const string& _index){index = _index;}
-void	CommonDirectives::setAlias(const string& _alias) {alias = _alias;}
-void	CommonDirectives::setTryFiles(const string& _try_files){try_files = _try_files;}
+void	CommonDirectives::setIndex(const string& _index)
+{
+	if (check[1])
+		throw CustomException("directive is duplicate", "index");
+	index = _index;
+	check[1] = 1;
+}
+
+void	CommonDirectives::setTryFiles(const string& _try_files)
+{
+	if (check[2])
+		throw CustomException("directive is duplicate", "index");
+	try_files = _try_files;
+	check[2] = 1;
+}
+
 static bool	isValideMethod(const string& to_check)
 {
 	string validMethods[] = {"GET", "POST", "DELETE"};
@@ -79,17 +90,17 @@ static bool	isValideMethod(const string& to_check)
 
 void	CommonDirectives::setAutoIndex(const string& _autoindex)
 {
-	if (check[1])
+	if (check[3])
 		throw CustomException("directive is duplicate", "autoindex");
 	if (_autoindex != "on" && _autoindex != "off")
 		throw CustomException("is invalid value for \"autoindex\" directive, it must be \"on\" or \"off\"", _autoindex);
 	autoindex = (_autoindex == "on" ? true : false);
-	check[1] = 1;
+	check[3] = 1;
 }
 
 void	CommonDirectives::setClientMaxBodySize(const string& _client_max_body_size)
 {
-	if (check[2])
+	if (check[4])
 		throw CustomException("directive is duplicate", "client_max_body_size");
 	char*	endp;
 	double	value = strtod(_client_max_body_size.c_str(), &endp);
@@ -107,23 +118,23 @@ void	CommonDirectives::setClientMaxBodySize(const string& _client_max_body_size)
 		client_max_body_size = value * (1024 * 1024 * 1024);
 	else
 		throw CustomException("is invalid value for \"client_max_body_size\" directive", _client_max_body_size);
-	check[2] = 1;
+	check[4] = 1;
 }
 
 void	CommonDirectives::setErrorLog(const string& _error_log)
 {
-	if (check[3])
+	if (check[5])
 		throw CustomException("directive is duplicate", "error_log");
 	error_log = _error_log;
-	check[3] = 1;
+	check[5] = 1;
 }
 
 void	CommonDirectives::setAccessLog(const string& _access_log)
 {
-	if (check[4])
+	if (check[6])
 		throw CustomException("directive is duplicate", "access_log");
 	access_log = _access_log;
-	check[4] = 1;
+	check[6] = 1;
 }
 void	CommonDirectives::addErrorPage(const string& _error_pages)
 {
@@ -146,7 +157,7 @@ void	CommonDirectives::addErrorPage(const string& _error_pages)
 
 void	CommonDirectives::setAllowedMethod(const string& _allowed_methods)
 {
-	if (check[5])
+	if (check[7])
 		throw CustomException("directive is duplicate", "allowed_methods");
 	VecString	values = str_utils::ultimatSplit(_allowed_methods, " \t");
 	VecString_iter	it = values.begin();
@@ -156,7 +167,7 @@ void	CommonDirectives::setAllowedMethod(const string& _allowed_methods)
 			throw CustomException("is invalid value for \"allowed_method\" directive", _allowed_methods); 
 		allowed_methods.push_back(*it);
 	}
-	check[5] = 1;
+	check[7] = 1;
 }
 
 void	CommonDirectives::addMimeType(const string& _key, const string& _value)
@@ -168,7 +179,6 @@ void	CommonDirectives::addMimeType(const string& _key, const string& _value)
 }
 
 const string&		CommonDirectives::getRoot() const {return (root);}
-const string&		CommonDirectives::getAlias() const {return (alias);}
 const string&		CommonDirectives::getErrorLog() const {return (error_log);}
 const string&		CommonDirectives::getAccessLog() const {return (access_log);}
 long				CommonDirectives::getClientMaxBodySize() const {return (client_max_body_size);}
