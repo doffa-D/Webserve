@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:53 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/30 16:10:28 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/01/31 19:56:40 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,10 +129,15 @@ VecInt					Server::getPorts() const
 Locations				Server::getLocations() const {return (locations);}
 Location				Server::getLocationByPath(const string& _path)
 {
-	Location l = Location::createNullObject();
-	Locations::iterator it = locations.begin();
-	for (;it != locations.end();it++)
-		if (it->first == _path)
-			return (it->second);
+	Location l(*this);
+	string tmp = _path;
+	while (tmp.size())
+	{
+		Locations::iterator it = locations.begin();
+		for (;it != locations.end();it++)
+			if (it->first == tmp)
+				return (it->second);
+		tmp = tmp.substr(0, str_utils::r_find(tmp, '/'));
+	}
 	return (l);
 }
