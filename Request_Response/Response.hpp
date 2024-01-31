@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/01/30 11:42:31 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/01/31 14:50:46 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 #include "Request.hpp"
 #include <fstream>
-#include "../ConfigParsing2/StringExtensions.hpp"
+#include "../ConfigParsing/StringExtensions.hpp"
 #include <unistd.h>
 #include <sys/socket.h>
-#include "../ConfigParsing2/Parser.hpp"
-#include "../ConfigParsing2/StringExtensions.hpp"
+#include "../ConfigParsing/Parser.hpp"
+#include "../ConfigParsing/StringExtensions.hpp"
 
 
 class ResponseLine
@@ -80,6 +80,7 @@ class Response
 		void	ft_Response(int clientSocket, Request& Req, Parser& parser);
 		std::string	Fill_Response();
 		std::string	Error_HmlPage(const std::string& stat_code, const std::string& stat_msg);
+		Location	Find_Location(Parser& parser, std::string& _host, std::string Path_Req);
 		// std::string ReadFile();
 		~Response();
 };

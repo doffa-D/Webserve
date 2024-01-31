@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/01/30 15:41:31 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/01/31 19:26:48 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,64 +173,59 @@ std::string	Response::Fill_Response()
 
 std::string root = "./Resources";
 
+
+
+Location	Response::Find_Location(Parser& parser, std::string& _host, std::string Path_Req)
+{
+	Server		server;
+	Location	location;
+	
+	server = parser.getServerbyHost(_host);
+	if(server.isNull() == false)
+	{
+		std::cout << "found server" << std::endl;
+		location = server.getLocationByPath(Path_Req);
+		if(location.isNull() == false)
+		{
+			std::cout << "found location" << std::endl;
+			std::cout << location.getIndexes().at(0) << std::endl;
+			std::cout << location.getAutoIndex() << std::endl;
+		}
+		else
+		{
+			// if not found location use directive dyal server
+			// location.setRoot(server.getRoot());
+			// location.setAutoIndex(server.getAutoIndex());
+			std::cout << "not found location " << std::endl;
+			std::cout << "Root = " << location.getRoot() << std::endl;
+		}
+	}
+	else
+		std::cout << "not found server" << std::endl;
+	return location;
+}
+
 void	Response::ft_Response(int clientSocket, Request& Req, Parser& parser)
 {
 	std::string	_host;
-	Server		server;
-	std::cout << "======>     " << Req.getHttp_Header().size() << std::endl;
+	Location	location;
 
 	for(size_t i=0; i<Req.getHttp_Header().size(); i++)
 	{
 		if (Req.getHttp_Header().at(i).first == "Host")
 		{
 			_host = Req.getHttp_Header().at(i).second;
-			std::cout << "===>[" << _host << "]" << std::endl;
 			break;
-		}	
-	}
-	std::cout << _host << std::endl;
-	server = parser.getServerbyHost(_host);
-	if(server.isNull() == false)
-	{
-		// std::cout << "found " << std::endl;
-		Location location = server.getLocationByPath(Req.getReqLine().getPath());
-		if(location.isNull() == false)
-		{
-			std::cout << "found location" << std::endl;
-			std::cout << location.getIndexes().at(0) << std::endl;
 		}
-		else
-			std::cout << "not found location " << std::endl;
 	}
-	else
-		std::cout << "not found " << std::endl;
-	// std::vector<std::pair<std::string, std::string> >::iterator it = Req.getHttp_Header().begin();
-	// for(; it != Req.getHttp_Header().end(); it++)
-	// {
-	// 	// std::cout << "\n------------\n";
-	// 	// std::cout << it->first << std::endl;
-		
-	// 	// std::cout << "\n------------\n";
-	// 	// if(it->first == "Host")
-	// 	// {
-	// 	// 	std::cout << "====>   " << it->second << std::endl;
-	// 	// 	break;
-	// 	// }
+	location = Find_Location(parser, _host, Req.getReqLine().getPath());
+	
+	// if(Req.getReferer() == 0)
+    // {
+		setResPath(root + Req.getReqLine().getPath()  + "index.html");
 	// }
 	
-	// std::cout << parser.getDefaultServer().getRoot() << std::endl;
-	// Check File
-	if(Req.getReferer() == 0)
-    {
-		setResPath(root + Req.getReqLine().getPath()  + "index.html");
-		// std::cout << " ===>  " << Req.getReqLine().getPath() << std::endl;
-	}
-	
+	std::cout << getResPath() << std::endl;
 	std::string response = Fill_Response();
-	// std::cout << "\n---------------------Respone ---------------------------\n";
-	// std::cout << response << std::endl;
-	// std::cout << "\n--------------------- ======= ---------------------------\n";
 	send(clientSocket, response.c_str(), response.size(), 0);
-
-	// close(clientSocket);
 }

@@ -6,12 +6,12 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 11:19:31 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/30 11:58:18 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/01/31 12:05:31 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./ConfigParsing2/Parser.hpp"
-#include "./ConfigParsing2/StringExtensions.hpp"
+#include "./ConfigParsing/Parser.hpp"
+#include "./ConfigParsing/StringExtensions.hpp"
 #include "./Request_Response/TmpServer.hpp"
 
 int main(int ac, char **av)
@@ -20,10 +20,7 @@ int main(int ac, char **av)
 		return (std::cout << "Usage: \n\t./webserv [configuration file]" << std::endl, 1);
 	try
 	{
-		// Parser parser(av[1]);
-		// std::cout <<  parser.getServers()[0].getServerName() << std::endl;
 		server(av[1], atoi(av[2]));
-		// parser.dump();
 	}
 	catch (CustomException ce)
 	{
