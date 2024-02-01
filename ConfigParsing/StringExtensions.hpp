@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   StringExtensions.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 08:31:30 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/29 19:46:45 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/01 10:17:12 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ using	std::endl;
 
 namespace str_utils
 {
+	size_t			r_find(const string& fileName, char to_find);
 	bool			createFile(const string& fileName);
 	unsigned int	ip(int n1, int n2, int n3, int n4);
 	string			to_string(int value);

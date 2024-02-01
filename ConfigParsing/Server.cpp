@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:53 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/31 18:59:49 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/01 10:15:40 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,19 +127,34 @@ VecInt					Server::getPorts() const
 	return (ports);
 }
 Locations				Server::getLocations() const {return (locations);}
+
 Location				Server::getLocationByPath(const string& _path)
 {
-	
-	// split _path with '\' and take the first split it means split[0] and check if split[0] is location
-	// if split[0] is a location give me location and give me remaining path it mean split[1]...
-
-
-	// in case i have a refer i sent u full path it mean in case ReqLinePath is (/css/index.css) this _path maghdixe ikone (/css/index.css) walakin ghadi ikone 
-	// refer/css/index.css
-	Location l = Location::createNullObject();
-	Locations::iterator it = locations.begin();
-	for (;it != locations.end();it++)
-		if (it->first == _path)
-			return (it->second);
+	Location l(*this);
+	string tmp = _path;
+	while (tmp.size())
+	{
+		Locations::iterator it = locations.begin();
+		for (;it != locations.end();it++)
+			if (it->first == tmp)
+				return (it->second);
+		tmp = tmp.substr(0, str_utils::r_find(tmp, '/'));
+	}
 	return (l);
 }
+// Location				Server::getLocationByPath(const string& _path)
+// {
+	
+// 	// split _path with '\' and take the first split it means split[0] and check if split[0] is location
+// 	// if split[0] is a location give me location and give me remaining path it mean split[1]...
+
+
+// 	// in case i have a refer i sent u full path it mean in case ReqLinePath is (/css/index.css) this _path maghdixe ikone (/css/index.css) walakin ghadi ikone 
+// 	// refer/css/index.css
+// 	Location l = Location::createNullObject();
+// 	Locations::iterator it = locations.begin();
+// 	for (;it != locations.end();it++)
+// 		if (it->first == _path)
+// 			return (it->second);
+// 	return (l);
+// }

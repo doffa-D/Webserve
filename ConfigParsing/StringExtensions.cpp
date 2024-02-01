@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   StringExtensions.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 08:10:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/29 18:46:35 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/01 10:16:42 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,4 +153,13 @@ VecString str_utils::proSplit(const string& toSplit)
 			_toSplit += toSplit[i++];
 	}
 	return (split(_toSplit, '\x07'));
+}
+
+size_t	str_utils::r_find(const string& fileName, char to_find)
+{
+	int i = fileName.length() - 1;
+	for (;i > 0;--i)
+		if (fileName[i] == to_find)
+			return (i);
+	return (i);
 }

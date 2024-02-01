@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/01/31 19:26:48 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/01 10:14:08 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,10 +219,14 @@ void	Response::ft_Response(int clientSocket, Request& Req, Parser& parser)
 		}
 	}
 	location = Find_Location(parser, _host, Req.getReqLine().getPath());
+
+	// function Check Path is here 
+	// CheckPath(location, ReqPath);
 	
 	// if(Req.getReferer() == 0)
     // {
-		setResPath(root + Req.getReqLine().getPath()  + "index.html");
+		std::cout << "root  = " << location.getRoot() << std::endl;
+		setResPath(location.getRoot() + Req.getReqLine().getPath()  + "index.html");
 	// }
 	
 	std::cout << getResPath() << std::endl;
