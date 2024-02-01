@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/30 16:08:00 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/01 14:57:35 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ CommonDirectives& CommonDirectives::operator=(const CommonDirectives& _assignmen
 		access_log = _assignment.access_log;
 		error_pages = _assignment.error_pages;
 		mimeTypes = _assignment.mimeTypes;
-		for (int i = 0; i < 8; ++i)
+		upload = _assignment.upload;
+		for (int i = 0; i < CHECK_SIZE; ++i)
         	check[i] = 0;
 	}
 	return (*this);
@@ -38,7 +39,7 @@ CommonDirectives& CommonDirectives::operator=(const CommonDirectives& _assignmen
 CommonDirectives::CommonDirectives(const string& _root, const string& _index,
 								   const string& _try_files,
 								   const bool& _autoindex , const long& _client_max_body_size,
-								   const string& _error_log, const string& _access_log)
+								   const string& _error_log, const string& _access_log, const string& _upload)
 {
 	root = _root;
 	index = _index;
@@ -47,7 +48,8 @@ CommonDirectives::CommonDirectives(const string& _root, const string& _index,
 	client_max_body_size = _client_max_body_size;
 	error_log = _error_log;
 	access_log = _access_log;
-	for (int i = 0; i < 8; ++i)
+	upload = _upload;
+	for (int i = 0; i < CHECK_SIZE; ++i)
         check[i] = 0;
 }
 
@@ -178,6 +180,9 @@ void	CommonDirectives::addMimeType(const string& _key, const string& _value)
 		mimeTypes.insert(std::make_pair(*it, _key));
 }
 
+void	CommonDirectives::setUpload(const string& _upload){upload = _upload;}
+
+
 const string&		CommonDirectives::getRoot() const {return (root);}
 const string&		CommonDirectives::getErrorLog() const {return (error_log);}
 const string&		CommonDirectives::getAccessLog() const {return (access_log);}
@@ -214,3 +219,4 @@ string				CommonDirectives::getMimeTypeByKey(const string& _key)
 			return (it->second);
 	return ("text/html");
 }
+const string&		CommonDirectives::getUpload() const {return (upload);}

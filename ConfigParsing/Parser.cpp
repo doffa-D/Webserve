@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/31 19:13:44 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/01 15:02:44 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	Parser::fileValideDirectives()
     validDirectives.push_back("index");
     validDirectives.push_back("try_files");
     validDirectives.push_back("include");
+    validDirectives.push_back("upload");
 }
 
 bool	Parser::isValideDirective(const string& _directive)
@@ -45,12 +46,12 @@ bool	Parser::isValideDirective(const string& _directive)
 
 bool	Parser::isValideForLocation(const string& key)
 {
-	string validDirectives[12] = {"root", "try_files", "index",
+	string validDirectives[13] = {"root", "try_files", "index",
 								 "location", "alias", "allowed_method",
 								 "autoindex", "client_max_body_size", 
 								 "error_log", "access_log", "error_pages",
-								 "include"};
-	for (size_t i = 0; i < 12; i++)
+								 "include", "upload"};
+	for (size_t i = 0; i < 13; i++)
 		if (key == validDirectives[i])
 			return (true);
 	return (false);
@@ -96,6 +97,8 @@ void	fillCommonDirectives(CommonDirectives& common, const string& key, const str
 		common.setAllowedMethod(value);
 	else if (key == "include")
 		parseMimeTypes(common, value);
+	else if (key == "upload")
+		common.setUpload(value);
 }
 
 void	Parser::fillLocationDirective(Server& server, CommonDirectives& old_location, ListString_iter& it, const string& befor)
@@ -407,6 +410,8 @@ void	printCommonDirectives(const CommonDirectives& common)
 	MapStringString types = common.getMimeTypes();
 	for (MapStringString_iter it = types.begin(); it != types.end();it++)
 		cout << "\t" << it->first << ": " << it->second << endl;
+	
+	cout << "upload: [" << common.getUpload() << "]" << endl;
 }
 
 void	printLocation(Locations locations)

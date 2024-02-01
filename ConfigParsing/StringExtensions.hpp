@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 08:31:30 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/31 19:45:21 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/01 14:59:33 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #define MAX_CLIENT_BODY_SIZE 8589934592
 #define ERROR_LOG "./logs/error_log.log"
 #define ACCESS_LOG "./logs/access_log.log"
+#define UPLOAD "./upload/"
 
 typedef std::string						string; 
 typedef std::map<int, string>			MapIntString;

@@ -6,13 +6,13 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:53 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/31 19:56:40 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/01 14:59:51 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server() : CommonDirectives("/", "index.html", "", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG), nullObject(false) {}
+Server::Server() : CommonDirectives("/", "index.html", "", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG, UPLOAD), nullObject(false) {}
 Server::~Server() {}
 Server::Server(const Server& _copy) : CommonDirectives(_copy) {*this = _copy;}
 Server& Server::operator=(const Server& _assignment)

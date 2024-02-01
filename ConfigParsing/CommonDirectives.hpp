@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/30 16:08:35 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/01 14:57:12 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include "StringExtensions.hpp"
 #include "CustomException.hpp"
+#define CHECK_SIZE 9
 
 class CommonDirectives
 {
@@ -28,7 +29,8 @@ class CommonDirectives
 		MapStringString		mimeTypes;
 		MapIntString		error_pages;
 		VecString 			allowed_methods;
-		int					check[8];
+		string				upload;
+		int					check[CHECK_SIZE];
 		CommonDirectives();
 	public:
 		~CommonDirectives();
@@ -37,7 +39,7 @@ class CommonDirectives
 		CommonDirectives(const string& _root, const string& _index,
 						 const string& _try_files,
 						 const bool& _autoindex , const long& _client_max_body_size,
-						 const string& _error_log, const string& _access_log);
+						 const string& _error_log, const string& _access_log, const string& _upload);
 
 		void	setRoot(const string& _root);
 		void	setIndex(const string& _index);
@@ -49,6 +51,7 @@ class CommonDirectives
 		void	setAccessLog(const string& _access_log);
 		void	addErrorPage(const string& _error_pages);
 		void	addMimeType(const string& _key, const string& _value);
+		void	setUpload(const string& _upload);
 
 		const string&		getRoot() const;
 		VecString			getAllowedMethods() const;
@@ -61,4 +64,5 @@ class CommonDirectives
 		VecString			getTryFiles() const;
 		MapStringString		getMimeTypes() const;
 		string				getMimeTypeByKey(const string& _key);
+		const string&		getUpload() const;
 };
