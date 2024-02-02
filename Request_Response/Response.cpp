@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/01 10:14:08 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/02 21:14:53 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,14 @@ std::string	ReadFile(std::string&	ResPath)
 
 std::string	Response::Fill_Response()
 {
+
+	/*
+		structure of http response 
+		HTTP/1.1 200 OK
+		Content-Type: text/html
+		Content-Length: 45
+		Hello
+	*/
 	ResponseLine	Resline;
 
 	ResLine.setHttpVersion("HTTP/1.1");
@@ -205,6 +213,15 @@ Location	Response::Find_Location(Parser& parser, std::string& _host, std::string
 	return location;
 }
 
+void	Fill_ResPath(Location& location, std::string ReqPath)
+{
+	std::string	ResPath;
+
+	ResPath = location.getRoot() + ReqPath;
+
+	std::cout << "ResPath = " << ResPath << std::endl;
+}
+
 void	Response::ft_Response(int clientSocket, Request& Req, Parser& parser)
 {
 	std::string	_host;
@@ -219,7 +236,7 @@ void	Response::ft_Response(int clientSocket, Request& Req, Parser& parser)
 		}
 	}
 	location = Find_Location(parser, _host, Req.getReqLine().getPath());
-
+	Fill_ResPath(location, Req.getReqLine().getPath());
 	// function Check Path is here 
 	// CheckPath(location, ReqPath);
 	
@@ -230,6 +247,18 @@ void	Response::ft_Response(int clientSocket, Request& Req, Parser& parser)
 	// }
 	
 	std::cout << getResPath() << std::endl;
-	std::string response = Fill_Response();
+	std::string response;
+	if(Req.getReqLine().getPath()[Req.getReqLine().getPath().size() - 1] != '/')
+	{
+		response = "HTTP/1.1 301 Moved Permanently\r\nContent-Type: text/html\r\nContent-Length: 0\r\nLocation: http://"
+				 	+ _host + Req.getReqLine().getPath() + "/\r\n\r\n";
+
+		// response = "HTTP/1.1 301 Moved Permanently\r\nContent-Type: text/html\r\nContent-Length: 0\r\nLocation: "
+		// 		 	+ Req.getReqLine().getPath() + "/\r\n\r\n";
+	}
+	else
+		response = Fill_Response();
+	std::cout << "Response =   \n" << response << std::endl;
 	send(clientSocket, response.c_str(), response.size(), 0);
+	close(clientSocket);
 }
