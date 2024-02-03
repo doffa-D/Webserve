@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/01/31 14:50:46 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/03 18:26:08 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 #include <sys/socket.h>
 #include "../ConfigParsing/Parser.hpp"
 #include "../ConfigParsing/StringExtensions.hpp"
+#include <sys/stat.h>
+
 
 
 class ResponseLine
@@ -81,6 +83,7 @@ class Response
 		std::string	Fill_Response();
 		std::string	Error_HmlPage(const std::string& stat_code, const std::string& stat_msg);
 		Location	Find_Location(Parser& parser, std::string& _host, std::string Path_Req);
+
 		// std::string ReadFile();
 		~Response();
 };

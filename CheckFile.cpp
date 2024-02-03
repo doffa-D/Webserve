@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/26 18:03:26 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/01/26 18:04:32 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/03 18:51:29 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int main()
             {
 				// join directory with index.html 
 				// and serach if this file is exest or no 
-				// if exests serve this other ways  print not found
+				// if exests serve this other ways  print forbiden
 				
 				std::string Full_Path = Path + "/index.html";
 				std::ifstream FileIndex(Full_Path.c_str());

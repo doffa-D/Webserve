@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/02 21:14:53 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/03 20:53:33 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,19 +213,11 @@ Location	Response::Find_Location(Parser& parser, std::string& _host, std::string
 	return location;
 }
 
-void	Fill_ResPath(Location& location, std::string ReqPath)
-{
-	std::string	ResPath;
-
-	ResPath = location.getRoot() + ReqPath;
-
-	std::cout << "ResPath = " << ResPath << std::endl;
-}
-
 void	Response::ft_Response(int clientSocket, Request& Req, Parser& parser)
 {
 	std::string	_host;
 	Location	location;
+	std::string	Root_ReqPath;
 
 	for(size_t i=0; i<Req.getHttp_Header().size(); i++)
 	{
@@ -236,29 +228,55 @@ void	Response::ft_Response(int clientSocket, Request& Req, Parser& parser)
 		}
 	}
 	location = Find_Location(parser, _host, Req.getReqLine().getPath());
-	Fill_ResPath(location, Req.getReqLine().getPath());
-	// function Check Path is here 
-	// CheckPath(location, ReqPath);
+	Root_ReqPath = location.getRoot() + Req.getReqLine().getPath();
+	setResPath(Root_ReqPath);
 	
-	// if(Req.getReferer() == 0)
-    // {
-		std::cout << "root  = " << location.getRoot() << std::endl;
-		setResPath(location.getRoot() + Req.getReqLine().getPath()  + "index.html");
-	// }
+	std::cout << "Root_ReqPath ==>  " << Root_ReqPath << std::endl;
 	
-	std::cout << getResPath() << std::endl;
+
+	std::ifstream File(Root_ReqPath.c_str());
+	std::string Full_Path = Root_ReqPath;
+	if(File.is_open())
+	{
+		struct stat fileInfo;
+		if (stat(Root_ReqPath.c_str(), &fileInfo) == 0)
+		{
+			if (S_ISDIR(fileInfo.st_mode))
+            {
+				ResPath = Root_ReqPath + "/index.html";
+				std::ifstream FileIndex(Full_Path.c_str());
+				if(FileIndex.is_open())
+				{
+					//servi file 
+				}
+				else if(location.getAutoIndex() == 1)
+				{
+					//check auto index 
+				}
+				else
+				{
+					// Forbiden
+				}
+				std::cout << "It is a directory." << std::endl;
+			}
+			else if (S_ISREG(fileInfo.st_mode))
+            {
+                std::cout << "It is a regular file." << std::endl;
+            }
+		}
+	}
+	else
+		std::cout << "Not Found" << std::endl;
+	
 	std::string response;
 	if(Req.getReqLine().getPath()[Req.getReqLine().getPath().size() - 1] != '/')
 	{
 		response = "HTTP/1.1 301 Moved Permanently\r\nContent-Type: text/html\r\nContent-Length: 0\r\nLocation: http://"
 				 	+ _host + Req.getReqLine().getPath() + "/\r\n\r\n";
-
-		// response = "HTTP/1.1 301 Moved Permanently\r\nContent-Type: text/html\r\nContent-Length: 0\r\nLocation: "
-		// 		 	+ Req.getReqLine().getPath() + "/\r\n\r\n";
 	}
 	else
 		response = Fill_Response();
-	std::cout << "Response =   \n" << response << std::endl;
+	// std::cout << "Response =   \n" << response << std::endl;
 	send(clientSocket, response.c_str(), response.size(), 0);
 	close(clientSocket);
 }
