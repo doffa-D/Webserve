@@ -6,7 +6,7 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2023/12/16 15:41:33 by hdagdagu         ###   ########.fr        #
+#    Updated: 2024/02/05 12:04:30 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,6 @@ NAME = WebServer
 OBJDIR = .objFiles
 
 SRC_DIR = src
-SRC_DIR1 = src1
 
 INCLUDE_DIR = include
 CONFIG_INCLUDE_DIR = $(SRC_DIR)/config/include
@@ -25,24 +24,18 @@ REQUEST_INCLUDE_DIR = $(SRC_DIR)/request/include
 SERVER_INCLUDE_DIR = $(SRC_DIR)/server/include
 
 SRCS = main.cpp \
-	$(SRC_DIR)/server/src/Server.cpp \
-	$(SRC_DIR)/server/src/MIME_type.cpp \
-	$(SRC_DIR)/request/src/parseHttpRequest.cpp \
-	$(SRC_DIR)/request/src/request_status_code.cpp \
-	$(SRC_DIR)/config/src/ServerConfigFile.cpp \
-	$(SRC_DIR)/exception/src/exception.cpp \
-	$(SRC_DIR)/server/src/init_server.cpp \
+	$(SRC_DIR)/config/src/CommonDirectives.cpp \
+	$(SRC_DIR)/config/src/CustomException.cpp \
+	$(SRC_DIR)/config/src/Location.cpp \
+	$(SRC_DIR)/config/src/Parser.cpp \
+	$(SRC_DIR)/config/src/StringExtensions.cpp \
+	$(SRC_DIR)/config/src/Server.cpp \
+	$(SRC_DIR)/server/src/Wb_Server.cpp \
 	$(SRC_DIR)/server/src/Upload.cpp \
 	$(SRC_DIR)/server/src/SendTracker.cpp \
 	$(SRC_DIR)/server/src/request.cpp \
-	${SRC_DIR1}/Parser/Parser.cpp \
-	${SRC_DIR1}/Parser/Location.cpp \
-	${SRC_DIR1}/Models/GlobalModel.cpp \
-	${SRC_DIR1}/Models/ServerModel.cpp \
-	${SRC_DIR1}/Models/Data.cpp \
-	${SRC_DIR1}/Utils/String.cpp \
-	${SRC_DIR1}/Exception/ParsingException.cpp \
-	${SRC_DIR1}/Utils/ServerData.cpp \
+
+
 
 
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)

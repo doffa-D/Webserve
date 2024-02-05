@@ -1,30 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   CustomException.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/01 15:36:49 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/05 11:53:37 by hdagdagu         ###   ########.fr       */
+/*   Created: 2023/12/09 10:06:24 by kchaouki          #+#    #+#             */
+/*   Updated: 2024/02/05 09:29:07 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+// #include "CustomException.hpp"
 #include "../../../include/header.hpp"
 
-int main(int ac, char **av)
-{
-	try
-	{
-		Parser parsedData(ac, av);
-        Wb_Server(parsedData.getHostsAndPorts());
-		// parsedData.dump();
 
-	}
-	catch (CustomException ce)
-	{
-		std::cerr << ce.what() << std::endl;
-	    return (1);
-	}
-	return (0);
+CustomException::CustomException(const std::string& _message) : message(_message)
+{
+	message = "webserve: " + message;
 }
+
+CustomException::CustomException(const std::string& _message, const std::string& _arg) : message(_message)
+{
+	message = "webserve: [" + _arg + "] " + message;
+}
+
+const char* CustomException::what() const throw(){return (message.c_str());}

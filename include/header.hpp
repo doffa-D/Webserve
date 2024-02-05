@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:24:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/01/10 11:20:38 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/05 12:03:53 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,21 +26,26 @@
 #include <string>       // For string
 #include <map>          // For map
 
-// ======================== //
-#include "../src/exception/include/exception.hpp"
-// #include "../src/config/include/ServerConfigFile.hpp"
-#include "../src/request/include/parseHttpRequest.hpp"
+// ===========Config============= //
+
+#include "../src/config/include/StringExtensions.hpp"
+#include "../src/config/include/CommonDirectives.hpp"
+#include "../src/config/include/CustomException.hpp"
+#include "../src/config/include/Location.hpp"
+#include "../src/config/include/Parser.hpp"
+#include "../src/config/include/Server.hpp"
+
+// ===========Server============= //
+
 #include "../src/server/include/Upload.hpp"
 #include "../src/server/include/SendTracker.hpp"
+#include "../src/server/include/Wb_Server.hpp" 
 #include "../src/server/include/cgi.hpp"
 
 // ======================== //
-#include "../src1/Includes/Location.hpp"
-#include "../src1/Includes/Parser.hpp"
-#include "../src1/Includes/ServerModel.hpp"
-#include "../src1/Includes/ServerData.hpp"
-#include "../src1/Includes/Logger.hpp"
 
-// ======================== //
+
+
+
 
 #endif

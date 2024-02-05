@@ -6,11 +6,13 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/16 15:40:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/01/10 12:18:21 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/05 11:10:47 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/SendTracker.hpp"
+// #include "../include/SendTracker.hpp"
+#include "../../../include/header.hpp" // in this header file we have all the libraries that we need
+
 
 int SendTracker::getFd()
 {
