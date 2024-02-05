@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/30 16:08:35 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/05 23:13:37 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,6 @@ class CommonDirectives
 		MapIntString		getErrorPages() const;
 		VecString			getIndexes() const;
 		VecString			getTryFiles() const;
-		MapStringString		getMimeTypes() const;
+		MapStringString		getMimeTypes() const;   
 		string				getMimeTypeByKey(const string& _key);
 };

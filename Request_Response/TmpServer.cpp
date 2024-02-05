@@ -6,15 +6,13 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:35:32 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/03 18:16:41 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/05 22:56:06 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "TmpServer.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
-
-// int portno = 83;
 
 void error(std::string msg)
 {

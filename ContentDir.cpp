@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 13:35:22 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/05 14:41:09 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/05 21:48:54 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int main() {
     if ((directory = opendir(".")) != NULL) {
         // Read each entry in the directory
         while ((entry = readdir(directory)) != NULL) {
-            std::cout << entry->d_name << std::endl;
+            std::cout << entry->d_name  << "  " <<  << " " <<  std::endl;
         }
 
         // Close the directory
