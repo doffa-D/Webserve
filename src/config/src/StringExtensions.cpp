@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   StringExtensions.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 08:10:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/05 11:27:40 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/05 16:10:06 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,6 @@ int	str_utils::to_int(const string& value)
 Uint	str_utils::ip(int n1, int n2, int n3, int n4)
 {
 	return (n1 << 24 | n2 << 16 | n3 << 8 | n4);
-	// return (n4 << 24 | n3 << 16 | n2 << 8 | n1);
 }
 
 Uint	str_utils::ip(const string& value)

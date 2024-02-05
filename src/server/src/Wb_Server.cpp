@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/05 11:36:35 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/05 16:13:22 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -493,11 +493,7 @@ void Wb_Server::Setup_Server(int port_index)
 	// initialize address
 	address[port_index].sin_family = AF_INET;
 	address[port_index].sin_port = htons(HostAndPorts[port_index].second);
-	
-	cout << "Host: " << htonl(HostAndPorts[port_index].first) << endl;
-	cout << "inet Host: " << htonl(inet_addr("127.0.0.1")) << endl;
-
-	address[port_index].sin_addr.s_addr = INADDR_ANY;
+	address[port_index].sin_addr.s_addr = htonl(HostAndPorts[port_index].first);
 
 	if (bind(socket_fd_server[port_index], (struct sockaddr *)&address[port_index], sizeof(address[port_index])) == -1)
 	{
