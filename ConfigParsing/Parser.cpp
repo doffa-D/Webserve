@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/01 15:02:44 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/05 09:15:35 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,29 +16,17 @@ Parser::Parser(){}
 Parser::~Parser() {}
 Parser::Parser(const Parser& _copy) {*this = _copy;}
 
-void	Parser::fileValideDirectives()
+void	Parser::fillValideDirectives()
 {
-	validDirectives.push_back("server_name");
-    validDirectives.push_back("autoindex");
-    validDirectives.push_back("allowed_method");
-    validDirectives.push_back("host");
-    validDirectives.push_back("listen");
-    validDirectives.push_back("client_max_body_size");
-    validDirectives.push_back("error_log");
-    validDirectives.push_back("access_log");
-    validDirectives.push_back("error_page");
-    validDirectives.push_back("location");
-    validDirectives.push_back("root");
-    validDirectives.push_back("index");
-    validDirectives.push_back("try_files");
-    validDirectives.push_back("include");
-    validDirectives.push_back("upload");
+	allowed_directives = str_utils::split(ALLOWED_DIRECTIVES, ' ');
+	location_valid_directives = str_utils::split(LOCATION_DIRECTIVES, ' ');
+	cout << location_valid_directives.size() << endl;
 }
 
 bool	Parser::isValideDirective(const string& _directive)
 {
-	std::vector<string>::iterator it = validDirectives.begin();
-	for (; it < validDirectives.end(); it++)
+	std::vector<string>::iterator it = allowed_directives.begin();
+	for (; it < allowed_directives.end(); it++)
 		if (*it == _directive)
 			return (true);
 	return (false);
@@ -46,14 +34,13 @@ bool	Parser::isValideDirective(const string& _directive)
 
 bool	Parser::isValideForLocation(const string& key)
 {
-	string validDirectives[13] = {"root", "try_files", "index",
-								 "location", "alias", "allowed_method",
-								 "autoindex", "client_max_body_size", 
-								 "error_log", "access_log", "error_pages",
-								 "include", "upload"};
-	for (size_t i = 0; i < 13; i++)
-		if (key == validDirectives[i])
+	cout << key << endl;
+	for (size_t i = 0; i < location_valid_directives.size(); i++)
+	{
+		cout << location_valid_directives[i] << endl;
+		if (key == location_valid_directives[i])
 			return (true);
+	}
 	return (false);
 }
 
@@ -77,28 +64,22 @@ void	parseMimeTypes(CommonDirectives& common, const string& filePath)
 
 void	fillCommonDirectives(CommonDirectives& common, const string& key, const string& value)
 {
-	if (key == "root")
-		common.setRoot(value);
-	else if (key == "index")
-		common.setIndex(value);
-	else if (key == "try_files")
-		common.setTryFiles(value);
-	else if (key == "autoindex")
-		common.setAutoIndex(value);
-	else if (key == "client_max_body_size")
-		common.setClientMaxBodySize(value);
-	else if (key == "error_log")
-		common.setErrorLog(value);
-	else if (key == "access_log")
-		common.setAccessLog(value);
-	else if (key == "error_page")
-		common.addErrorPage(value);
-	else if (key == "allowed_method")
-		common.setAllowedMethod(value);
+	std::string  keys[10] = {"root", "index", "try_files", "autoindex",  "client_max_body_size", \
+							 "error_log", "access_log", "error_page", "allowed_method", "upload"};
+
+	void	(CommonDirectives::*functionPtr[10])(const string&) = 
+			{&CommonDirectives::setRoot, &CommonDirectives::setIndex, &CommonDirectives::setTryFiles, 
+			&CommonDirectives::setAutoIndex, &CommonDirectives::setClientMaxBodySize, 
+			&CommonDirectives::setErrorLog, &CommonDirectives::setAccessLog, &CommonDirectives::addErrorPage,
+			&CommonDirectives::setAllowedMethod, &CommonDirectives::setUpload};
+
+	int i = 0;
+	while (i < 10 && key != keys[i])
+		i++;
+	if (i < 10)
+		(common.*functionPtr[i])(value);
 	else if (key == "include")
 		parseMimeTypes(common, value);
-	else if (key == "upload")
-		common.setUpload(value);
 }
 
 void	Parser::fillLocationDirective(Server& server, CommonDirectives& old_location, ListString_iter& it, const string& befor)
@@ -127,6 +108,8 @@ void	Parser::fillLocationDirective(Server& server, CommonDirectives& old_locatio
 				string	value = str_utils::trim(it->substr(str_utils::find_first_of(*it, " \t"), it->length()));
 				fillCommonDirectives(location, key, value);
 				it++;
+				if (it == tokens.end())
+					throw CustomException("unexpected end of file, expecting \";\" or \"}\"");
 				if (*it == "}")
 					throw CustomException("unexpected \"}\"");
 				else if (*it == "{")	
@@ -177,9 +160,9 @@ void	Parser::fillServerData(ListString_iter& it)
 			else
 			{
 				fillDirectives(server, it, hasDefualtTage);
+				it++;
 				if (it == tokens.end())
 					throw CustomException("unexpected end of file, expecting \";\" or \"}\"");
-				it++;
 				if (*it == "}")
 					throw CustomException("unexpected \"}\"");
 				else if (*it == "{")	
@@ -283,7 +266,7 @@ Parser::Parser(int ac, char**av)
 		throw CustomException("Usage: \n\t./webserv [configuration file]");
 	if (!str_utils::endsWith(fileName, ".conf"))
 		throw CustomException("File must end with [.conf] extension!!", fileName);
-	fileValideDirectives();
+	fillValideDirectives();
 	std::ifstream configFile(fileName.c_str());
 	if (configFile.fail())
 		throw CustomException("Failed to open file!!", fileName);
@@ -315,7 +298,7 @@ Server                Parser::getServerbyHost(const string& _host)
     VecString	split = str_utils::split(_host, ':');
     if(split.size() == 2)
         port = str_utils::to_int(split[1]);
-    unsigned int	ip;
+    Uint	ip;
     Server s = Server::createNullObject();
     if (split[0] == "localhost")
         ip = str_utils::ip(127, 0, 0, 1);
@@ -432,7 +415,11 @@ void	Parser::dump()
 	for (int i = 0; it != servers.end();it++)
 	{
 		cout << "==========================> Server[" << i << "] <==========================" << endl;
-		cout << "server name: [" << it->getServerName() << "]" << endl;
+		cout << "server name: " << endl;
+		VecString server_names = it->getServerNames();
+		for (VecString_iter it = server_names.begin(); it != server_names.end();it++)
+			cout << "\t" << *it << endl;
+
 		cout << "host: [" << it->getIpAddress() << "]" << endl;
 		printPorts(it->getPorts());
 		printCommonDirectives(*it);

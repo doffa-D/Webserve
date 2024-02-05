@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:53 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/01 14:59:51 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/02 19:27:27 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,8 +116,14 @@ void	Server::AddLocation(const string& path, const Location& _location)
 }
 
 /*==============>GETTERES<================*/
-const string&			Server::getServerName() const {return (server_name);}
-unsigned int			Server::getIpAddress() const {return (ip_address);}
+VecString				Server::getServerNames() const 
+{
+	VecString out = str_utils::proSplit(server_name);
+	for (VecString_iter it = out.begin(); it != out.end();it++)
+		*it = str_utils::remove_quotes(*it);
+	return (out);
+}
+Uint					Server::getIpAddress() const {return (ip_address);}
 VecInt					Server::getPorts() const 
 {
 	VecInt v;
@@ -126,6 +132,7 @@ VecInt					Server::getPorts() const
 		return (v);
 	return (ports);
 }
+
 Locations				Server::getLocations() const {return (locations);}
 Location				Server::getLocationByPath(const string& _path)
 {

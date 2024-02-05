@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:32 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/27 18:45:01 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/02 19:27:48 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ typedef std::vector<std::pair<string, Location> > Locations;
 class Server : public CommonDirectives
 {
 	private:
-		string					server_name;
-		unsigned int			ip_address;
-		VecInt					ports;
-		Locations				locations;
-		bool					nullObject;
+		string				server_name;
+		Uint				ip_address;
+		VecInt				ports;
+		Locations			locations;
+		bool				nullObject;
 		bool	isLocationAlreadyExists(const string& _path);
 		bool	isPorteAlreadyExists(int _port);
 	public:
@@ -41,8 +41,8 @@ class Server : public CommonDirectives
 		bool	AddPort(const string& _port);
 		void	AddLocation(const string& path, const Location& _location);	
 		/*==============>GETTERES<================*/
-		const string&		getServerName() const;
-		unsigned int		getIpAddress() const;
+		VecString			getServerNames() const;
+		Uint				getIpAddress() const;
 		VecInt				getPorts() const;
 		Locations			getLocations() const;
 		Location			getLocationByPath(const string& _path);

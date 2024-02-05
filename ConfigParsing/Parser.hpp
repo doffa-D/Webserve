@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 09:04:45 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/29 16:19:21 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/05 09:17:13 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,20 @@
 
 #include "Server.hpp"
 
+#define ALLOWED_DIRECTIVES "server_name autoindex allowed_method host \
+listen client_max_body_size error_log access_log error_page location root index \
+try_files include upload"
+
+#define LOCATION_DIRECTIVES "root try_files index location alias allowed_method \
+autoindex client_max_body_size error_log access_log \
+error_pages include upload"
+
 class	Parser
 {
 	private:
 		std::vector<Server>	servers;
-		VecString 			validDirectives;
+		VecString 			allowed_directives;
+		VecString 			location_valid_directives;
 		string				dataToParse;
 		ListString			tokens;
 		Parser();
@@ -30,7 +39,7 @@ class	Parser
 		void	fillServerData(ListString_iter& it);
 		void	fillLocationDirective(Server& server, CommonDirectives& old_location, ListString_iter& it, const  string& befor);
 		void	fillDirectives(Server& server, ListString_iter& it, bool& ok);
-		void	fileValideDirectives();
+		void	fillValideDirectives();
 		bool	isValideForLocation(const string& key);
 		bool	isValideDirective(const string& _directive);
 	public:

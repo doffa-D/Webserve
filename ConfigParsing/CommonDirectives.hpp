@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/01 14:57:12 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/02 18:32:16 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 
 #include "StringExtensions.hpp"
 #include "CustomException.hpp"
+
+#define MAX_CLIENT_BODY_SIZE 8589934592
+#define ERROR_LOG "./logs/error_log.log"
+#define ACCESS_LOG "./logs/access_log.log"
+#define UPLOAD "./upload/"
 #define CHECK_SIZE 9
 
 class CommonDirectives

@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 08:10:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/01/31 19:46:05 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/02 19:27:09 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,15 +99,26 @@ string	str_utils::to_string(int value)
 	return (ss.str());
 }
 
-unsigned int	str_utils::ip(int n1, int n2, int n3, int n4)
-{
-	return (n4 << 24 | n3 << 16 | n2 << 8 | n1);
-}
-
 int	str_utils::to_int(const string& value)
 {
 	double ret = strtod(value.c_str(), NULL);
 	return (ret);
+}
+
+Uint	str_utils::ip(int n1, int n2, int n3, int n4)
+{
+	return (n4 << 24 | n3 << 16 | n2 << 8 | n1);
+}
+
+Uint	str_utils::ip(const string& value)
+{
+	VecString vec = str_utils::split(value, '.');
+	if (vec.size() != 4)
+		return (-1);
+	return (str_utils::to_int(vec[3]) << 24 | \
+			str_utils::to_int(vec[2]) << 16 | \
+			str_utils::to_int(vec[1]) << 8 | \
+			str_utils::to_int(vec[0]));
 }
 
 bool	str_utils::createFile(const string& fileName)

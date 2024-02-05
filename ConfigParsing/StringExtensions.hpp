@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 08:31:30 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/01 14:59:33 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/02 19:01:44 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,12 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <cstring>
+#include <string.h>
 #include <limits.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <fcntl.h>
-
-#define MAX_CLIENT_BODY_SIZE 8589934592
-#define ERROR_LOG "./logs/error_log.log"
-#define ACCESS_LOG "./logs/access_log.log"
-#define UPLOAD "./upload/"
 
 typedef std::string						string; 
 typedef std::map<int, string>			MapIntString;
@@ -39,7 +37,7 @@ typedef std::vector<int> 				VecInt;
 typedef VecInt::iterator 				VecInt_iter;
 typedef std::list<string>				ListString;
 typedef ListString::iterator			ListString_iter;
-
+typedef unsigned int 					Uint;
 using	std::cout;
 using	std::cerr;
 using	std::endl;
@@ -48,7 +46,8 @@ namespace str_utils
 {
 	size_t			r_find(const string& fileName, char to_find);
 	bool			createFile(const string& fileName);
-	unsigned int	ip(int n1, int n2, int n3, int n4);
+	Uint			ip(const string& value);
+	Uint			ip(int n1, int n2, int n3, int n4);
 	string			to_string(int value);
 	int				to_int(const string& value);
 	size_t			find_first_of(const string& str, const string& charset);

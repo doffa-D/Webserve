@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/01 14:57:35 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/02 18:28:20 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,7 @@ CommonDirectives& CommonDirectives::operator=(const CommonDirectives& _assignmen
 		error_pages = _assignment.error_pages;
 		mimeTypes = _assignment.mimeTypes;
 		upload = _assignment.upload;
-		for (int i = 0; i < CHECK_SIZE; ++i)
-        	check[i] = 0;
+		memset(check, 0, sizeof(check)); 
 	}
 	return (*this);
 }
@@ -49,8 +48,7 @@ CommonDirectives::CommonDirectives(const string& _root, const string& _index,
 	error_log = _error_log;
 	access_log = _access_log;
 	upload = _upload;
-	for (int i = 0; i < CHECK_SIZE; ++i)
-        check[i] = 0;
+	memset(check, 0, sizeof(check)); 
 }
 
 void	CommonDirectives::setRoot(const string& _root)
@@ -192,21 +190,19 @@ MapIntString		CommonDirectives::getErrorPages() const {return (error_pages);}
 VecString			CommonDirectives::getAllowedMethods() const {return (allowed_methods);}
 VecString 			CommonDirectives::getIndexes() const
 {
-	VecString curr = str_utils::proSplit(index);
-	VecString out;
+	VecString out = str_utils::proSplit(index);
 
-	for (VecString_iter it = curr.begin(); it != curr.end();it++)
-		out.push_back(str_utils::remove_quotes(*it));
+	for (VecString_iter it = out.begin(); it != out.end();it++)
+		*it = str_utils::remove_quotes(*it);
 	return (out);
 }
 
 VecString 			CommonDirectives::getTryFiles() const
 {
-	VecString out;
-	VecString curr = str_utils::proSplit(try_files);
+	VecString out = str_utils::proSplit(try_files);
 
-	for (VecString_iter it = curr.begin(); it != curr.end();it++)
-		out.push_back(str_utils::remove_quotes(*it));
+	for (VecString_iter it = out.begin(); it != out.end();it++)
+		*it = str_utils::remove_quotes(*it);
 	return (out);
 }
 
