@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/05 10:42:17 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/08 19:20:04 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,10 +257,10 @@ void	Parser::createFiles()
 
 Parser::Parser(int ac, char**av)
 {
-	string fileName = av[1];
 	string line;
 	if (ac != 2)
 		throw CustomException("Usage: \n\t./webserv [configuration file]");
+	string fileName = av[1];
 	if (!str_utils::endsWith(fileName, ".conf"))
 		throw CustomException("File must end with [.conf] extension!!", fileName);
 	fillValideDirectives();
