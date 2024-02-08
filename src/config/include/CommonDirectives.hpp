@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/02 18:32:16 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/08 19:24:34 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #define ERROR_LOG "./logs/error_log.log"
 #define ACCESS_LOG "./logs/access_log.log"
 #define UPLOAD "./upload/"
+#define ALLOWED_METHODS "GET POST DELETE"
 #define CHECK_SIZE 9
 
 class CommonDirectives

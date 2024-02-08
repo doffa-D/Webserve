@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/05 09:28:49 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/08 21:53:14 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,8 @@ void	CommonDirectives::setTryFiles(const string& _try_files)
 
 static bool	isValideMethod(const string& to_check)
 {
-	string validMethods[] = {"GET", "POST", "DELETE"};
-	for (int i = 0; i < 3;i++)
+	VecString validMethods = str_utils::split(ALLOWED_METHODS, ' ');
+	for (size_t i = 0; i < validMethods.size();i++)
 		if (to_check == validMethods[i])
 			return (true);
 	return (false);
@@ -137,6 +137,7 @@ void	CommonDirectives::setAccessLog(const string& _access_log)
 	access_log = _access_log;
 	check[6] = 1;
 }
+
 void	CommonDirectives::addErrorPage(const string& _error_pages)
 {
 	VecString values = str_utils::ultimatSplit(_error_pages, " \t");
@@ -160,14 +161,18 @@ void	CommonDirectives::setAllowedMethod(const string& _allowed_methods)
 {
 	if (check[7])
 		throw CustomException("directive is duplicate", "allowed_methods");
-	VecString	values = str_utils::ultimatSplit(_allowed_methods, " \t");
+	VecString		values = str_utils::ultimatSplit(_allowed_methods, " \t");
 	VecString_iter	it = values.begin();
+	VecString		_methods;
 	for (; it != values.end(); it++)
 	{
 		if (!isValideMethod(*it))
-			throw CustomException("is invalid value for \"allowed_method\" directive", _allowed_methods); 
-		allowed_methods.push_back(*it);
+			throw CustomException("is invalid value for \"allowed_method\" directive", _allowed_methods);
+		if (find(_methods.begin(), _methods.end(), *it) != _methods.end())
+			throw CustomException("a duplicate allowed_method", *it);
+		_methods.push_back(*it);
 	}
+	allowed_methods = _methods;
 	check[7] = 1;
 }
 
@@ -188,7 +193,13 @@ const string&		CommonDirectives::getAccessLog() const {return (access_log);}
 long				CommonDirectives::getClientMaxBodySize() const {return (client_max_body_size);}
 bool				CommonDirectives::getAutoIndex() const {return (autoindex);}
 MapIntString		CommonDirectives::getErrorPages() const {return (error_pages);}
-VecString			CommonDirectives::getAllowedMethods() const {return (allowed_methods);}
+VecString			CommonDirectives::getAllowedMethods() const 
+{
+	if (!allowed_methods.size())
+		return (str_utils::split(ALLOWED_METHODS, ' '));
+	return (allowed_methods);
+}
+
 VecString 			CommonDirectives::getIndexes() const
 {
 	VecString out = str_utils::proSplit(index);
