@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 08:31:30 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/02 19:01:44 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/08 18:12:00 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ namespace str_utils
 	bool			createFile(const string& fileName);
 	Uint			ip(const string& value);
 	Uint			ip(int n1, int n2, int n3, int n4);
+	std::string		ip(Uint value);
 	string			to_string(int value);
 	int				to_int(const string& value);
 	size_t			find_first_of(const string& str, const string& charset);

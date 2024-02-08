@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 08:10:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/05 16:10:06 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/08 18:12:39 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,19 @@ Uint	str_utils::ip(const string& value)
 			str_utils::to_int(vec[2]) << 16 | \
 			str_utils::to_int(vec[1]) << 8 | \
 			str_utils::to_int(vec[0]));
+}
+
+std::string	str_utils::ip(unsigned int value)
+{
+	int n1 = (value >> 24) & 0xFF;
+	int n2 = (value >> 16) & 0xFF;
+	int n3 = (value >> 8) & 0xFF;
+	int n4 = value & 0xFF;
+
+	return (str_utils::to_string(n1) + "." + 
+			str_utils::to_string(n2) + "." + 
+			str_utils::to_string(n3) + "." + 
+			str_utils::to_string(n4));
 }
 
 bool	str_utils::createFile(const string& fileName)
