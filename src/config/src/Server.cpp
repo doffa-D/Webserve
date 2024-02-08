@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:53 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/08 18:15:31 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/08 18:17:56 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,8 @@ bool	Server::AddPort(const string& _porte)
 		throw CustomException("host not found of the \"listen\" directive", split[0]);
 	if (isPorteAlreadyExists(ret))
 		throw CustomException("a duplicate listen", str_utils::to_string(ret));
+	if (ret < 0 || ret > 65536)
+		throw CustomException("invalid port ", str_utils::to_string(ret));
 	ports.push_back(ret);
 	if (split.size() == 2)
 	{
