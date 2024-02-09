@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/08 21:53:14 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/09 16:44:22 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,6 +209,20 @@ VecString 			CommonDirectives::getIndexes() const
 	return (out);
 }
 
+string			CommonDirectives::getIndexFilePathByRoot(const string& _value)
+{
+	VecString out = str_utils::proSplit(index);
+	string fullPath;
+	for (VecString_iter it = out.begin(); it != out.end();it++)
+	{
+		fullPath = _value + str_utils::remove_quotes(*it);
+		std::ifstream file(fullPath);
+		if (file.is_open())
+			return (fullPath);
+	}
+	return ("");
+}
+
 VecString 			CommonDirectives::getTryFiles() const
 {
 	VecString out = str_utils::proSplit(try_files);
@@ -227,4 +241,5 @@ string				CommonDirectives::getMimeTypeByKey(const string& _key)
 			return (it->second);
 	return ("text/html");
 }
+
 const string&		CommonDirectives::getUpload() const {return (upload);}

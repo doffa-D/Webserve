@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/08 19:24:34 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/09 16:27:56 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,5 +70,6 @@ class CommonDirectives
 		VecString			getTryFiles() const;
 		MapStringString		getMimeTypes() const;
 		string				getMimeTypeByKey(const string& _key);
+		string				getIndexFilePathByRoot(const string& _value);
 		const string&		getUpload() const;
 };
