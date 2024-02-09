@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 08:31:30 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/08 21:42:58 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/09 17:43:34 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ using	std::endl;
 
 namespace str_utils
 {
+	bool			is_number(const string& value);
 	size_t			r_find(const string& fileName, char to_find);
 	bool			createFile(const string& fileName);
 	Uint			ip(const string& value);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 09:04:45 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/05 10:39:17 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/09 18:47:49 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 #include "Server.hpp"
 
-#define ALLOWED_DIRECTIVES "server_name autoindex allowed_method host \
+#define ALLOWED_DIRECTIVES "server_name autoindex allowed_method \
 listen client_max_body_size error_log access_log error_page location root index \
 try_files include upload"
 
@@ -48,6 +48,6 @@ class	Parser
 		Server								getDefaultServer() const;
 		Server								getServerbyHost(const string& _host);
 		std::vector<Server>					getServers() const;
-		std::vector<std::pair<Uint, int> >	getHostsAndPorts();
+		IpPorts								getHostsAndPorts();
 		void								dump();
 };

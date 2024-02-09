@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:32 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/02 19:27:48 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/09 18:44:31 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,19 @@
 #include "Location.hpp"
 
 typedef std::vector<std::pair<string, Location> > Locations;
+typedef std::vector<std::pair<Uint, int> >	IpPorts;
 
 class Server : public CommonDirectives
 {
 	private:
 		string				server_name;
-		Uint				ip_address;
-		VecInt				ports;
+		IpPorts				ip_ports;
 		Locations			locations;
 		bool				nullObject;
 		bool	isLocationAlreadyExists(const string& _path);
-		bool	isPorteAlreadyExists(int _port);
+		bool	isIpPortAlreadyExists(Uint _ip, int _port);
+		Uint	getIp(const string& _value);
+		int		getPort(const string& _value);
 	public:
 		Server();
 		~Server();
@@ -35,15 +37,13 @@ class Server : public CommonDirectives
 		static Server createNullObject();
 		bool	isNull();
 
-		/*==============>SETTERES<================*/
+		/*==============>SETTERS<================*/
 		void	setServerName(const string& _server_name);
-		void	setIpAddress(const string& _host);
-		bool	AddPort(const string& _port);
+		bool	AddIpPort(const string& _ip_port);
 		void	AddLocation(const string& path, const Location& _location);	
-		/*==============>GETTERES<================*/
+		/*==============>GETTERS<================*/
 		VecString			getServerNames() const;
-		Uint				getIpAddress() const;
-		VecInt				getPorts() const;
+		IpPorts				getIpPorts() const;
 		Locations			getLocations() const;
 		Location			getLocationByPath(const string& _path);
 };

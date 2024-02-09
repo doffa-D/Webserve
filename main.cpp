@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:49 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/05 11:53:37 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/09 18:34:27 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ int main(int ac, char **av)
 	try
 	{
 		Parser parsedData(ac, av);
+		parsedData.dump();
         Wb_Server(parsedData.getHostsAndPorts());
-		// parsedData.dump();
 
 	}
 	catch (CustomException ce)

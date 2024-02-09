@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:53 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/08 18:17:56 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/09 18:44:23 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../../../include/header.hpp"
 
 
-Server::Server() : CommonDirectives("./", "index.html", "", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG, UPLOAD), ip_address(str_utils::ip(127,0,0,1)), nullObject(false) {}
+Server::Server() : CommonDirectives("./", "index.html", "", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG, UPLOAD), nullObject(false) {}
 Server::~Server() {}
 Server::Server(const Server& _copy) : CommonDirectives(_copy) {*this = _copy;}
 Server& Server::operator=(const Server& _assignment)
@@ -22,8 +22,7 @@ Server& Server::operator=(const Server& _assignment)
 	if (this != &_assignment)
 	{
 		server_name = _assignment.server_name;
-		ip_address = _assignment.ip_address;
-		ports = _assignment.ports;
+		ip_ports = _assignment.ip_ports;
 		locations = _assignment.locations;
 		nullObject = _assignment.nullObject;
 		CommonDirectives::operator=(_assignment);
@@ -45,55 +44,82 @@ bool			Server::isNull()
 
 /*==============>SETTERES<================*/
 void	Server::setServerName(const string& _server_name) {server_name = _server_name;}
-void	Server::setIpAddress(const string& _ip_address)
+
+Uint	Server::getIp(const string& _value)
 {
-	if (_ip_address == "localhost")
-		ip_address = str_utils::ip(127, 0, 0, 1);
+	Uint _ip;
+	if (_value == "localhost")
+		_ip = str_utils::ip(127, 0, 0, 1);
 	else
 	{
-		VecString split = str_utils::split(_ip_address, '.');
+		VecString split = str_utils::split(_value, '.');
 		VecString_iter it = split.begin();
 		if (split.size() != 4)
-			throw CustomException("host not found in \"" + _ip_address + "\" of the \"host\" directive");
+			throw CustomException("host not found in \"" + _value + "\" of the \"listen\" directive");
 		for (; it != split.end(); it++)
 		{
 			char* endp;
 			double ret = strtod(it->c_str(), &endp);
 			string string_ret = endp;
 			if (string_ret != "" || ret < 0 || ret > 255)
-				throw CustomException("host not found in \"" + _ip_address + "\" of the \"host\" directive");
+				throw CustomException("host not found in \"" + _value + "\" of the \"listen\" directive");
 		}
-		ip_address = str_utils::ip(str_utils::to_int(split[0]),
-							 str_utils::to_int(split[1]),
-							 str_utils::to_int(split[2]),
-							 str_utils::to_int(split[3]));
-	}		
+		_ip = str_utils::ip(str_utils::to_int(split[0]),
+							str_utils::to_int(split[1]),
+							str_utils::to_int(split[2]),
+							str_utils::to_int(split[3]));
+	}
+	return (_ip);
 }
 
-bool	Server::isPorteAlreadyExists(int _porte)
+int		Server::getPort(const string& _value)
 {
-	VecInt_iter it = ports.begin();
-	for (;it != ports.end();it++)
-		if (*it == _porte)
+	char* endp;
+	double	_port = strtod(_value.c_str(), &endp);
+	string string_ret = endp;
+	if (_port < 0 || _port > 65536)
+		throw CustomException("invalid port ", _value);
+	if (string_ret != "")
+		throw CustomException("is invalid port for the \"listen\" directive ", _value);
+	return (_port);
+}
+
+bool	Server::isIpPortAlreadyExists(Uint _ip, int _port)
+{
+	IpPorts::iterator it = ip_ports.begin();
+	for (;it != ip_ports.end();it++)
+		if (it->first == _ip && it->second == _port)
 			return (true);
 	return (false);
 }
 
-bool	Server::AddPort(const string& _porte)
+bool	Server::AddIpPort(const string& _ip_port)
 {
-	VecString split = str_utils::ultimatSplit(_porte, "\t ");
-	if (_porte.empty() || split.size() > 2)
+	VecString split = str_utils::ultimatSplit(_ip_port, "\t ");
+	if (_ip_port.empty() || split.size() > 2)
 		throw CustomException("Directive have invalid number of arguments", "listen");
-	char* endp;
-	double ret = strtod(split[0].c_str(), &endp);
-	string string_ret = endp;
-	if (string_ret != "")
-		throw CustomException("host not found of the \"listen\" directive", split[0]);
-	if (isPorteAlreadyExists(ret))
-		throw CustomException("a duplicate listen", str_utils::to_string(ret));
-	if (ret < 0 || ret > 65536)
-		throw CustomException("invalid port ", str_utils::to_string(ret));
-	ports.push_back(ret);
+	
+	VecString	split2 = str_utils::split(split[0], ':');
+	Uint		_ip = str_utils::ip("127.0.0.1");
+	int			_port = 80;
+	if (split2.size() > 2)
+		throw CustomException("is invalid port for the \"listen\" directive", _ip_port);
+
+	if (split2.size() == 1)
+	{
+		if (str_utils::is_number(split2[0]))
+			_port = getPort(split2[0]);
+		else
+			_ip = getIp(split2[0]);
+	}
+	else
+	{
+		_ip = getIp(split2[0]);
+		_port = getPort(split2[1]);
+	}
+	if (isIpPortAlreadyExists(_ip, _port))
+		throw CustomException("a duplicate listen", _ip_port);
+	ip_ports.push_back(std::make_pair(_ip, _port));
 	if (split.size() == 2)
 	{
 		if(split[1] != "default_server")
@@ -128,18 +154,13 @@ VecString				Server::getServerNames() const
 	return (out);
 }
 
-Uint					Server::getIpAddress() const 
+IpPorts				Server::getIpPorts() const
 {
-	return (ip_address);
-}
-
-VecInt					Server::getPorts() const 
-{
-	VecInt v;
-	v.push_back(80);
-	if (ports.size() == 0)
-		return (v);
-	return (ports);
+	if (ip_ports.size() != 0)
+		return (ip_ports);
+	IpPorts v;
+	v.push_back(std::make_pair(str_utils::ip("127.0.0.1"), 80));
+	return (v);
 }
 
 Locations				Server::getLocations() const {return (locations);}

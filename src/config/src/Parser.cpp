@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/08 19:20:04 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/09 18:47:32 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,10 +132,11 @@ void	Parser::fillDirectives(Server& server, ListString_iter& it, bool& ok)
 		throw CustomException("Directive have invalid number of arguments", key);
 	if (key == "server_name")
 		server.setServerName(value);
-	else if (key == "host")
-		server.setIpAddress(value);
 	else if (key == "listen")
-		ok = (ok == false) ? server.AddPort(value) : server.AddPort(value);
+	{
+		ok = (ok == false) ? server.AddIpPort(value) : server.AddIpPort(value);
+		// if (ok)	
+	}
 	else
 		fillCommonDirectives(server, key, value);
 }
@@ -292,11 +293,13 @@ Parser& Parser::operator=(const Parser& _assignment)
 Server                Parser::getServerbyHost(const string& _host)
 {
     int			port = 80;
+    Server s = Server::createNullObject();
+	if (_host.empty())
+		return (s);
     VecString	split = str_utils::split(_host, ':');
     if(split.size() == 2)
         port = str_utils::to_int(split[1]);
     Uint	ip;
-    Server s = Server::createNullObject();
     if (split[0] == "localhost")
         ip = str_utils::ip(127, 0, 0, 1);
     else
@@ -312,10 +315,10 @@ Server                Parser::getServerbyHost(const string& _host)
     std::vector<Server>::iterator it = servers.begin();
     for (;it != servers.end();it++)
     {
-        VecInt ports = it->getPorts();
-        // ila kane 3aks waslat 127.0.0.1 o 7na fi confile mdfinine server_name so khas server_name it7awl 127.0.0.1
-        if (it->getIpAddress() == ip && find(ports.begin(), ports.end(), port) != ports.end())
-            return (*it);
+        // VecInt ports = it->getPorts();
+        // // ila kane 3aks waslat 127.0.0.1 o 7na fi confile mdfinine server_name so khas server_name it7awl 127.0.0.1
+        // if (it->getIpAddress() == ip && find(ports.begin(), ports.end(), port) != ports.end())
+        //     return (*it);
     }
     return (s);
 }
@@ -330,14 +333,14 @@ Server				Parser::getDefaultServer() const
 	return (s);
 }
 
-std::vector<std::pair<Uint, int> > Parser::getHostsAndPorts()
+IpPorts	Parser::getHostsAndPorts()
 {
-	std::vector<std::pair<Uint, int> > Hosts;
+	IpPorts	Hosts;
 	for (size_t i = 0; i < servers.size();i++)
 	{
-		VecInt s = servers[i].getPorts();
-		for (size_t j = 0; j < s.size(); j++)
-			Hosts.push_back(std::make_pair(servers[i].getIpAddress(), s[j]));
+		IpPorts _ip_ports = servers[i].getIpPorts();
+		for (size_t j = 0; j < _ip_ports.size(); j++)
+			Hosts.push_back(std::make_pair(_ip_ports[j].first, _ip_ports[j].second));
 	}
 	return (Hosts);
 }
@@ -362,12 +365,12 @@ std::vector<std::pair<Uint, int> > Parser::getHostsAndPorts()
 
 
 
-void	printPorts(std::vector<int> ports)
+void	printHosts(IpPorts ports)
 {
-	VecInt_iter it = ports.begin();
-	cout << "ports: " << endl;
+	IpPorts::iterator it = ports.begin();
+	cout << "Hosts: " << endl;
 	for (;it != ports.end();it++)
-		cout << "\t" << *it << endl;
+		cout << "\t" << "ip: " << str_utils::ip(it->first) << " port: " << it->second <<  endl;
 }
 
 void	printCommonDirectives(const CommonDirectives& common)
@@ -429,8 +432,7 @@ void	Parser::dump()
 		for (VecString_iter it = server_names.begin(); it != server_names.end();it++)
 			cout << "\t" << *it << endl;
 
-		cout << "host: [" << it->getIpAddress() << "]" << endl;
-		printPorts(it->getPorts());
+		printHosts(it->getIpPorts());
 		printCommonDirectives(*it);
 		printLocation(it->getLocations());
 		i++;

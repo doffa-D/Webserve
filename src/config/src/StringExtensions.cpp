@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 08:10:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/08 18:12:39 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/09 18:37:50 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,15 @@ int	str_utils::to_int(const string& value)
 	return (ret);
 }
 
+bool	str_utils::is_number(const string& value)
+{
+	for (size_t i = 0; i < value.size();i++)
+		if (!isdigit(value[i]))
+			return (false);
+	return (true);
+}
+
+
 Uint	str_utils::ip(int n1, int n2, int n3, int n4)
 {
 	return (n1 << 24 | n2 << 16 | n3 << 8 | n4);
@@ -117,10 +126,10 @@ Uint	str_utils::ip(const string& value)
 	VecString vec = str_utils::split(value, '.');
 	if (vec.size() != 4)
 		return (-1);
-	return (str_utils::to_int(vec[3]) << 24 | \
-			str_utils::to_int(vec[2]) << 16 | \
-			str_utils::to_int(vec[1]) << 8 | \
-			str_utils::to_int(vec[0]));
+	return (str_utils::to_int(vec[0]) << 24 | \
+			str_utils::to_int(vec[1]) << 16 | \
+			str_utils::to_int(vec[2]) << 8 | \
+			str_utils::to_int(vec[3]));
 }
 
 std::string	str_utils::ip(unsigned int value)
