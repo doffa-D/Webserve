@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:32 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/09 18:44:31 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/10 09:35:11 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ class Server : public CommonDirectives
 		string				server_name;
 		IpPorts				ip_ports;
 		Locations			locations;
+		bool				default_server;
 		bool				nullObject;
 		bool	isLocationAlreadyExists(const string& _path);
 		bool	isIpPortAlreadyExists(Uint _ip, int _port);
@@ -39,9 +40,11 @@ class Server : public CommonDirectives
 
 		/*==============>SETTERS<================*/
 		void	setServerName(const string& _server_name);
+		void	setAsDefaultServer();
 		bool	AddIpPort(const string& _ip_port);
 		void	AddLocation(const string& path, const Location& _location);	
 		/*==============>GETTERS<================*/
+		bool				isDefaultServer() const;
 		VecString			getServerNames() const;
 		IpPorts				getIpPorts() const;
 		Locations			getLocations() const;

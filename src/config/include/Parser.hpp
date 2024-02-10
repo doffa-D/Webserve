@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 09:04:45 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/09 18:47:49 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/10 09:37:29 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,9 @@ class	Parser
 		void	fillValideDirectives();
 		bool	isValideForLocation(const string& key);
 		bool	isValideDirective(const string& _directive);
+		Uint	getIPv4FromDns(const std::string& _dns);
+		Server	findServer(std::vector<Server>& _servers, const string& _host);
+		std::pair<Uint, int>	parseHost(const string& _host);
 	public:
 		Parser(int ac, char**av);
 		~Parser();

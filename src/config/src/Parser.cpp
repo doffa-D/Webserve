@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/09 18:47:32 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/10 09:36:32 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,8 +134,9 @@ void	Parser::fillDirectives(Server& server, ListString_iter& it, bool& ok)
 		server.setServerName(value);
 	else if (key == "listen")
 	{
-		ok = (ok == false) ? server.AddIpPort(value) : server.AddIpPort(value);
-		// if (ok)	
+		ok = server.AddIpPort(value);
+		if (ok)
+			server.setAsDefaultServer();
 	}
 	else
 		fillCommonDirectives(server, key, value);
@@ -290,36 +291,70 @@ Parser& Parser::operator=(const Parser& _assignment)
 	return (*this);
 }
 
-Server                Parser::getServerbyHost(const string& _host)
+Uint	Parser::getIPv4FromDns(const std::string& _dns)
 {
-    int			port = 80;
-    Server s = Server::createNullObject();
+	struct addrinfo hints, *results, *ptr;
+	Uint IpAddr;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+	if (getaddrinfo(_dns.c_str(), NULL, &hints, &results) != 0)
+		return (-1);
+	IpAddr = -1;
+	for (ptr = results; ptr; ptr = ptr->ai_next)
+		IpAddr = ntohl(((struct sockaddr_in *) ptr->ai_addr)->sin_addr.s_addr);
+	freeaddrinfo(results);
+	return (IpAddr);
+}
+
+std::pair<Uint, int>	Parser::parseHost(const string& _host)
+{
+	VecString	split = str_utils::split(_host, ':');
+	std::pair<Uint, int> ip_port;
+	ip_port.first = getIPv4FromDns(split[0]);
+	ip_port.second = 80;
+    if(split.size() == 2)
+        ip_port.second = str_utils::to_int(split[1]);
+    return (ip_port);
+}
+
+Server	Parser::findServer(std::vector<Server>& _servers, const string& _host)
+{
+	if (_servers.front().isDefaultServer())
+			return (_servers.front());
+	Server s = Server::createNullObject();
+	std::pair<Uint, int> ip_port = parseHost(_host);
+	std::vector<Server>::iterator it = _servers.begin();
+	for (;it != _servers.end();it++)
+	{
+		IpPorts	_IpPorts = it->getIpPorts();
+		for (size_t i = 0; i < _IpPorts.size();i++)
+			if (_IpPorts[i].first == ip_port.first && _IpPorts[i].second == ip_port.second)
+				return (*it);
+	}
+	return (s);
+}
+
+Server	Parser::getServerbyHost(const string& _host)
+{
+	Server s = Server::createNullObject();
 	if (_host.empty())
 		return (s);
-    VecString	split = str_utils::split(_host, ':');
-    if(split.size() == 2)
-        port = str_utils::to_int(split[1]);
-    Uint	ip;
-    if (split[0] == "localhost")
-        ip = str_utils::ip(127, 0, 0, 1);
-    else
-    {
-        VecString    ip_values = str_utils::split(split[0], '.');
-        if (ip_values.size() != 4)
-            return (s);
-        ip = str_utils::ip(str_utils::to_int(ip_values[0]),
-                           str_utils::to_int(ip_values[1]),
-                           str_utils::to_int(ip_values[2]),
-                           str_utils::to_int(ip_values[3]));
-    }
-    std::vector<Server>::iterator it = servers.begin();
-    for (;it != servers.end();it++)
-    {
-        // VecInt ports = it->getPorts();
-        // // ila kane 3aks waslat 127.0.0.1 o 7na fi confile mdfinine server_name so khas server_name it7awl 127.0.0.1
-        // if (it->getIpAddress() == ip && find(ports.begin(), ports.end(), port) != ports.end())
-        //     return (*it);
-    }
+
+	std::vector<Server> _s;
+	for (size_t i = 0; i < servers.size();i++)
+	{
+		VecString server_names = servers[i].getServerNames();
+		if (find(server_names.begin(), server_names.end(), _host) != server_names.end())
+			_s.push_back(servers[i]);
+	}
+
+	if (!_s.size())
+		return (findServer(servers, _host));
+	if (_s.size() == 1)
+		return (_s.front());
+	else
+		return (findServer(_s, _host));
     return (s);
 }
 
