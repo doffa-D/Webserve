@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/10 09:36:32 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/13 17:21:58 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,9 +260,13 @@ void	Parser::createFiles()
 Parser::Parser(int ac, char**av)
 {
 	string line;
-	if (ac != 2)
-		throw CustomException("Usage: \n\t./webserv [configuration file]");
-	string fileName = av[1];
+	string fileName;
+	if (ac > 2)
+		throw CustomException("Usage: \n\t./webserv\n\t./webserv [configuration file]");
+	else if (ac == 2)
+		fileName = av[1];
+	else
+		fileName = "ConfileFiles/default.conf";
 	if (!str_utils::endsWith(fileName, ".conf"))
 		throw CustomException("File must end with [.conf] extension!!", fileName);
 	fillValideDirectives();
