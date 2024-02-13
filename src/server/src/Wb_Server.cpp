@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/05 16:13:22 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/11 16:53:26 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void split_request(Client &client)
 	size_t bodyStart = client.buffer.find("\r\n\r\n");
 	if (bodyStart != std::string::npos)
 	{
-		header = client.buffer.substr(0, bodyStart);
+		header = client.buffer.substr(0, bodyStart)  + '\n' + '\x7F' + '\n';
 		body = client.buffer.substr(bodyStart + 2);
 	}
 	std::string boundary = "--" + client.fisrtboundaryValue;
@@ -249,7 +249,7 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 		clients_request[client_index].buffer.append(body);
 		if (!clients_request[client_index].lastboundaryValue.empty())
 		{
-			std::cout << "this is chuncked" << " hi from POST" << std::endl;
+			// std::cout << "this is chuncked" << " hi from POST" << std::endl;
 
 			clients_request[client_index].bytes_read += valread;
 			if (clients_request[client_index].isChunked)
@@ -259,7 +259,7 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 				size_t foundPos = substring.rfind("\r\n0\r\n");
 				if (foundPos != std::string::npos)
 				{
-					std::cout << "hello" << std::endl;
+					// std::cout << "hello" << std::endl;
 					std::string body;
 					size_t startPos = clients_request[client_index].start;
 					size_t endPos = clients_request[client_index].bytes_read;
@@ -312,7 +312,7 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 			}
 			else
 			{
-				std::cout << "this not chuncked" << " hi from POST" << std::endl;
+				// std::cout << "this not chuncked" << " hi from POST" << std::endl;
 
 				if (clients_request[client_index].bytes_read - clients_request[client_index].startFContent == clients_request[client_index].contentLength)
 				{
@@ -458,6 +458,8 @@ void Wb_Server::listen_to_multiple_clients()
 				if (!request.empty())
 				{
 					std::cout << "request: " << request << std::endl;
+					size_t pos = request.find('\x7F');
+					std::cout << &request[pos] << pos << " " << std::string::npos << std::endl;
 					if (send_full_response(i, htmlResponse) == true)
 					{
 						FD_CLR(i, &fd_set_write);
