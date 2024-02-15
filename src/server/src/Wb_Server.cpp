@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/15 12:54:31 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/15 15:15:28 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,7 @@ int Wb_Server::getNumber_of_ports()
 Wb_Server::Wb_Server(std::vector<std::pair<Uint, int> > hAndP)
 {
 	this->HostAndPorts = hAndP;
-	
-	// MIME_types_init();
 	this->Number_of_ports = hAndP.size();
-	getMyIpAddress();
 	for (size_t i = 0; i < hAndP.size(); i++)
 		Setup_Server(i);		  // Setup_Server function is used to setup the server
 	listen_to_multiple_clients(); // listen_to_multiple_clients function is used to listen to multiple clients_request
@@ -418,7 +415,7 @@ void Wb_Server::listen_to_multiple_clients()
 	{
 		FD_SET(socket_fd_server[i], &fd_set_Read);
 	}
-
+	std::cout << "Server is running"<< std::endl;
 	while (true)
 	{
 		Tmp_fd_set_Read = fd_set_Read;
@@ -462,18 +459,18 @@ void Wb_Server::listen_to_multiple_clients()
 					{
 						std::map<std::string, std::string> env;
 						env["SCRIPT_NAME"] = "index.php";
-						env["SCRIPT_FILENAME"] = "/Users/hdagdagu/Desktop/webser/Test_page/index.php";
+						env["SCRIPT_FILENAME"] = "/Users/kchaouki/Desktop/doffa_repo/Test_page/index.php";
 						env["CONTENT_TYPE"] = "text/plain";
 						env["REQUEST_METHOD"] = "GET";
-						env["CONTENT_LENGTH"] = "0";
-						env["QUERY_STRING"] = "";
+						env["CONTENT_LENGTH"] = "13";
+						env["QUERY_STRING"] = "";//It will be empty in the POST and fill it in GET so you can put the form parameter just if you have it
 						env["SERVER_PROTOCOL"] = "HTTP/1.1";
 						env["SERVER_NAME"] = "WebServer";
 						env["GATEWAY_INTERFACE"] = "CGI/1.1";
 						env["REDIRECT_STATUS"] = "200";
 
 						std::string body = "Hello World!";
-						std::string bin = "/Users/hdagdagu/Desktop/webser/CGI/cgi-bin/php-cgi";
+						std::string bin = "/Users/kchaouki/Desktop/doffa_repo/CGI/cgi-bin/php-cgi";
 
 						CGI cgi_obj(body, env, bin);
 						std::cout << cgi_obj.fill_env() << std::endl;
@@ -526,21 +523,4 @@ void Wb_Server::Setup_Server(int port_index)
 	}
 	fcntl(socket_fd_server[port_index], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 	// std::cout << "Listening on port " << HostAndPorts[port_index].second << std::endl;
-}
-
-void Wb_Server::getMyIpAddress()
-{
-	char buffer[1024];
-	ip_address = "";
-
-	struct hostent *host; // Structure containing host information
-	if (gethostname(buffer, sizeof(buffer)) != -1)
-	{
-		host = gethostbyname(buffer); // Get the IP address
-		if (host != NULL)
-		{
-			ip_address = inet_ntoa(*((struct in_addr *)host->h_addr_list[0])); // Convert IP to string
-		}
-	}
-	return;
 }

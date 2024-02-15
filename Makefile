@@ -6,12 +6,12 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/02/15 14:37:36 by hdagdagu         ###   ########.fr        #
+#    Updated: 2024/02/15 15:14:45 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX = g++
-CFLAGS = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g3
+CFLAGS = -Wall -Werror -Wextra -std=c++98 #-fsanitize=address -g3
 NAME = webserv
 OBJDIR = .objFiles
 
@@ -34,8 +34,6 @@ SRCS = main.cpp \
 	$(SRC_DIR)/server/src/SendTracker.cpp \
 	$(SRC_DIR)/server/src/request.cpp \
 	$(SRC_DIR)/CGI/src/CGI.cpp \
-
-
 
 
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
@@ -67,15 +65,14 @@ ascii_art:
 
 
 $(NAME): $(OBJS)
-	@echo "$(YELLOW)Linking object files to create executable $(NAME)$(NC)"
+	@echo "$(RED)"$(NAME)"$(YELLOW) Executable is ready$(NC)"
 	@$(CXX) $(CFLAGS) $(INCLUDES) $^ -o $@
 
+	
 $(OBJDIR)/%.o: %.cpp
-	@echo "$(GREEN)Compiling $< and generating object file $@$(NC)"
+	@echo "$(GREEN)Compiling $(notdir $<)$(NC) >> $(GREEN)$(notdir $@)$(NC)"
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CFLAGS) $(INCLUDES) -MMD -MP -c $< -o $@
-
--include $(OBJS:.o=.d)
+	@$(CXX) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 
 clean:
@@ -88,17 +85,4 @@ fclean: clean
 
 re: fclean all
 
-run: all
-	@echo "$(YELLOW)Running $(NAME)$(NC)"
-	@./$(NAME) config_file/default.conf
-
-
-# watch:
-#     @echo "$(YELLOW)Watching for changes...$(NC)"
-#     @while true; do \
-#         inotifywait -r -e modify -e create -e delete $(SRC_DIR) && \
-#         make --no-print-directory run; \
-#     done
-
-	
 .PHONY: all clean fclean re ascii_art

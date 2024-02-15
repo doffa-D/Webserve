@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:49 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/15 12:56:56 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/15 14:39:54 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int main(int ac, char **av)
 	try
 	{
 		Parser parsedData(ac, av);
-		parsedData.dump();
+		// parsedData.dump();
         Wb_Server(parsedData.getHostsAndPorts());
 
 	}

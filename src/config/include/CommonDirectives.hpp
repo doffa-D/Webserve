@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/15 12:06:09 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 14:40:58 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,13 @@
 #define ALLOWED_METHODS "GET POST DELETE"
 #define ALLOWED_EXTENSION "php py c cpp"
 #define DEFAULT_INDEX "index.html"
-#define CHECK_SIZE 10
+#define CHECK_SIZE 11
 
 class CommonDirectives
 {
 	private:
 		string					root;
+		string					alias;
 		VecString				index;
 		pair<int, string>		redirection;
 		bool					autoindex;
@@ -50,6 +51,7 @@ class CommonDirectives
 
 		/*==============>SETTERS<================*/
 		void	setRoot(const string& _root);
+		void	setAlias(const string& _alias);
 		void	setIndex(const string& _index);
 		void	setRedirection(const string& _redirection);
 		void	setAllowedMethod(const string& _allowed_methods);
@@ -64,6 +66,7 @@ class CommonDirectives
 		
 		/*==============>GETTERS<================*/
 		const string&		getRoot() const;
+		const string&		getAlias() const;
 		VecString			getAllowedMethods() const;
 		bool				getAutoIndex() const;
 		long				getClientMaxBodySize() const;
