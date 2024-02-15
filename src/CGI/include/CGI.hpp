@@ -3,29 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   cgi.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:20 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/05 13:14:16 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 12:40:04 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/header.hpp"
-#define CGI "cgi-bin/php-cgi"
 
-#pragma once
+#ifndef CGI_HPP
+#define CGI_HPP
 
-class cgi
+class CGI
 {
 	private:
 		std::map<std::string, std::string> env;
 		char **envp;
-		std::string head;
 		std::string body;
+		std::string bin;
 
 	public:
-		cgi(std::string head, std::string body, std::string SCRIPT_NAME, std::string SCRIPT_FILENAME, std::string CONTENT_TYPE, std::string REQUEST_METHOD, std::string CONTENT_LENGTH, std::string QUERY_STRING, std::string SERVER_PROTOCOL, std::string SERVER_SOFTWARE, std::string SERVER_NAME, std::string GATEWAY_INTERFACE, std::string REDIRECT_STATUS);
+		CGI(std::string const &body, std::map<std::string, std::string> const &env, std::string const &bin);
 
-		~cgi();
-    	void fill_env(std::string SCRIPT_FILENAME);
+		~CGI();
+
+		std::string fill_env();
 };
+
+#endif // CGI_HPP

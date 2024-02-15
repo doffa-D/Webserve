@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+         #
+#    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/02/05 16:22:35 by kchaouki         ###   ########.fr        #
+#    Updated: 2024/02/15 12:36:06 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,6 +34,7 @@ SRCS = main.cpp \
 	$(SRC_DIR)/server/src/Upload.cpp \
 	$(SRC_DIR)/server/src/SendTracker.cpp \
 	$(SRC_DIR)/server/src/request.cpp \
+	$(SRC_DIR)/CGI/src/CGI.cpp \
 
 
 
@@ -90,7 +91,12 @@ run: all
 	@./$(NAME) config_file/default.conf
 
 
-watch:
-	@python3 watch.py
+# watch:
+#     @echo "$(YELLOW)Watching for changes...$(NC)"
+#     @while true; do \
+#         inotifywait -r -e modify -e create -e delete $(SRC_DIR) && \
+#         make --no-print-directory run; \
+#     done
+
 	
 .PHONY: all clean fclean re ascii_art
