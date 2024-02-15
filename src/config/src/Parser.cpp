@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/13 17:21:58 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 10:13:03 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	Parser::fillValideDirectives()
 
 bool	Parser::isValideDirective(const string& _directive)
 {
-	std::vector<string>::iterator it = allowed_directives.begin();
+	vector<string>::iterator it = allowed_directives.begin();
 	for (; it < allowed_directives.end(); it++)
 		if (*it == _directive)
 			return (true);
@@ -61,19 +61,21 @@ void	parseMimeTypes(CommonDirectives& common, const string& filePath)
 
 void	fillCommonDirectives(CommonDirectives& common, const string& key, const string& value)
 {
-	std::string  keys[10] = {"root", "index", "try_files", "autoindex",  "client_max_body_size", \
-							 "error_log", "access_log", "error_page", "allowed_method", "upload"};
+	std::string  keys[11] = {"root", "index", "autoindex",  "client_max_body_size", \
+							 "error_log", "access_log", "error_page", "allowed_method", "upload", \
+							 "redirection", "cgi"};
 
-	void	(CommonDirectives::*functionPtr[10])(const string&) = 
-			{&CommonDirectives::setRoot, &CommonDirectives::setIndex, &CommonDirectives::setTryFiles, 
+	void	(CommonDirectives::*functionPtr[11])(const string&) = 
+			{&CommonDirectives::setRoot, &CommonDirectives::setIndex, 
 			&CommonDirectives::setAutoIndex, &CommonDirectives::setClientMaxBodySize, 
 			&CommonDirectives::setErrorLog, &CommonDirectives::setAccessLog, &CommonDirectives::addErrorPage,
-			&CommonDirectives::setAllowedMethod, &CommonDirectives::setUpload};
+			&CommonDirectives::setAllowedMethod, &CommonDirectives::setUpload, &CommonDirectives::setRedirection,
+			&CommonDirectives::setCgi};
 
 	int i = 0;
-	while (i < 10 && key != keys[i])
+	while (i < 11 && key != keys[i])
 		i++;
-	if (i < 10)
+	if (i < 11)
 		(common.*functionPtr[i])(value);
 	else if (key == "include")
 		parseMimeTypes(common, value);
@@ -246,7 +248,7 @@ void	checkFiles(CommonDirectives common)
 
 void	Parser::createFiles()
 {
-	std::vector<Server>::iterator it = servers.begin();
+	vector<Server>::iterator it = servers.begin();
 	for (; it != servers.end();it++)
 	{
 		checkFiles(*it);
@@ -295,7 +297,7 @@ Parser& Parser::operator=(const Parser& _assignment)
 	return (*this);
 }
 
-Uint	Parser::getIPv4FromDns(const std::string& _dns)
+Uint	Parser::getIPv4FromDns(const string& _dns)
 {
 	struct addrinfo hints, *results, *ptr;
 	Uint IpAddr;
@@ -311,10 +313,10 @@ Uint	Parser::getIPv4FromDns(const std::string& _dns)
 	return (IpAddr);
 }
 
-std::pair<Uint, int>	Parser::parseHost(const string& _host)
+pair<Uint, int>	Parser::parseHost(const string& _host)
 {
 	VecString	split = str_utils::split(_host, ':');
-	std::pair<Uint, int> ip_port;
+	pair<Uint, int> ip_port;
 	ip_port.first = getIPv4FromDns(split[0]);
 	ip_port.second = 80;
     if(split.size() == 2)
@@ -322,13 +324,13 @@ std::pair<Uint, int>	Parser::parseHost(const string& _host)
     return (ip_port);
 }
 
-Server	Parser::findServer(std::vector<Server>& _servers, const string& _host)
+Server	Parser::findServer(vector<Server>& _servers, const string& _host)
 {
 	if (_servers.front().isDefaultServer())
 			return (_servers.front());
 	Server s = Server::createNullObject();
-	std::pair<Uint, int> ip_port = parseHost(_host);
-	std::vector<Server>::iterator it = _servers.begin();
+	pair<Uint, int> ip_port = parseHost(_host);
+	vector<Server>::iterator it = _servers.begin();
 	for (;it != _servers.end();it++)
 	{
 		IpPorts	_IpPorts = it->getIpPorts();
@@ -345,7 +347,7 @@ Server	Parser::getServerbyHost(const string& _host)
 	if (_host.empty())
 		return (s);
 
-	std::vector<Server> _s;
+	vector<Server> _s;
 	for (size_t i = 0; i < servers.size();i++)
 	{
 		VecString server_names = servers[i].getServerNames();
@@ -362,7 +364,7 @@ Server	Parser::getServerbyHost(const string& _host)
     return (s);
 }
 
-std::vector<Server>	Parser::getServers() const {return (servers);}
+vector<Server>	Parser::getServers() const {return (servers);}
 
 Server				Parser::getDefaultServer() const
 {
@@ -420,10 +422,10 @@ void	printCommonDirectives(const CommonDirectives& common)
 	for (VecString_iter it = indexes.begin(); it != indexes.end();it++)
 		cout << "\t" << *it << endl;
 
-	cout << "try_files: " << endl;
-	VecString tryFiles = common.getTryFiles();
-	for (VecString_iter it = tryFiles.begin(); it != tryFiles.end();it++)
-		cout << "\t" << *it << endl;
+	cout << "redirection: " << endl;
+	pair<int, string>	redirection = common.getRedirection();
+	cout << "\tstatus: " << redirection.first << " path: " << redirection.second << endl;
+	
 
 	cout << "autoindex: [" << common.getAutoIndex() << "]" << endl;
 	cout << "client_max_body_size: [" << common.getClientMaxBodySize() << "]" << endl;
@@ -446,6 +448,11 @@ void	printCommonDirectives(const CommonDirectives& common)
 		cout << "\t" << it->first << ": " << it->second << endl;
 	
 	cout << "upload: [" << common.getUpload() << "]" << endl;
+	
+	cout << "Cgi: " << endl;
+	MapStringString cgi = common.getCgi();
+	for (MapStringString_iter it = cgi.begin(); it != cgi.end();it++)
+		cout << "\t" << it->first << " => " << it->second << endl;
 }
 
 void	printLocation(Locations locations)
@@ -462,7 +469,7 @@ void	printLocation(Locations locations)
 
 void	Parser::dump()
 {
-	std::vector<Server>::iterator it = servers.begin();
+	vector<Server>::iterator it = servers.begin();
 	for (int i = 0; it != servers.end();it++)
 	{
 		cout << "==========================> Server[" << i << "] <==========================" << endl;

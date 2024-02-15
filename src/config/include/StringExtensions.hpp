@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 08:31:30 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/09 17:43:34 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/14 17:55:18 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,12 @@ typedef std::vector<int> 				VecInt;
 typedef VecInt::iterator 				VecInt_iter;
 typedef std::list<string>				ListString;
 typedef ListString::iterator			ListString_iter;
-typedef unsigned int 					Uint;
+typedef unsigned int					Uint;
+
+
+using	std::vector;
+using	std::pair;
+using	std::map;
 using	std::cout;
 using	std::cerr;
 using	std::endl;

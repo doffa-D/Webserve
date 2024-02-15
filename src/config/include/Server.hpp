@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:32 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/10 09:35:11 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/14 17:56:27 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 #include "CommonDirectives.hpp"
 #include "Location.hpp"
 
-typedef std::vector<std::pair<string, Location> > Locations;
-typedef std::vector<std::pair<Uint, int> >	IpPorts;
+typedef vector<pair<string, Location> > Locations;
+typedef vector<pair<Uint, int> >	IpPorts;
 
 class Server : public CommonDirectives
 {

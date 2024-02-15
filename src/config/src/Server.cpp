@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:53 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/10 08:17:26 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 11:48:02 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../../../include/header.hpp"
 
 
-Server::Server() : CommonDirectives("./", "index.html", "", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG, UPLOAD), default_server(false), nullObject(false) {}
+Server::Server() : CommonDirectives("./", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG, UPLOAD), default_server(false), nullObject(false) {}
 Server::~Server() {}
 Server::Server(const Server& _copy) : CommonDirectives(_copy) {*this = _copy;}
 Server& Server::operator=(const Server& _assignment)
