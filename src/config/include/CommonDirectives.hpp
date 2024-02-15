@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/15 11:58:25 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 12:06:09 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ class CommonDirectives
 		CommonDirectives(const string& _root, const bool& _autoindex , const long& _client_max_body_size,
 						 const string& _error_log, const string& _access_log, const string& _upload);
 
+		/*==============>SETTERS<================*/
 		void	setRoot(const string& _root);
 		void	setIndex(const string& _index);
 		void	setRedirection(const string& _redirection);
@@ -60,7 +61,8 @@ class CommonDirectives
 		void	addMimeType(const string& _key, const string& _value);
 		void	setUpload(const string& _upload);
 		void	setCgi(const string& _cgi);
-
+		
+		/*==============>GETTERS<================*/
 		const string&		getRoot() const;
 		VecString			getAllowedMethods() const;
 		bool				getAutoIndex() const;

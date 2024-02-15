@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:53 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/15 11:48:02 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 12:09:32 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,8 @@ bool	Server::AddIpPort(const string& _ip_port)
 		throw CustomException("Directive have invalid number of arguments", "listen");
 	
 	VecString	split2 = str_utils::split(split[0], ':');
-	Uint		_ip = str_utils::ip("127.0.0.1");
-	int			_port = 80;
+	Uint		_ip = str_utils::ip(DEFAULT_IP);
+	int			_port = DEFAULT_PORT;
 	if (split2.size() > 2)
 		throw CustomException("is invalid port for the \"listen\" directive", _ip_port);
 
@@ -160,7 +160,7 @@ IpPorts				Server::getIpPorts() const
 	if (ip_ports.size() != 0)
 		return (ip_ports);
 	IpPorts v;
-	v.push_back(std::make_pair(str_utils::ip("127.0.0.1"), 80));
+	v.push_back(std::make_pair(str_utils::ip(DEFAULT_IP), DEFAULT_PORT));
 	return (v);
 }
 

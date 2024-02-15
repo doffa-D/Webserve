@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:32 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/14 17:56:27 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 12:05:06 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 #include "CommonDirectives.hpp"
 #include "Location.hpp"
+#define DEFAULT_IP "127.0.0.1"
+#define DEFAULT_PORT 80
 
 typedef vector<pair<string, Location> > Locations;
 typedef vector<pair<Uint, int> >	IpPorts;
