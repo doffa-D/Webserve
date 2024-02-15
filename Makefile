@@ -6,7 +6,7 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/02/15 12:36:06 by hdagdagu         ###   ########.fr        #
+#    Updated: 2024/02/15 14:37:36 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,9 +19,8 @@ SRC_DIR = src
 
 INCLUDE_DIR = include
 CONFIG_INCLUDE_DIR = $(SRC_DIR)/config/include
-EXCEPTION_INCLUDE_DIR = $(SRC_DIR)/exception/include
-REQUEST_INCLUDE_DIR = $(SRC_DIR)/request/include
 SERVER_INCLUDE_DIR = $(SRC_DIR)/server/include
+CGI_INCLUDE_DIR = $(SRC_DIR)/CGI/include
 
 SRCS = main.cpp \
 	$(SRC_DIR)/config/src/CommonDirectives.cpp \
@@ -41,7 +40,7 @@ SRCS = main.cpp \
 
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 
-INCLUDES = -I$(INCLUDE_DIR) -I$(CONFIG_INCLUDE_DIR) -I$(EXCEPTION_INCLUDE_DIR) -I$(REQUEST_INCLUDE_DIR) -I$(SERVER_INCLUDE_DIR) -I./src1/Includes
+INCLUDES = -I$(INCLUDE_DIR) -I$(CONFIG_INCLUDE_DIR) -I$(SERVER_INCLUDE_DIR) -I$(CGI_INCLUDE_DIR)
 
 # Color codes
 GREEN = \033[0;32m
@@ -74,7 +73,10 @@ $(NAME): $(OBJS)
 $(OBJDIR)/%.o: %.cpp
 	@echo "$(GREEN)Compiling $< and generating object file $@$(NC)"
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CXX) $(CFLAGS) $(INCLUDES) -MMD -MP -c $< -o $@
+
+-include $(OBJS:.o=.d)
+
 
 clean:
 	@echo "$(RED)Cleaning up object files$(NC)"
