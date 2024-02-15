@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/15 11:46:36 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 11:58:25 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #define UPLOAD "./upload/"
 #define ALLOWED_METHODS "GET POST DELETE"
 #define ALLOWED_EXTENSION "php py c cpp"
+#define DEFAULT_INDEX "index.html"
 #define CHECK_SIZE 10
 
 class CommonDirectives
@@ -70,7 +71,7 @@ class CommonDirectives
 		VecString			getIndexes() const;
 		pair<int, string>	getRedirection() const;
 		MapStringString		getMimeTypes() const;
-		string				getMimeTypeByKey(const string& _key);
+		string				getMimeTypeByKey(const string& _key) const;
 		string				getIndexFilePathByRoot(const string& _value) const;
 		const string&		getUpload() const;
 		MapStringString		getCgi() const;

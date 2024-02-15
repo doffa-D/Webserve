@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/15 11:52:48 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 11:59:07 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,7 +270,7 @@ VecString			CommonDirectives::getAllowedMethods() const
 VecString 			CommonDirectives::getIndexes() const
 {
 	if (!index.size())
-		return (str_utils::split("index.html", ' '));
+		return (str_utils::split(DEFAULT_INDEX, ' '));
 	return (index);
 }
 
@@ -290,7 +290,7 @@ string			CommonDirectives::getIndexFilePathByRoot(const string& _value) const
 
 pair<int, string>	CommonDirectives::getRedirection() const{return (redirection);}
 MapStringString		CommonDirectives::getMimeTypes() const {return (mimeTypes);}
-string				CommonDirectives::getMimeTypeByKey(const string& _key)
+string				CommonDirectives::getMimeTypeByKey(const string& _key) const
 {
 	try{return (mimeTypes.at(_key));}
 	catch (const std::out_of_range& e) { (void) e;}
