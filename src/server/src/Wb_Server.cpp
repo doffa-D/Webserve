@@ -6,11 +6,10 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/15 15:15:28 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/15 18:03:37 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "../include/Server.hpp"
 #include "../../../include/header.hpp"
 
 
@@ -458,8 +457,8 @@ void Wb_Server::listen_to_multiple_clients()
 					if (send_full_response(i, htmlResponse) == true)
 					{
 						std::map<std::string, std::string> env;
-						env["SCRIPT_NAME"] = "index.php";
-						env["SCRIPT_FILENAME"] = "/Users/kchaouki/Desktop/doffa_repo/Test_page/index.php";
+						env["SCRIPT_NAME"] = "ll.py";
+						env["SCRIPT_FILENAME"] = "/Users/hdagdagu/Desktop/webser/Test_page/ll.py";
 						env["CONTENT_TYPE"] = "text/plain";
 						env["REQUEST_METHOD"] = "GET";
 						env["CONTENT_LENGTH"] = "13";
@@ -470,7 +469,7 @@ void Wb_Server::listen_to_multiple_clients()
 						env["REDIRECT_STATUS"] = "200";
 
 						std::string body = "Hello World!";
-						std::string bin = "/Users/kchaouki/Desktop/doffa_repo/CGI/cgi-bin/php-cgi";
+						std::string bin = "/usr/bin/c++";
 
 						CGI cgi_obj(body, env, bin);
 						std::cout << cgi_obj.fill_env() << std::endl;

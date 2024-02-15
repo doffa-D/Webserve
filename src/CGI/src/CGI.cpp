@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/15 14:43:50 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/15 18:12:42 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,6 @@ std::string CGI::fill_env()
         {
             perror("waitpid");
             throw std::runtime_error("500 internal server error");
-
         }
         close(fd[1]);
         char buffer[1024];
