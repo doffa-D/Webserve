@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/15 13:13:11 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 13:19:34 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,7 +268,7 @@ Parser::Parser(int ac, char**av)
 	else if (ac == 2)
 		fileName = av[1];
 	else
-		fileName = "ConfileFiles/default.conf";
+		fileName = DEFUALT_CONFIG_PATH;
 	if (!str_utils::endsWith(fileName, ".conf"))
 		throw CustomException("File must end with [.conf] extension!!", fileName);
 	fillValideDirectives();

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/15 12:54:31 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/15 13:38:43 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -462,18 +462,18 @@ void Wb_Server::listen_to_multiple_clients()
 					{
 						std::map<std::string, std::string> env;
 						env["SCRIPT_NAME"] = "index.php";
-						env["SCRIPT_FILENAME"] = "/Users/hdagdagu/Desktop/webser/Test_page/index.php";
+						env["SCRIPT_FILENAME"] = "/Users/kchaouki/Desktop/doffa_repo/Test_page/index.php";
 						env["CONTENT_TYPE"] = "text/plain";
 						env["REQUEST_METHOD"] = "GET";
-						env["CONTENT_LENGTH"] = "0";
-						env["QUERY_STRING"] = "";
+						env["CONTENT_LENGTH"] = "13";
+						env["QUERY_STRING"] = "";//It will be empty in the POST and fill it in GET so you can put the form parameter just if you have it
 						env["SERVER_PROTOCOL"] = "HTTP/1.1";
 						env["SERVER_NAME"] = "WebServer";
 						env["GATEWAY_INTERFACE"] = "CGI/1.1";
 						env["REDIRECT_STATUS"] = "200";
 
 						std::string body = "Hello World!";
-						std::string bin = "/Users/hdagdagu/Desktop/webser/CGI/cgi-bin/php-cgi";
+						std::string bin = "/Users/kchaouki/Desktop/doffa_repo/CGI/cgi-bin/php-cgi";
 
 						CGI cgi_obj(body, env, bin);
 						std::cout << cgi_obj.fill_env() << std::endl;

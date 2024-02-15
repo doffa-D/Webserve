@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cgi.cpp                                            :+:      :+:    :+:   */
+/*   CGI.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/15 12:53:16 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/15 13:36:31 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,6 @@ std::string CGI::fill_env()
             exit(1);
         }
 
-        close(fd[0]);
-        close(fd[1]);
 
         char **arge = new char *[3];
         arge[0] = new char[this->bin.length() + 1];
@@ -83,17 +81,19 @@ std::string CGI::fill_env()
             perror("execve");
             exit(1);
         }
+        close(fd[0]);
+        close(fd[1]);
         exit(0);
     }
     else
     {
+        write(fd[1], body.c_str(), body.length());
         waitpid(pid, &status, 0);
         if (WEXITSTATUS(status) != 0)
         {
             perror("waitpid");
             exit(status);
         }
-        write(fd[1], body.c_str(), body.length());
         close(fd[1]);
         char buffer[1024];
         std::string response = "";
