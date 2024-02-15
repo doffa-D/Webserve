@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 09:04:45 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/15 09:43:26 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 12:31:06 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@
 
 #define ALLOWED_DIRECTIVES "server_name autoindex allowed_method \
 listen client_max_body_size error_log access_log error_page location root index \
-try_files include upload redirection cgi"
+try_files include upload redirection cgi alias"
 
 #define LOCATION_DIRECTIVES "root try_files index location alias allowed_method \
 autoindex client_max_body_size error_log access_log \
-error_pages include upload redirection cgi"
+error_pages include upload redirection cgi alias"
 
 class	Parser
 {

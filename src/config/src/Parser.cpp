@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/15 10:13:03 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 13:13:11 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,21 +61,21 @@ void	parseMimeTypes(CommonDirectives& common, const string& filePath)
 
 void	fillCommonDirectives(CommonDirectives& common, const string& key, const string& value)
 {
-	std::string  keys[11] = {"root", "index", "autoindex",  "client_max_body_size", \
+	std::string  keys[12] = {"root", "alias", "index", "autoindex",  "client_max_body_size", \
 							 "error_log", "access_log", "error_page", "allowed_method", "upload", \
 							 "redirection", "cgi"};
 
-	void	(CommonDirectives::*functionPtr[11])(const string&) = 
-			{&CommonDirectives::setRoot, &CommonDirectives::setIndex, 
+	void	(CommonDirectives::*functionPtr[12])(const string&) = 
+			{&CommonDirectives::setRoot, &CommonDirectives::setAlias, &CommonDirectives::setIndex, 
 			&CommonDirectives::setAutoIndex, &CommonDirectives::setClientMaxBodySize, 
 			&CommonDirectives::setErrorLog, &CommonDirectives::setAccessLog, &CommonDirectives::addErrorPage,
 			&CommonDirectives::setAllowedMethod, &CommonDirectives::setUpload, &CommonDirectives::setRedirection,
 			&CommonDirectives::setCgi};
 
 	int i = 0;
-	while (i < 11 && key != keys[i])
+	while (i < 12 && key != keys[i])
 		i++;
-	if (i < 11)
+	if (i < 12)
 		(common.*functionPtr[i])(value);
 	else if (key == "include")
 		parseMimeTypes(common, value);
@@ -417,6 +417,7 @@ void	printHosts(IpPorts ports)
 void	printCommonDirectives(const CommonDirectives& common)
 {
 	cout << "root: [" << common.getRoot() << "]" << endl;
+	cout << "alias: [" << common.getAlias() << "]" << endl;
 	cout << "index: " << endl;
 	VecString indexes = common.getIndexes();
 	for (VecString_iter it = indexes.begin(); it != indexes.end();it++)
