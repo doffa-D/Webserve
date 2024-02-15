@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:32 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/02 19:27:48 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 12:05:06 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,24 @@
 
 #include "CommonDirectives.hpp"
 #include "Location.hpp"
+#define DEFAULT_IP "127.0.0.1"
+#define DEFAULT_PORT 80
 
-typedef std::vector<std::pair<string, Location> > Locations;
+typedef vector<pair<string, Location> > Locations;
+typedef vector<pair<Uint, int> >	IpPorts;
 
 class Server : public CommonDirectives
 {
 	private:
 		string				server_name;
-		Uint				ip_address;
-		VecInt				ports;
+		IpPorts				ip_ports;
 		Locations			locations;
+		bool				default_server;
 		bool				nullObject;
 		bool	isLocationAlreadyExists(const string& _path);
-		bool	isPorteAlreadyExists(int _port);
+		bool	isIpPortAlreadyExists(Uint _ip, int _port);
+		Uint	getIp(const string& _value);
+		int		getPort(const string& _value);
 	public:
 		Server();
 		~Server();
@@ -35,15 +40,15 @@ class Server : public CommonDirectives
 		static Server createNullObject();
 		bool	isNull();
 
-		/*==============>SETTERES<================*/
+		/*==============>SETTERS<================*/
 		void	setServerName(const string& _server_name);
-		void	setIpAddress(const string& _host);
-		bool	AddPort(const string& _port);
+		void	setAsDefaultServer();
+		bool	AddIpPort(const string& _ip_port);
 		void	AddLocation(const string& path, const Location& _location);	
-		/*==============>GETTERES<================*/
+		/*==============>GETTERS<================*/
+		bool				isDefaultServer() const;
 		VecString			getServerNames() const;
-		Uint				getIpAddress() const;
-		VecInt				getPorts() const;
+		IpPorts				getIpPorts() const;
 		Locations			getLocations() const;
 		Location			getLocationByPath(const string& _path);
 };

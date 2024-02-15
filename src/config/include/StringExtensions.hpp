@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 08:31:30 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/02 19:01:44 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/14 17:55:18 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include <cstring>
-#include <string.h>
 #include <limits.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -37,17 +37,24 @@ typedef std::vector<int> 				VecInt;
 typedef VecInt::iterator 				VecInt_iter;
 typedef std::list<string>				ListString;
 typedef ListString::iterator			ListString_iter;
-typedef unsigned int 					Uint;
+typedef unsigned int					Uint;
+
+
+using	std::vector;
+using	std::pair;
+using	std::map;
 using	std::cout;
 using	std::cerr;
 using	std::endl;
 
 namespace str_utils
 {
+	bool			is_number(const string& value);
 	size_t			r_find(const string& fileName, char to_find);
 	bool			createFile(const string& fileName);
 	Uint			ip(const string& value);
 	Uint			ip(int n1, int n2, int n3, int n4);
+	std::string		ip(Uint value);
 	string			to_string(int value);
 	int				to_int(const string& value);
 	size_t			find_first_of(const string& str, const string& charset);

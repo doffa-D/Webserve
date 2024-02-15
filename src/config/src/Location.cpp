@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:15:25 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/05 09:29:15 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/15 11:48:13 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../../../include/header.hpp"
 
 
-Location::Location() : CommonDirectives("/", "index.html", "", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG, UPLOAD), nullObject(false) {}
+Location::Location() : CommonDirectives("./", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG, UPLOAD), nullObject(false) {}
 Location::~Location() {}
 Location::Location(const Location& _copy) : CommonDirectives(_copy) {*this = _copy;}
 Location::Location(const CommonDirectives& _copy) : CommonDirectives(_copy) {}
