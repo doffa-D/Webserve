@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:49 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/15 13:31:59 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/16 22:45:13 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int main(int ac, char **av)
 	try
 	{
 		Parser parsedData(ac, av);
-		// parsedData.dump();
+		parsedData.dump();
         Wb_Server(parsedData.getHostsAndPorts());
 
 	}
