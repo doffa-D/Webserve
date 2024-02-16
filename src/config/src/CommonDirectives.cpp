@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/16 22:37:02 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/16 23:06:49 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ CommonDirectives& CommonDirectives::operator=(const CommonDirectives& _assignmen
 		mimeTypes = _assignment.mimeTypes;
 		upload = _assignment.upload;
 		cgi = _assignment.cgi;
-		root_alias = _assignment.root_alias;
+		root_alias = false;
 		memset(check, 0, sizeof(check)); 
 	}
 	return (*this);
@@ -47,6 +47,7 @@ CommonDirectives::CommonDirectives(const string& _root, const bool& _autoindex ,
 	error_log = _error_log;
 	access_log = _access_log;
 	upload = _upload;
+	root_alias = false;
 	memset(check, 0, sizeof(check)); 
 }
 
