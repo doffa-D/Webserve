@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/16 23:29:05 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/16 23:36:13 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -390,26 +390,7 @@ IpPorts	Parser::getHostsAndPorts()
 	return (Hosts);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*==============>print parsed config data<==============*/
 void	printHosts(IpPorts ports)
 {
 	IpPorts::iterator it = ports.begin();
