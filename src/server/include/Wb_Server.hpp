@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/05 16:17:14 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 15:15:08 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ private:
 	int socket_fd_client;			  // socket_fd_client is the file descriptor of the client socket
 	int bytes_read;					  // bytes_read is the number of bytes read from the client
 	sockaddr_in address[FD_SETSIZE];			   // address is the address of the server socket
-	std::string ip_address;						   // ip_address is the ip address of the server
 	std::string sBuffer;						   // sBuffer is the buffer that will be used to store data as a string
 	std::string HtmlFile;						   // HtmlFile is the html file that will be sent to the client
 	// std::map<std::string, std::string> MIME_types; // MIME_types is the map that will be used to store the mime types
@@ -59,7 +58,6 @@ public:
 	Wb_Server(std::vector<std::pair<Uint, int> > hAndP);
 	~Wb_Server();
 	void Setup_Server(int port_index);						   // Setup_Server function is used to setup the server
-	void getMyIpAddress();									   // getMyIpAddress function is used to get the ip address of the server
 	void Accept_Connection(int port_index);					   // Accept_Connection function is used to accept a connection request from a client
 	void Read_Request_From_Client(int client, int port_index); // Read_From_Client function is used to read data from a client
 	void Send_Response_To_Client();							   // Send_Response_To_Client function is used to send a response to the client

@@ -6,12 +6,12 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/02/15 12:36:06 by hdagdagu         ###   ########.fr        #
+#    Updated: 2024/02/15 15:14:45 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX = g++
-CFLAGS = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g3
+CFLAGS = -Wall -Werror -Wextra -std=c++98 #-fsanitize=address -g3
 NAME = webserv
 OBJDIR = .objFiles
 
@@ -19,9 +19,8 @@ SRC_DIR = src
 
 INCLUDE_DIR = include
 CONFIG_INCLUDE_DIR = $(SRC_DIR)/config/include
-EXCEPTION_INCLUDE_DIR = $(SRC_DIR)/exception/include
-REQUEST_INCLUDE_DIR = $(SRC_DIR)/request/include
 SERVER_INCLUDE_DIR = $(SRC_DIR)/server/include
+CGI_INCLUDE_DIR = $(SRC_DIR)/CGI/include
 
 SRCS = main.cpp \
 	$(SRC_DIR)/config/src/CommonDirectives.cpp \
@@ -37,11 +36,9 @@ SRCS = main.cpp \
 	$(SRC_DIR)/CGI/src/CGI.cpp \
 
 
-
-
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 
-INCLUDES = -I$(INCLUDE_DIR) -I$(CONFIG_INCLUDE_DIR) -I$(EXCEPTION_INCLUDE_DIR) -I$(REQUEST_INCLUDE_DIR) -I$(SERVER_INCLUDE_DIR) -I./src1/Includes
+INCLUDES = -I$(INCLUDE_DIR) -I$(CONFIG_INCLUDE_DIR) -I$(SERVER_INCLUDE_DIR) -I$(CGI_INCLUDE_DIR)
 
 # Color codes
 GREEN = \033[0;32m
@@ -68,13 +65,15 @@ ascii_art:
 
 
 $(NAME): $(OBJS)
-	@echo "$(YELLOW)Linking object files to create executable $(NAME)$(NC)"
+	@echo "$(RED)"$(NAME)"$(YELLOW) Executable is ready$(NC)"
 	@$(CXX) $(CFLAGS) $(INCLUDES) $^ -o $@
 
+	
 $(OBJDIR)/%.o: %.cpp
-	@echo "$(GREEN)Compiling $< and generating object file $@$(NC)"
+	@echo "$(GREEN)Compiling $(notdir $<)$(NC) >> $(GREEN)$(notdir $@)$(NC)"
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
 
 clean:
 	@echo "$(RED)Cleaning up object files$(NC)"
@@ -86,17 +85,4 @@ fclean: clean
 
 re: fclean all
 
-run: all
-	@echo "$(YELLOW)Running $(NAME)$(NC)"
-	@./$(NAME) config_file/default.conf
-
-
-# watch:
-#     @echo "$(YELLOW)Watching for changes...$(NC)"
-#     @while true; do \
-#         inotifywait -r -e modify -e create -e delete $(SRC_DIR) && \
-#         make --no-print-directory run; \
-#     done
-
-	
 .PHONY: all clean fclean re ascii_art

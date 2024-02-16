@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/15 13:38:43 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/15 18:03:37 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "../include/Server.hpp"
 #include "../../../include/header.hpp"
 
 
@@ -22,10 +21,7 @@ int Wb_Server::getNumber_of_ports()
 Wb_Server::Wb_Server(std::vector<std::pair<Uint, int> > hAndP)
 {
 	this->HostAndPorts = hAndP;
-	
-	// MIME_types_init();
 	this->Number_of_ports = hAndP.size();
-	getMyIpAddress();
 	for (size_t i = 0; i < hAndP.size(); i++)
 		Setup_Server(i);		  // Setup_Server function is used to setup the server
 	listen_to_multiple_clients(); // listen_to_multiple_clients function is used to listen to multiple clients_request
@@ -418,7 +414,7 @@ void Wb_Server::listen_to_multiple_clients()
 	{
 		FD_SET(socket_fd_server[i], &fd_set_Read);
 	}
-
+	std::cout << "Server is running"<< std::endl;
 	while (true)
 	{
 		Tmp_fd_set_Read = fd_set_Read;
@@ -461,8 +457,8 @@ void Wb_Server::listen_to_multiple_clients()
 					if (send_full_response(i, htmlResponse) == true)
 					{
 						std::map<std::string, std::string> env;
-						env["SCRIPT_NAME"] = "index.php";
-						env["SCRIPT_FILENAME"] = "/Users/kchaouki/Desktop/doffa_repo/Test_page/index.php";
+						env["SCRIPT_NAME"] = "ll.py";
+						env["SCRIPT_FILENAME"] = "/Users/hdagdagu/Desktop/webser/Test_page/ll.py";
 						env["CONTENT_TYPE"] = "text/plain";
 						env["REQUEST_METHOD"] = "GET";
 						env["CONTENT_LENGTH"] = "13";
@@ -473,7 +469,7 @@ void Wb_Server::listen_to_multiple_clients()
 						env["REDIRECT_STATUS"] = "200";
 
 						std::string body = "Hello World!";
-						std::string bin = "/Users/kchaouki/Desktop/doffa_repo/CGI/cgi-bin/php-cgi";
+						std::string bin = "/usr/bin/c++";
 
 						CGI cgi_obj(body, env, bin);
 						std::cout << cgi_obj.fill_env() << std::endl;
@@ -526,21 +522,4 @@ void Wb_Server::Setup_Server(int port_index)
 	}
 	fcntl(socket_fd_server[port_index], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 	// std::cout << "Listening on port " << HostAndPorts[port_index].second << std::endl;
-}
-
-void Wb_Server::getMyIpAddress()
-{
-	char buffer[1024];
-	ip_address = "";
-
-	struct hostent *host; // Structure containing host information
-	if (gethostname(buffer, sizeof(buffer)) != -1)
-	{
-		host = gethostbyname(buffer); // Get the IP address
-		if (host != NULL)
-		{
-			ip_address = inet_ntoa(*((struct in_addr *)host->h_addr_list[0])); // Convert IP to string
-		}
-	}
-	return;
 }
