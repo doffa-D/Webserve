@@ -6,12 +6,12 @@
 #    By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/02/17 19:30:07 by rrhnizar         ###   ########.fr        #
+#    Updated: 2024/02/18 00:00:15 by rrhnizar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX = g++
-CFLAGS = -Wall -Werror -Wextra -std=c++98 #-fsanitize=address -g3
+CFLAGS = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g3
 NAME = webserv
 OBJDIR = .objFiles
 
@@ -20,6 +20,7 @@ INCLUDE_DIR = include
 CONFIG_INCLUDE_DIR = $(SRC_DIR)/config/include
 SERVER_INCLUDE_DIR = $(SRC_DIR)/server/include
 CGI_INCLUDE_DIR = $(SRC_DIR)/CGI/include
+REQUEST_RESPONSE = $(SRC_DIR)/Request_Response/include
 
 SRCS = main.cpp \
 	$(SRC_DIR)/config/src/CommonDirectives.cpp \
@@ -31,12 +32,14 @@ SRCS = main.cpp \
 	$(SRC_DIR)/server/src/Wb_Server.cpp \
 	$(SRC_DIR)/server/src/SendTracker.cpp \
 	$(SRC_DIR)/server/src/request.cpp \
-	$(SRC_DIR)/CGI/src/CGI.cpp
+	$(SRC_DIR)/CGI/src/CGI.cpp \
+	$(SRC_DIR)/Request_Response/src/Request.cpp \
+	$(SRC_DIR)/Request_Response/src/Response.cpp
 
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 DEPS = $(OBJS:.o=.d)
 
-INCLUDES = -I$(INCLUDE_DIR) -I$(CONFIG_INCLUDE_DIR) -I$(SERVER_INCLUDE_DIR) -I$(CGI_INCLUDE_DIR)
+INCLUDES = -I$(INCLUDE_DIR) -I$(CONFIG_INCLUDE_DIR) -I$(SERVER_INCLUDE_DIR) -I$(CGI_INCLUDE_DIR) -I$(REQUEST_RESPONSE)
 
 # Color codes
 GREEN = \033[0;32m

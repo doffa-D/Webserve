@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/16 23:06:49 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/17 23:35:19 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -301,6 +301,8 @@ string				CommonDirectives::getMimeTypeByKey(const string& _key) const
 	catch (const std::out_of_range& e) { (void) e;}
 	return ("text/html");
 }
+
+
 
 const string&		CommonDirectives::getUpload() const {return (upload);}
 MapStringString		CommonDirectives::getCgi() const {return (cgi);}

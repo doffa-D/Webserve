@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   CustomException.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 10:06:24 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/05 09:29:07 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/18 00:25:28 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "CustomException.hpp"
 #include "../../../include/header.hpp"
 
 

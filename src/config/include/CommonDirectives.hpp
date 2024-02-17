@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/16 22:54:46 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/18 00:32:11 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "StringExtensions.hpp"
-#include "CustomException.hpp"
+#include "../../../include/header.hpp"
+
 
 #define MAX_CLIENT_BODY_SIZE 8589934592
 #define ERROR_LOG "./logs/error_log.log"

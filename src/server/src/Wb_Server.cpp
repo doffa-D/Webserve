@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/17 19:29:29 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/18 00:45:55 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,15 @@
 
 
 
-Wb_Server::Wb_Server(std::vector<std::pair<Uint, int> > hAndP)
+// Wb_Server::Wb_Server(std::vector<std::pair<Uint, int> > hAndP)
+Wb_Server::Wb_Server(const Parser& parsedData)
 {
+	std::vector<std::pair<Uint, int> > hAndP = parsedData.getHostsAndPorts();
 	this->HostAndPorts = hAndP;
 	this->Number_of_ports = hAndP.size();
 	for (size_t i = 0; i < hAndP.size(); i++)
 		Setup_Server(i);		  // Setup_Server function is used to setup the server
-	listen_to_multiple_clients(); // listen_to_multiple_clients function is used to listen to multiple clients_request
+	listen_to_multiple_clients(parsedData); // listen_to_multiple_clients function is used to listen to multiple clients_request
 }
 
 
@@ -62,9 +64,9 @@ void Wb_Server::Setup_Server(int port_index)
 }
 
 
-void Wb_Server::listen_to_multiple_clients()
+void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 {
-	std::string request = "";
+	char buffer[1024];
 	fd_set fd_set_Read, Tmp_fd_set_Read;
 	fd_set fd_set_write, Tmp_fd_set_write;
 	FD_ZERO(&fd_set_Read);
@@ -79,13 +81,13 @@ void Wb_Server::listen_to_multiple_clients()
 	{
 		Tmp_fd_set_Read = fd_set_Read;
 		Tmp_fd_set_write = fd_set_write;
-
+		
 		if (select(FD_SETSIZE, &Tmp_fd_set_Read, &Tmp_fd_set_write, NULL, NULL) < 0)
 		{
 			perror("Error in select");
 			exit(1);
 		}
-
+		std::string httpRequest = "";
 		for (int i = 0; i < FD_SETSIZE; ++i)
 		{
 			if (FD_ISSET(i, &Tmp_fd_set_Read))
@@ -106,49 +108,57 @@ void Wb_Server::listen_to_multiple_clients()
 				}
 				else
 				{
-					request = read_full_request(i, fd_set_Read, fd_set_write);
-				}
-			}
-			else if (FD_ISSET(i, &Tmp_fd_set_write))
-			{
-				if (!request.empty())
-				{
-						std::string htmlResponse = "hello world";
-					try
-					{
-						std::cout << "request: " << request << std::endl;
-						
-						std::map<std::string, std::string> env;
-						env["SCRIPT_NAME"] = "ll.py"; //It will be the name of the file
-						env["SCRIPT_FILENAME"] = "/Users/rrhnizar/Desktop/DofaCgi/ll.py"; //It will be the path of the file 
-						env["CONTENT_TYPE"] = "application/x-www-form-urlencoded";
-						env["REQUEST_METHOD"] = "POST";
-						env["CONTENT_LENGTH"] = "12";
-						env["QUERY_STRING"] = "";//It will be empty in the POST and fill it in GET so you can put the form parameter just if you have it
-						env["SERVER_PROTOCOL"] = "HTTP/1.1"; 
-						env["SERVER_NAME"] = "WebServer";
-						env["REDIRECT_STATUS"] = "200";
-					
-						std::string body = "Hello=Wollllrld!"; // it will be empty in GET !!!
-						std::string bin = "/usr/bin/python3";
+					Request request;
 
-						CGI cgi_obj(body, env, bin);
-						std::string respont = cgi_obj.fill_env();
-						std::cout <<  respont << std::endl;
-						
-					}
-					catch(const std::exception& e)
-					{
-						std::cerr << e.what() << '\n';
-					}
+					// httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
+					// httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
+					bzero(buffer, 1024);
+					int n = recv(i, buffer, 1024, 0);
+					std::string buf(buffer, n);
+					httpRequest += buf;
+					request.Parse_Request(httpRequest);
 					
-					if (send_full_response(i, htmlResponse) == true)
-					{
-						FD_CLR(i, &fd_set_write);
-						close(i);
-					}
+					Response	response;
+					response.ft_Response(i, request, parsedData);
+					// response.ft_Response(newsockfd, request, parser);
+					// std::cout << "Request : \n" << httpRequest << std::endl;
 				}
 			}
+			// else if (FD_ISSET(i, &Tmp_fd_set_write))
+			// {
+			// 	if (!httpRequest.empty())
+			// 	{
+			// 		std::string htmlResponse = "hello world";
+			// 		// try
+			// 		// {
+			// 		// 	// std::cout << "request: " << httpRequest << std::endl;			
+			// 		// 	std::map<std::string, std::string> env;
+			// 		// 	env["SCRIPT_NAME"] = "ll.py"; //It will be the name of the file
+			// 		// 	env["SCRIPT_FILENAME"] = "/Users/rrhnizar/Desktop/DofaCgi/ll.py"; //It will be the path of the file 
+			// 		// 	env["CONTENT_TYPE"] = "application/x-www-form-urlencoded";
+			// 		// 	env["REQUEST_METHOD"] = "POST";
+			// 		// 	env["CONTENT_LENGTH"] = "12";
+			// 		// 	env["QUERY_STRING"] = "";//It will be empty in the POST and fill it in GET so you can put the form parameter just if you have it
+			// 		// 	env["SERVER_PROTOCOL"] = "HTTP/1.1"; 
+			// 		// 	env["SERVER_NAME"] = "WebServer";
+			// 		// 	env["REDIRECT_STATUS"] = "200";	
+			// 		// 	std::string body = "Hello=Wollllrld!"; // it will be empty in GET !!!
+			// 		// 	std::string bin = "/usr/bin/python3";
+			// 		// 	CGI cgi_obj(body, env, bin);
+			// 		// 	std::string respont = cgi_obj.fill_env();
+			// 		// 	std::cout <<  respont << std::endl;
+			// 		// }
+			// 		// catch(const std::exception& e)
+			// 		// {
+			// 		// 	std::cerr << e.what() << '\n';
+			// 		// }
+			// 		if (send_full_response(i, htmlResponse) == true)
+			// 		{
+			// 			FD_CLR(i, &fd_set_write);
+			// 			close(i);
+			// 		}
+			// 	}
+			// }
 		}
 	}
 }

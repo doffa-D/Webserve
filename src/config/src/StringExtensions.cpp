@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   StringExtensions.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 08:10:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/15 10:45:44 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/18 00:25:03 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "StringExtensions.hpp"
 #include "../../../include/header.hpp"
 
 

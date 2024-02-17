@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:15:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/16 22:38:59 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/18 00:27:48 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "CommonDirectives.hpp"
+#include "../../../include/header.hpp"
+
 
 class Location : public CommonDirectives
 {

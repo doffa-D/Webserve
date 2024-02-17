@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 09:04:45 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/16 22:41:49 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/18 00:29:51 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "Server.hpp"
+
 
 #define ALLOWED_DIRECTIVES "server_name autoindex allowed_method \
 listen client_max_body_size error_log access_log error_page location root index \
@@ -44,15 +45,15 @@ class	Parser
 		void			fillValideDirectives();
 		bool			isValideForLocation(const string& key);
 		bool			isValideDirective(const string& _directive);
-		Uint			getIPv4FromDns(const std::string& _dns);
-		Server			findServer(std::vector<Server>& _servers, const string& _host);
-		pair<Uint, int>	parseHost(const string& _host);
+		Uint			getIPv4FromDns(const std::string& _dns) const;
+		Server			findServer(std::vector<Server>& _servers, const string& _host) const;
+		pair<Uint, int>	parseHost(const string& _host) const;
 	public:
 		Parser(int ac, char**av);
 		~Parser();
 		Server								getDefaultServer() const;
-		Server								getServerbyHost(const string& _host);
+		Server								getServerbyHost(const string& _host) const;
 		vector<Server>						getServers() const;
-		IpPorts								getHostsAndPorts();
+		IpPorts								getHostsAndPorts() const;
 		void								dump();
 };

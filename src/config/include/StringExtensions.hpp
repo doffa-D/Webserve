@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   StringExtensions.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 08:31:30 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/14 17:55:18 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/18 00:40:40 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <netdb.h> //getaddrinfo
 
 typedef std::string						string; 
 typedef std::map<int, string>			MapIntString;

@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/16 23:36:13 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/18 00:39:33 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "Parser.hpp"
 #include "../../../include/header.hpp"
 
 
@@ -301,7 +300,7 @@ Parser& Parser::operator=(const Parser& _assignment)
 	return (*this);
 }
 
-Uint	Parser::getIPv4FromDns(const string& _dns)
+Uint	Parser::getIPv4FromDns(const string& _dns) const
 {
 	struct addrinfo hints, *results, *ptr;
 	Uint IpAddr;
@@ -317,7 +316,7 @@ Uint	Parser::getIPv4FromDns(const string& _dns)
 	return (IpAddr);
 }
 
-pair<Uint, int>	Parser::parseHost(const string& _host)
+pair<Uint, int>	Parser::parseHost(const string& _host) const
 {
 	VecString	split = str_utils::split(_host, ':');
 	pair<Uint, int> ip_port;
@@ -328,7 +327,7 @@ pair<Uint, int>	Parser::parseHost(const string& _host)
     return (ip_port);
 }
 
-Server	Parser::findServer(vector<Server>& _servers, const string& _host)
+Server	Parser::findServer(vector<Server>& _servers, const string& _host) const
 {
 	if (_servers.front().isDefaultServer())
 			return (_servers.front());
@@ -345,22 +344,23 @@ Server	Parser::findServer(vector<Server>& _servers, const string& _host)
 	return (s);
 }
 
-Server	Parser::getServerbyHost(const string& _host)
+Server	Parser::getServerbyHost(const string& _host) const
 {
 	Server s = Server::createNullObject();
 	if (_host.empty())
 		return (s);
 
 	vector<Server> _s;
-	for (size_t i = 0; i < servers.size();i++)
+	vector<Server> _servers = servers;
+	for (size_t i = 0; i < _servers.size();i++)
 	{
-		VecString server_names = servers[i].getServerNames();
+		VecString server_names = _servers[i].getServerNames();
 		if (find(server_names.begin(), server_names.end(), _host) != server_names.end())
-			_s.push_back(servers[i]);
+			_s.push_back(_servers[i]);
 	}
 
 	if (!_s.size())
-		return (findServer(servers, _host));
+		return (findServer(_servers, _host));
 	if (_s.size() == 1)
 		return (_s.front());
 	else
@@ -378,7 +378,7 @@ Server				Parser::getDefaultServer() const
 	return (s);
 }
 
-IpPorts	Parser::getHostsAndPorts()
+IpPorts	Parser::getHostsAndPorts() const
 {
 	IpPorts	Hosts;
 	for (size_t i = 0; i < servers.size();i++)

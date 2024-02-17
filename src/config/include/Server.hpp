@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:32 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/16 22:39:01 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/18 00:54:57 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include "CommonDirectives.hpp"
 #include "Location.hpp"
+
 #define DEFAULT_IP "127.0.0.1"
 #define DEFAULT_PORT 8080
 

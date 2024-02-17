@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/16 10:27:32 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/17 23:57:30 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/header.hpp" // in this header file we have all the libraries that we need
+// #include "../../Request_Response/Request.hpp"
+// #include "../../Request_Response/Response.hpp"
 
 #define PORT 8080		 // the port users will be connecting to
 #define BACKLOG 5		 // how many pending connections queue will hold
@@ -54,7 +56,8 @@ private:
 	std::vector<SendTracker> clients_respont;
 
 public:
-	Wb_Server(std::vector<std::pair<Uint, int> > hAndP);
+	// Wb_Server(std::vector<std::pair<Uint, int> > hAndP);
+	Wb_Server(const Parser& parsedData);
 	~Wb_Server();
 	void Setup_Server(int port_index);						   // Setup_Server function is used to setup the server
 	void Accept_Connection(int port_index);					   // Accept_Connection function is used to accept a connection request from a client
@@ -65,7 +68,7 @@ public:
 	void MIME_types_init();									   // MIME_types_init function is used to initialize the map with the mime types
 	void Send_Error_Response(int fd_client);				   // Send_Error_Response function is used to send an error response to the client
 	void get_matched_location_for_request_uri();			   // Send_Correct_Response function is used to send a correct response to the client
-	void listen_to_multiple_clients();						   // listen_to_multiple_clients function is used to listen to multiple clients
+	void listen_to_multiple_clients(const Parser& parsedData);						   // listen_to_multiple_clients function is used to listen to multiple clients
 	void Check_file_existence(std::string path);			   // Check_file_existence function is used to check if the file exists
 	void Send_Correct_Response();							   // Send_Correct_Response function is used to send a correct response to the client
 	void get_server_by_hostname(std::string host, int fd_clien);

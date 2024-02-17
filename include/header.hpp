@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   header.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:24:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/16 10:24:09 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/18 00:41:44 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,6 @@
 
 #include <sys/socket.h> // For socket functions
 #include <netinet/in.h> // For sockaddr_in
-#include <cstdlib>      // For exit() and EXIT_FAILURE
-#include <iostream>     // For cout
-#include <unistd.h>     // For read
-#include <arpa/inet.h>  // For inet_ntoa
-#include <netdb.h>      // For gethostbyname
-#include <fstream>      // For ifstream
-#include <fcntl.h>      // For open
-#include <vector>       // For vector
-#include <string>       // For string
-#include <map>          // For map
 
 // ===========Config============= //
 
@@ -42,8 +32,10 @@
 #include "../src/server/include/Wb_Server.hpp" 
 #include "../src/CGI/include/CGI.hpp"
 
-// ======================== //
+// ===========Request_Response============ //
 
+#include "../src/Request_Response/include/Request.hpp"
+#include "../src/Request_Response/include/Response.hpp"
 
 
 
