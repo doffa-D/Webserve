@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/15 13:19:34 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/16 23:36:13 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,24 +58,23 @@ void	parseMimeTypes(CommonDirectives& common, const string& filePath)
 	}
 }
 
-
 void	fillCommonDirectives(CommonDirectives& common, const string& key, const string& value)
 {
-	std::string  keys[12] = {"root", "alias", "index", "autoindex",  "client_max_body_size", \
+	std::string  keys[11] = {"root", "index", "autoindex",  "client_max_body_size", \
 							 "error_log", "access_log", "error_page", "allowed_method", "upload", \
 							 "redirection", "cgi"};
 
-	void	(CommonDirectives::*functionPtr[12])(const string&) = 
-			{&CommonDirectives::setRoot, &CommonDirectives::setAlias, &CommonDirectives::setIndex, 
+	void	(CommonDirectives::*functionPtr[11])(const string&) = 
+			{&CommonDirectives::setRoot, &CommonDirectives::setIndex, 
 			&CommonDirectives::setAutoIndex, &CommonDirectives::setClientMaxBodySize, 
 			&CommonDirectives::setErrorLog, &CommonDirectives::setAccessLog, &CommonDirectives::addErrorPage,
 			&CommonDirectives::setAllowedMethod, &CommonDirectives::setUpload, &CommonDirectives::setRedirection,
 			&CommonDirectives::setCgi};
 
 	int i = 0;
-	while (i < 12 && key != keys[i])
+	while (i < 11 && key != keys[i])
 		i++;
-	if (i < 12)
+	if (i < 11)
 		(common.*functionPtr[i])(value);
 	else if (key == "include")
 		parseMimeTypes(common, value);
@@ -105,7 +104,10 @@ void	Parser::fillLocationDirective(Server& server, CommonDirectives& old_locatio
 			else
 			{
 				string	value = str_utils::trim(it->substr(str_utils::find_first_of(*it, " \t"), it->length()));
-				fillCommonDirectives(location, key, value);
+				if (key == "alias")
+					location.setAlias(value);
+				else
+					fillCommonDirectives(location, key, value);
 				it++;
 				if (it == tokens.end())
 					throw CustomException("unexpected end of file, expecting \";\" or \"}\"");
@@ -140,6 +142,8 @@ void	Parser::fillDirectives(Server& server, ListString_iter& it, bool& ok)
 		if (ok)
 			server.setAsDefaultServer();
 	}
+	else if (key == "alias")
+		throw CustomException("directive is not allowed inside server", key);
 	else
 		fillCommonDirectives(server, key, value);
 }
@@ -386,26 +390,7 @@ IpPorts	Parser::getHostsAndPorts()
 	return (Hosts);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*==============>print parsed config data<==============*/
 void	printHosts(IpPorts ports)
 {
 	IpPorts::iterator it = ports.begin();
@@ -414,46 +399,45 @@ void	printHosts(IpPorts ports)
 		cout << "\t" << "ip: " << str_utils::ip(it->first) << " port: " << it->second <<  endl;
 }
 
-void	printCommonDirectives(const CommonDirectives& common)
+void	printCommonDirectives(const CommonDirectives& common, string befor)
 {
-	cout << "root: [" << common.getRoot() << "]" << endl;
-	cout << "alias: [" << common.getAlias() << "]" << endl;
-	cout << "index: " << endl;
+	cout << befor << "root: [" << common.getRoot() << "]" << endl;
+	cout << befor << "index: " << endl;
 	VecString indexes = common.getIndexes();
 	for (VecString_iter it = indexes.begin(); it != indexes.end();it++)
-		cout << "\t" << *it << endl;
+		cout << befor << "\t" << *it << endl;
 
-	cout << "redirection: " << endl;
+	cout << befor << "redirection: " << endl;
 	pair<int, string>	redirection = common.getRedirection();
-	cout << "\tstatus: " << redirection.first << " path: " << redirection.second << endl;
+	cout << befor << "\tstatus: " << redirection.first << " path: " << redirection.second << endl;
 	
 
-	cout << "autoindex: [" << common.getAutoIndex() << "]" << endl;
-	cout << "client_max_body_size: [" << common.getClientMaxBodySize() << "]" << endl;
-	cout << "error_log: [" << common.getErrorLog() << "]" << endl;
-	cout << "access_log: [" << common.getAccessLog() << "]" << endl;
+	cout << befor << "autoindex: [" << common.getAutoIndex() << "]" << endl;
+	cout << befor << "client_max_body_size: [" << common.getClientMaxBodySize() << "]" << endl;
+	cout << befor << "error_log: [" << common.getErrorLog() << "]" << endl;
+	cout << befor << "access_log: [" << common.getAccessLog() << "]" << endl;
 
-	cout << "error_pages: " << endl;
+	cout << befor << "error_pages: " << endl;
 	MapIntString errorPages = common.getErrorPages();
 	for (MapIntString_iter it= errorPages.begin(); it!= errorPages.end();it++)
-		cout << "\t" << it->first << ": " << it->second << endl;
+		cout << befor << "\t" << it->first << ": " << it->second << endl;
 
-	cout << "allowed_methods: " << endl;
+	cout << befor << "allowed_methods: " << endl;
 	VecString allowedMethods = common.getAllowedMethods();
 	for (VecString_iter it = allowedMethods.begin(); it != allowedMethods.end();it++)
-		cout << "\t" << *it << endl;
+		cout << befor << "\t" << *it << endl;
 
-	cout << "types: " << endl;
+	cout << befor << "types: " << endl;
 	MapStringString types = common.getMimeTypes();
 	for (MapStringString_iter it = types.begin(); it != types.end();it++)
-		cout << "\t" << it->first << ": " << it->second << endl;
+		cout << befor << "\t" << it->first << ": " << it->second << endl;
 	
-	cout << "upload: [" << common.getUpload() << "]" << endl;
+	cout << befor << "upload: [" << common.getUpload() << "]" << endl;
 	
-	cout << "Cgi: " << endl;
+	cout << befor << "Cgi: " << endl;
 	MapStringString cgi = common.getCgi();
 	for (MapStringString_iter it = cgi.begin(); it != cgi.end();it++)
-		cout << "\t" << it->first << " => " << it->second << endl;
+		cout << befor << "\t" << it->first << " => " << it->second << endl;
 }
 
 void	printLocation(Locations locations)
@@ -462,10 +446,12 @@ void	printLocation(Locations locations)
 	cout << "locations: " << endl;
 	for (;it != locations.end();it++)
 	{
-		cout << "---------------->path: " << it->first << endl;
-		printCommonDirectives(it->second);
+		cout << "--->path: " << it->first << endl;
+		cout << "\talias: [" << it->second.getAlias() << "]" << endl;
+		printCommonDirectives(it->second, "\t");
 		cout << "<----------------" << endl;
 	}
+
 }
 
 void	Parser::dump()
@@ -480,7 +466,7 @@ void	Parser::dump()
 			cout << "\t" << *it << endl;
 
 		printHosts(it->getIpPorts());
-		printCommonDirectives(*it);
+		printCommonDirectives(*it, "");
 		printLocation(it->getLocations());
 		i++;
 	}

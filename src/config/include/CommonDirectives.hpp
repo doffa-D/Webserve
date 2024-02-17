@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/15 14:40:58 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/16 22:54:46 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ class CommonDirectives
 {
 	private:
 		string					root;
-		string					alias;
 		VecString				index;
 		pair<int, string>		redirection;
 		bool					autoindex;
@@ -42,6 +41,8 @@ class CommonDirectives
 		MapStringString			cgi;
 		int						check[CHECK_SIZE];
 		CommonDirectives();
+	protected:
+		bool					root_alias;
 	public:
 		~CommonDirectives();
 		CommonDirectives(const CommonDirectives& _copy);
@@ -49,9 +50,9 @@ class CommonDirectives
 		CommonDirectives(const string& _root, const bool& _autoindex , const long& _client_max_body_size,
 						 const string& _error_log, const string& _access_log, const string& _upload);
 
+		void	check_unexpected(const string& to_check, const string& direc);
 		/*==============>SETTERS<================*/
 		void	setRoot(const string& _root);
-		void	setAlias(const string& _alias);
 		void	setIndex(const string& _index);
 		void	setRedirection(const string& _redirection);
 		void	setAllowedMethod(const string& _allowed_methods);
@@ -66,7 +67,6 @@ class CommonDirectives
 		
 		/*==============>GETTERS<================*/
 		const string&		getRoot() const;
-		const string&		getAlias() const;
 		VecString			getAllowedMethods() const;
 		bool				getAutoIndex() const;
 		long				getClientMaxBodySize() const;

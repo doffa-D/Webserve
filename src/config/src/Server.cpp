@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:53 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/15 12:09:32 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/16 22:39:09 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,18 @@ bool			Server::isNull()
 }
 
 /*==============>SETTERES<================*/
-void	Server::setServerName(const string& _server_name) {server_name = _server_name;}
+void	Server::setServerName(const string& _server_name) 
+{
+	if (server_name.size())
+		throw CustomException("directive is duplicate", "server_name");
+	VecString vec = str_utils::proSplit(_server_name);
+	for (size_t i = 0; i < vec.size();i++)
+	{
+		this->check_unexpected(vec[i], "server_name");
+		server_name.push_back(str_utils::remove_quotes(vec[i]));
+	}
+}
+
 void	Server::setAsDefaultServer() {default_server = true;}
 
 Uint	Server::getIp(const string& _value)
@@ -147,14 +158,7 @@ void	Server::AddLocation(const string& path, const Location& _location)
 }
 
 /*==============>GETTERES<================*/
-VecString				Server::getServerNames() const 
-{
-	VecString out = str_utils::proSplit(server_name);
-	for (VecString_iter it = out.begin(); it != out.end();it++)
-		*it = str_utils::remove_quotes(*it);
-	return (out);
-}
-
+VecString				Server::getServerNames() const {return (server_name);}
 IpPorts				Server::getIpPorts() const
 {
 	if (ip_ports.size() != 0)
