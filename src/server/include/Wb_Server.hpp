@@ -6,11 +6,10 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/15 15:15:08 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/16 10:27:32 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// For ifstream
 #include "../../../include/header.hpp" // in this header file we have all the libraries that we need
 
 #define PORT 8080		 // the port users will be connecting to

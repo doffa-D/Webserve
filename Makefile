@@ -6,7 +6,7 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/02/15 15:14:45 by hdagdagu         ###   ########.fr        #
+#    Updated: 2024/02/16 10:33:03 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,6 @@ NAME = webserv
 OBJDIR = .objFiles
 
 SRC_DIR = src
-
 INCLUDE_DIR = include
 CONFIG_INCLUDE_DIR = $(SRC_DIR)/config/include
 SERVER_INCLUDE_DIR = $(SRC_DIR)/server/include
@@ -33,10 +32,10 @@ SRCS = main.cpp \
 	$(SRC_DIR)/server/src/Upload.cpp \
 	$(SRC_DIR)/server/src/SendTracker.cpp \
 	$(SRC_DIR)/server/src/request.cpp \
-	$(SRC_DIR)/CGI/src/CGI.cpp \
-
+	$(SRC_DIR)/CGI/src/CGI.cpp
 
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
+DEPS = $(OBJS:.o=.d)
 
 INCLUDES = -I$(INCLUDE_DIR) -I$(CONFIG_INCLUDE_DIR) -I$(SERVER_INCLUDE_DIR) -I$(CGI_INCLUDE_DIR)
 
@@ -46,7 +45,7 @@ RED = \033[0;31m
 YELLOW = \033[0;33m
 NC = \033[0m
 
-all: ascii_art $(NAME)  
+all: ascii_art $(NAME)
 
 ascii_art:
 	@echo "\n"
@@ -63,17 +62,14 @@ ascii_art:
 	@echo "\n"
 
 
-
 $(NAME): $(OBJS)
-	@echo "$(RED)"$(NAME)"$(YELLOW) Executable is ready$(NC)"
+	@echo "$(RED)$(NAME)$(YELLOW) Executable is ready$(NC)"
 	@$(CXX) $(CFLAGS) $(INCLUDES) $^ -o $@
 
-	
 $(OBJDIR)/%.o: %.cpp
 	@echo "$(GREEN)Compiling $(notdir $<)$(NC) >> $(GREEN)$(notdir $@)$(NC)"
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CFLAGS) $(INCLUDES) -c $< -o $@
-
 
 clean:
 	@echo "$(RED)Cleaning up object files$(NC)"
@@ -84,5 +80,13 @@ fclean: clean
 	@rm -f $(NAME)
 
 re: fclean all
+
+run: $(NAME)
+	./$(NAME)
+
+watch:
+	@npx nodemon -x 'reset && make run' -e cpp,hpp
+
+
 
 .PHONY: all clean fclean re ascii_art
