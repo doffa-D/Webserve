@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGI.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/16 10:22:58 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/17 19:34:43 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ CGI::CGI(std::string const &body, std::map<std::string, std::string> const &env,
 
 CGI::~CGI()
 {
-    for (int i = 0; envp[i]; ++i)
-        delete[] envp[i];
-    delete[] envp;
+    // for (int i = 0; envp[i]; ++i)
+    //     delete[] envp[i];
+    // delete[] envp;
 }
 
 std::string CGI::fill_env()
@@ -93,7 +93,7 @@ std::string CGI::fill_env()
         if (WEXITSTATUS(status) != 0)
         {
             perror("waitpid");
-            throw std::runtime_error("500 internal server error");
+            // throw std::runtime_error("500 internal server error");
         }
         close(fd[1]);
         char buffer[1024];

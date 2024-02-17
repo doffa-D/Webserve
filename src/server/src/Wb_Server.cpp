@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/17 13:26:51 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/17 19:29:29 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,27 +113,37 @@ void Wb_Server::listen_to_multiple_clients()
 			{
 				if (!request.empty())
 				{
-					std::string htmlResponse = "hello world";
-					if (send_full_response(i, htmlResponse) == true)
+						std::string htmlResponse = "hello world";
+					try
 					{
 						std::cout << "request: " << request << std::endl;
 						
-						// std::map<std::string, std::string> env;
-						// env["SCRIPT_NAME"] = "ll.py"; //It will be the name of the file
-						// env["SCRIPT_FILENAME"] = "/Users/hdagdagu/Desktop/webser/Test_page/ll.py"; //It will be the path of the file 
-						// env["CONTENT_TYPE"] = "text/plain";
-						// env["REQUEST_METHOD"] = "GET";
-						// env["CONTENT_LENGTH"] = "13";
-						// env["QUERY_STRING"] = "";//It will be empty in the POST and fill it in GET so you can put the form parameter just if you have it
-						// env["SERVER_PROTOCOL"] = "HTTP/1.1"; 
-						// env["SERVER_NAME"] = "WebServer";
-						// env["REDIRECT_STATUS"] = "200";
+						std::map<std::string, std::string> env;
+						env["SCRIPT_NAME"] = "ll.py"; //It will be the name of the file
+						env["SCRIPT_FILENAME"] = "/Users/rrhnizar/Desktop/DofaCgi/ll.py"; //It will be the path of the file 
+						env["CONTENT_TYPE"] = "application/x-www-form-urlencoded";
+						env["REQUEST_METHOD"] = "POST";
+						env["CONTENT_LENGTH"] = "12";
+						env["QUERY_STRING"] = "";//It will be empty in the POST and fill it in GET so you can put the form parameter just if you have it
+						env["SERVER_PROTOCOL"] = "HTTP/1.1"; 
+						env["SERVER_NAME"] = "WebServer";
+						env["REDIRECT_STATUS"] = "200";
 					
-						// std::string body = "Hello World!";
-						// std::string bin = "/usr/bin/c++";
+						std::string body = "Hello=Wollllrld!"; // it will be empty in GET !!!
+						std::string bin = "/usr/bin/python3";
 
-						// CGI cgi_obj(body, env, bin);
-						// std::cout << cgi_obj.fill_env() << std::endl;
+						CGI cgi_obj(body, env, bin);
+						std::string respont = cgi_obj.fill_env();
+						std::cout <<  respont << std::endl;
+						
+					}
+					catch(const std::exception& e)
+					{
+						std::cerr << e.what() << '\n';
+					}
+					
+					if (send_full_response(i, htmlResponse) == true)
+					{
 						FD_CLR(i, &fd_set_write);
 						close(i);
 					}
