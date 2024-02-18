@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/18 00:32:11 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/18 22:50:19 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ class CommonDirectives
 		pair<int, string>	getRedirection() const;
 		MapStringString		getMimeTypes() const;
 		string				getMimeTypeByKey(const string& _key) const;
-		string				getIndexFilePathByRoot(const string& _value) const;
 		const string&		getUpload() const;
 		MapStringString		getCgi() const;
 };

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/17 23:35:19 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/18 22:50:25 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -279,20 +279,6 @@ VecString 			CommonDirectives::getIndexes() const
 	return (index);
 }
 
-string			CommonDirectives::getIndexFilePathByRoot(const string& _value) const
-{
-	string fullPath;
-	VecString out = index;
-	for (VecString_iter it = out.begin(); it != out.end();it++)
-	{
-		fullPath = _value + *it;
-		std::ifstream file(fullPath);
-		if (file.is_open())
-			return (fullPath);
-	}
-	return ("");
-}
-
 pair<int, string>	CommonDirectives::getRedirection() const{return (redirection);}
 MapStringString		CommonDirectives::getMimeTypes() const {return (mimeTypes);}
 string				CommonDirectives::getMimeTypeByKey(const string& _key) const
@@ -301,8 +287,6 @@ string				CommonDirectives::getMimeTypeByKey(const string& _key) const
 	catch (const std::out_of_range& e) { (void) e;}
 	return ("text/html");
 }
-
-
 
 const string&		CommonDirectives::getUpload() const {return (upload);}
 MapStringString		CommonDirectives::getCgi() const {return (cgi);}

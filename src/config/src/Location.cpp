@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:15:25 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/16 22:36:09 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/18 22:48:43 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,21 @@ void	Location::setAlias(const string& _alias)
 	this->check_unexpected(_alias, "alias");
 	alias = str_utils::remove_quotes(_alias);
 	root_alias = true;
+}
+
+string			Location::getIndexFilePathByRoot(const string& _value) const
+{
+	string fullPath;
+	VecString out = this->getIndexes();
+	// cout << "index: [" << index.size() << "]" << endl;
+	for (VecString_iter it = out.begin(); it != out.end();it++)
+	{
+		fullPath = _value + *it;
+		std::ifstream file(fullPath);
+		if (file.is_open())
+			return (fullPath);
+	}
+	return ("");
 }
 
 const string&		Location::getAlias() const {return (alias);}

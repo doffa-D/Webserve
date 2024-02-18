@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:15:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/18 00:27:48 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/18 22:49:10 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,6 @@ class Location : public CommonDirectives
 		static Location	createNullObject();
 		bool			isNull();
 		void			setAlias(const string& _alias);
+		string		getIndexFilePathByRoot(const string& _value) const;
 		const string&	getAlias() const;
 };
