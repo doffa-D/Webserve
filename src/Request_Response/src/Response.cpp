@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/18 00:54:12 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/19 16:36:03 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,6 +298,7 @@ void Response::handleFileRequest(int clientSocket, const std::string& filePath, 
 
 void Response::handleNotFound(int clientSocket, Location& location)
 {
+	// if(location.getErrorPages())
 	ResPath = Error_HmlPage("404", "Not Found");
 	Fill_Response("404", "Not Found", 1, location);
 	send(clientSocket, response.c_str(), response.size(), 0);
@@ -314,6 +315,11 @@ long	MaxBodySize(Request& Req)
 	return 0; // in case not found Content-Length i return 0
 }
 
+void	Using_Error_Page()
+{
+	
+}
+
 void	Response::ft_Response(int clientSocket, Request& Req, const Parser& parser)
 {
 	std::string	_host;
@@ -326,6 +332,8 @@ void	Response::ft_Response(int clientSocket, Request& Req, const Parser& parser)
 	server = parser.getServerbyHost(_host);
 	std::cout << "Host = " << _host << std::endl;
 	location = server.getLocationByPath(Req.getReqLine().getPath());
+	std::cout << "error pages : \n" << location.getErrorPages()[400] << std::endl;
+	// exit(1);
 	VecString Methods = location.getAllowedMethods();
 	std::string method = Req.getReqLine().getMethod();
 	// std::cout << "Max Body size = " << location.getClientMaxBodySize() << std::endl;

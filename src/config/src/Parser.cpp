@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/18 22:55:59 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/19 13:12:09 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,12 @@ void	parseMimeTypes(CommonDirectives& common, const string& filePath)
 {
 	string line;
 	std::ifstream mimeTypeFile(filePath.c_str());
+	std::cout << "filePath: [" << filePath << "]" << std::endl;
 	if (mimeTypeFile.fail())
+	{
+		std::cout << "here \n";
 		throw CustomException("Failed to open file!!", filePath);
+	}
 	while (std::getline(mimeTypeFile, line, '\n'))
 	{
 		str_utils::trim(line);
@@ -301,7 +305,10 @@ Parser::Parser(int ac, char**av)
 	fillValideDirectives();
 	std::ifstream configFile(fileName.c_str());
 	if (configFile.fail())
+	{
+		std::cout << "no is here \n";
 		throw CustomException("Failed to open file!!", fileName);
+	}
 	while (std::getline(configFile, line, '\n'))
 	{
 		if (line.size() && line.find("#") != string::npos)

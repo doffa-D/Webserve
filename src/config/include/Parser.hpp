@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 09:04:45 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/18 23:14:45 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/19 16:24:42 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ include upload redirection cgi alias"
 
 #define LOCATION_DIRECTIVES "root index location alias allowed_method \
 autoindex client_max_body_size error_log access_log \
-error_pages include upload redirection cgi"
+error_page include upload redirection cgi"
 
 #define DEFUALT_CONFIG_PATH "ConfigFiles/default.conf"
 

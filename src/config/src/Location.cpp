@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:15:25 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/19 10:52:01 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/19 16:36:51 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,13 +66,6 @@ string			Location::getIndexFilePathByRoot(const string& _value) const
 			return (fullPath);
 	}
 	return ("");
-}
-
-string		Location::getErrorPageByStatus(int status) const
-{
-	try{return (this->getErrorPages().at(status));}
-	catch(const std::out_of_range& e){(void)e;}
-	return ("");	
 }
 
 const string&		Location::getAlias() const {return (alias);}
