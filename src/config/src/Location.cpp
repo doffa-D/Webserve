@@ -6,7 +6,7 @@
 /*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:15:25 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/19 10:49:41 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/19 10:52:01 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ string			Location::getIndexFilePathByRoot(const string& _value) const
 string		Location::getErrorPageByStatus(int status) const
 {
 	try{return (this->getErrorPages().at(status));}
-	catch(const std::exception& e){(void)e;}
+	catch(const std::out_of_range& e){(void)e;}
 	return ("");	
 }
 

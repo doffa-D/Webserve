@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   header.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:24:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/18 00:41:44 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/18 22:59:26 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 #include <sys/socket.h> // For socket functions
 #include <netinet/in.h> // For sockaddr_in
-
+#include <sys/wait.h> // For waitpid
 // ===========Config============= //
 
 #include "../src/config/include/StringExtensions.hpp"

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/18 00:39:33 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/18 22:55:59 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,35 @@ void	fillCommonDirectives(CommonDirectives& common, const string& key, const str
 		parseMimeTypes(common, value);
 }
 
+char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
+{
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	if (!*needle || haystack == needle)
+		return ((char *)haystack);
+	while (haystack[i] && len != 0)
+	{
+		j = 0;
+		while (haystack[i + j] == needle[j] && i + j < len)
+		{
+			if (needle[j + 1] == '\0')
+				return ((char *)&haystack[i]);
+			if (haystack[i + j + 1] != needle[j + 1])
+				break ;
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
+
 void	Parser::fillLocationDirective(Server& server, CommonDirectives& old_location, ListString_iter& it, const string& befor)
 {
 	string	path = str_utils::trim(it->substr(str_utils::find_first_of(*it, " \t"), it->length()));
 
-	if (befor != "" && !strnstr(path.c_str(), befor.c_str(), befor.length()))
+	if (befor != "" && !ft_strnstr(path.c_str(), befor.c_str(), befor.length()))
 		throw CustomException("location \"" + path + "\" is outside location \"" + befor + "\"");
 
 	if (*(++it) != "{")

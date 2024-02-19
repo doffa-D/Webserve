@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/18 00:45:55 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/18 22:57:53 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ Wb_Server::Wb_Server(const Parser& parsedData)
 	listen_to_multiple_clients(parsedData); // listen_to_multiple_clients function is used to listen to multiple clients_request
 }
 
-
 void Wb_Server::Setup_Server(int port_index)
 {
 	socket_fd_server[port_index] = socket(AF_INET, SOCK_STREAM, 0);
@@ -36,7 +35,8 @@ void Wb_Server::Setup_Server(int port_index)
 	}
 
 	int opt = 1;
-	if (setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1 || setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt)) == -1)
+	if (setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1 )
+	//|| setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt)) == -1)
 	{
 		std::cout << "Failed to set socket options for port " << HostAndPorts[port_index].second << std::endl;
 		exit(EXIT_FAILURE);
