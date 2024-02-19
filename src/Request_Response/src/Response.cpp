@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/19 16:49:38 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/19 19:01:56 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -296,7 +296,7 @@ void Response::handleFileRequest(int clientSocket, const std::string& filePath, 
 	// close(clientSocket);
 }
 
-void Response::handleNotFound(int clientSocket, Location& location)
+void Response::handleNotFound(int clientSocket, Location& location, Request& Req, const std::string& _host)
 {
 	std::cout << "Respaaaath = " << ResPath << std::endl;
 	if(location.getErrorPages()[404].empty() == 1)
@@ -306,9 +306,14 @@ void Response::handleNotFound(int clientSocket, Location& location)
 	}
 	else
 	{
-		ResPath += location.getErrorPages()[404];
+		// ResHeader.setLocation("http://" + _host + Req.getReqLine().getPath() + "/");
+		// had line fo9ani ghaalt : 3laxe ? hna makhasnixe njoine Req.getReqLine().getPath()
+		// ghdi njone host m3a errorPage nixane
+		ResHeader.setLocation("http://" + _host + "/" + location.getErrorPages()[404]);
+		std::cout << "getlocation ====>   " << ResHeader.getLocation() << std::endl;
+		ResPath = "";
 		std::cout << "Respaaaath222 = " << ResPath << std::endl;
-		Fill_Response("404", "Not Found", 0, location);
+		Fill_Response("302", "Moved Temporarily", 1, location);
 	}
 	
 	send(clientSocket, response.c_str(), response.size(), 0);
@@ -351,6 +356,7 @@ void	Response::ft_Response(int clientSocket, Request& Req, const Parser& parser)
 	// std::cout << "MBS =  " << MBS << std::endl;
 	if(std::find(Methods.begin(), Methods.end(), method) == Methods.end()) // Check allowed methods
 	{
+		std::cout << "method : \n" << method << std::endl;
 		ResPath = Error_HmlPage("405", "Method Not Allowed");
 		Fill_Response("405", "Method Not Allowed", 1, location);
 		send(clientSocket, response.c_str(), response.size(), 0);
@@ -381,5 +387,5 @@ void	Response::ft_Response(int clientSocket, Request& Req, const Parser& parser)
 		}
 	}
 	else
-		handleNotFound(clientSocket, location);
+		handleNotFound(clientSocket, location, Req, _host);
 }

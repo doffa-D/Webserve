@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/18 00:23:45 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/19 18:06:20 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ class Response
 
 		void		handleDirectoryRequest(int clientSocket, const Request& Req, const std::string& _host, const std::string& Root_ReqPath, const Location& location);
 		void		handleFileRequest(int clientSocket, const std::string& filePath, Location& location);
-		void 		handleNotFound(int clientSocket, Location& location);
+		void 		handleNotFound(int clientSocket, Location& location, Request& Req, const std::string& _host);
 		// std::string ReadFile();
 		~Response();
 };
