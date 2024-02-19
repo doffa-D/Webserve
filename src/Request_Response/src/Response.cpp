@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/19 16:36:03 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/19 16:49:38 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,9 +298,19 @@ void Response::handleFileRequest(int clientSocket, const std::string& filePath, 
 
 void Response::handleNotFound(int clientSocket, Location& location)
 {
-	// if(location.getErrorPages())
-	ResPath = Error_HmlPage("404", "Not Found");
-	Fill_Response("404", "Not Found", 1, location);
+	std::cout << "Respaaaath = " << ResPath << std::endl;
+	if(location.getErrorPages()[404].empty() == 1)
+	{
+		ResPath = Error_HmlPage("404", "Not Found");
+		Fill_Response("404", "Not Found", 1, location);
+	}
+	else
+	{
+		ResPath += location.getErrorPages()[404];
+		std::cout << "Respaaaath222 = " << ResPath << std::endl;
+		Fill_Response("404", "Not Found", 0, location);
+	}
+	
 	send(clientSocket, response.c_str(), response.size(), 0);
 	// close(clientSocket);
 }
