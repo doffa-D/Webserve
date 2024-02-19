@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/19 13:12:09 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/19 16:55:13 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,14 @@ bool	Parser::isValideForLocation(const string& key)
 void	parseMimeTypes(CommonDirectives& common, const string& filePath)
 {
 	string line;
-	std::ifstream mimeTypeFile(filePath.c_str());
-	std::cout << "filePath: [" << filePath << "]" << std::endl;
+	VecString vec = str_utils::proSplit(filePath);
+	if (vec.size() > 1)
+		throw CustomException("invalid number of arguments in \"include\" directive", filePath);
+	common.check_unexpected(vec[0], "include");
+	string _filePath = str_utils::remove_quotes(filePath);
+	std::ifstream mimeTypeFile(_filePath.c_str());
 	if (mimeTypeFile.fail())
-	{
-		std::cout << "here \n";
-		throw CustomException("Failed to open file!!", filePath);
-	}
+		throw CustomException("Failed to open file!!", _filePath);
 	while (std::getline(mimeTypeFile, line, '\n'))
 	{
 		str_utils::trim(line);
@@ -195,7 +196,7 @@ void	Parser::fillServerData(ListString_iter& it)
 				it++;
 				if (it == tokens.end())
 					throw CustomException("unexpected end of file, expecting \";\" or \"}\"");
-				if (*it == "}")
+				else if (*it == "}")
 					throw CustomException("unexpected \"}\"");
 				else if (*it == "{")	
 					throw CustomException("is not terminated by \";\"", key);
