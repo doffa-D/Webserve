@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/19 19:01:56 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/19 22:03:27 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,8 +281,17 @@ void	Response::handleDirectoryRequest(int clientSocket, const Request& Req, cons
 	}
 	else
 	{
-		ResPath = Error_HmlPage("403", "Forbiden");
-		Fill_Response("403", "Forbiden", 1, location);
+		if(location.getErrorPages()[403].empty() == 1)
+		{
+			ResPath = Error_HmlPage("403", "Forbiden");
+			Fill_Response("403", "Forbiden", 1, location);
+		}
+		else
+		{
+			ResHeader.setLocation("http://" + _host +  Req.getReqLine().getPath() + location.getErrorPages()[403]);
+			ResPath = "";
+			Fill_Response("302", "Moved Temporarily", 1, location);
+		}
 	}
 	send(clientSocket, response.c_str(), response.size(), 0);
 	// close(clientSocket);
@@ -298,6 +307,7 @@ void Response::handleFileRequest(int clientSocket, const std::string& filePath, 
 
 void Response::handleNotFound(int clientSocket, Location& location, Request& Req, const std::string& _host)
 {
+	(void)Req;
 	std::cout << "Respaaaath = " << ResPath << std::endl;
 	if(location.getErrorPages()[404].empty() == 1)
 	{
@@ -375,6 +385,7 @@ void	Response::ft_Response(int clientSocket, Request& Req, const Parser& parser)
 	std::cout << "Root = " << location.getRoot() << "ReqPath " << Req.getReqLine().getPath() << std::endl;
 	setResPath(Root_ReqPath);
 	std::ifstream File(Root_ReqPath.c_str());
+	std::cout << "file open : \n " << Root_ReqPath << std::endl;
 	if(File.is_open())
 	{
 		struct stat fileInfo;
