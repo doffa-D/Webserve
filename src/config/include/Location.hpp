@@ -6,7 +6,7 @@
 /*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:15:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/18 22:49:10 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/19 10:45:32 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,6 @@ class Location : public CommonDirectives
 		bool			isNull();
 		void			setAlias(const string& _alias);
 		string		getIndexFilePathByRoot(const string& _value) const;
+		string		getErrorPageByStatus(int status) const;
 		const string&	getAlias() const;
 };

@@ -6,7 +6,7 @@
 /*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:15:25 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/18 22:48:43 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/19 10:49:41 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ string			Location::getIndexFilePathByRoot(const string& _value) const
 {
 	string fullPath;
 	VecString out = this->getIndexes();
-	// cout << "index: [" << index.size() << "]" << endl;
 	for (VecString_iter it = out.begin(); it != out.end();it++)
 	{
 		fullPath = _value + *it;
@@ -67,6 +66,13 @@ string			Location::getIndexFilePathByRoot(const string& _value) const
 			return (fullPath);
 	}
 	return ("");
+}
+
+string		Location::getErrorPageByStatus(int status) const
+{
+	try{return (this->getErrorPages().at(status));}
+	catch(const std::exception& e){(void)e;}
+	return ("");	
 }
 
 const string&		Location::getAlias() const {return (alias);}
