@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/19 18:06:20 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/20 19:00:17 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,3 +89,8 @@ class Response
 		// std::string ReadFile();
 		~Response();
 };
+
+long	MaxBodySize(Request& Req);
+std::string	findHostFromHeaders(const Request& Req);
+std::string	ReadFile(std::string&	ResPath);
+std::string	 AutoIndex(std::string ResPath, std::string ReqPath);

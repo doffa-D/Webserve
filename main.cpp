@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:49 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/18 00:53:17 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/20 15:25:59 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 int main(int ac, char **av)
 {
+	signal(SIGPIPE, SIG_IGN);
 	try
 	{
 		Parser parsedData(ac, av);

@@ -6,7 +6,7 @@
 #    By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/02/19 21:51:45 by rrhnizar         ###   ########.fr        #
+#    Updated: 2024/02/20 21:02:14 by rrhnizar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,10 @@ SRCS = main.cpp \
 	$(SRC_DIR)/server/src/request.cpp \
 	$(SRC_DIR)/CGI/src/CGI.cpp \
 	$(SRC_DIR)/Request_Response/src/Request.cpp \
-	$(SRC_DIR)/Request_Response/src/Response.cpp
+	$(SRC_DIR)/Request_Response/src/Response.cpp \
+	$(SRC_DIR)/Request_Response/src/Main_Response.cpp \
+	$(SRC_DIR)/Request_Response/src/Response_Utils.cpp \
+	$(SRC_DIR)/Request_Response/src/AutoIndex.cpp
 
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 DEPS = $(OBJS:.o=.d)
