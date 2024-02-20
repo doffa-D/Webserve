@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/18 00:46:36 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/20 21:10:18 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,8 @@ void	RequestLine::Parse_ReqLine(std::string line)
 	setMethod(line.substr(0, pos1));
 	setPath(line.substr(pos1 + 1, pos2 - pos1 - 1)); // pos2 - pos1 - 1 ==> is lenght of the substring
 	setHttpVersion(line.substr(pos3 + 1, line.length() - pos2 - 2)); // add line.length() - pos2 - 2 for not need to add \n in this word 
-	std::cout << "method =  [" << getMethod() << "]  Path =  [" << getPath() << "]  HttpVersion = [" << getHttpVersion() << "]" << std::endl;
-	// std::cout << "Old	ReqPath ====>>>      " << getPath() << std::endl;
+	// std::cout << "method =  [" << getMethod() << "]  Path =  [" << getPath() << "]  HttpVersion = [" << getHttpVersion() << "]" << std::endl;
+
 	size_t	pos = getPath().find('?');
 	size_t	TmpPos = pos;
 	while (pos != std::string::npos && getPath()[pos] == '?')
@@ -80,9 +80,6 @@ void	RequestLine::Parse_ReqLine(std::string line)
 	if (pos != std::string::npos && pos != getPath().size() - 1)
 	{
     	std::string queryparams = getPath().substr(pos);
-		// std::cout << "getPath() " << getPath() << std::endl;
-		// std::cout << "queryparams ====>>>      " << queryparams << std::endl;
-		// Set the path without query parameters
     	setPath(getPath().substr(0, TmpPos));
 		// here Parse query parameters and fill vector the Query_Params;
 		std::vector<std::string> split1 = str_utils::split(queryparams, '&');

@@ -6,13 +6,13 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:54:30 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/20 21:01:04 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/20 21:31:02 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/header.hpp"
 
-long	MaxBodySize(Request& Req)
+long	Response::MaxBodySize(const Request& Req)
 {
 	for(size_t i=0; i<Req.getHttp_Header().size(); i++)
 	{
@@ -22,7 +22,7 @@ long	MaxBodySize(Request& Req)
 	return 0; // in case not found Content-Length i return 0
 }
 
-std::string	findHostFromHeaders(const Request& Req)
+std::string	Response::findHostFromHeaders(const Request& Req)
 {
 	std::string	_host;
 	for(size_t i=0; i<Req.getHttp_Header().size(); i++)
@@ -36,7 +36,7 @@ std::string	findHostFromHeaders(const Request& Req)
 	return _host;
 }
 
-std::string	ReadFile(std::string&	ResPath)
+std::string	Response::ReadFile(std::string&	ResPath)
 {
     std::ifstream file(ResPath.c_str());
     std::string line;

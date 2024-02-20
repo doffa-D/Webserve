@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 21:01:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/20 21:01:23 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/20 21:45:21 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ std::string getFileSize(const std::string& filePath)
         return "Error in getting file info";
 
     // Extract the file size
-    return std::to_string(fileInfo.st_size);
+    return str_utils::to_string(fileInfo.st_size);
 }
 
 std::string	 AutoIndex(std::string ResPath, std::string ReqPath)

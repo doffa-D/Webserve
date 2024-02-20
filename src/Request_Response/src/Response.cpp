@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/20 19:03:31 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/20 21:44:54 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,8 +163,6 @@ void	Response::Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int Fi
 		ResHeader.setContentFile(ResPath);
 	ResHeader.setContentLength(str_utils::to_string(ResHeader.getContentFile().size()));
 	size_t pos = ResPath.find('.');
-	// cout << "to look for: " << ResPath.substr(pos + 1) << endl;
-	// cout << "Mime: " << location.getMimeTypeByKey(ResPath.substr(pos + 1)) << endl;
 	ResHeader.setContentType(location.getMimeTypeByKey(ResPath.substr(pos + 1)));//this line needs to more checks.
 
 
@@ -215,7 +213,7 @@ void	Response::handleDirectoryRequest(int clientSocket, const Request& Req, cons
 	// close(clientSocket);
 }
 
-void Response::handleFileRequest(int clientSocket, const std::string& filePath, Location& location)
+void Response::handleFileRequest(int clientSocket, const std::string& filePath, const Location& location)
 {
 	ResPath = filePath;
 	Fill_Response("200", "ok", 0, location);
@@ -223,10 +221,8 @@ void Response::handleFileRequest(int clientSocket, const std::string& filePath, 
 	// close(clientSocket);
 }
 
-void Response::handleNotFound(int clientSocket, Location& location, Request& Req, const std::string& _host)
+void Response::handleNotFound(int clientSocket, Location& location, const std::string& _host)
 {
-	(void)Req;
-	std::cout << "Respaaaath = " << ResPath << std::endl;
 	if(location.getErrorPages()[404].empty() == 1)
 	{
 		ResPath = Error_HmlPage("404", "Not Found");

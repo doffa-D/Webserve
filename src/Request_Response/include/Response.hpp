@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/20 19:00:17 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/20 21:37:18 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,24 @@ class Response
 		// Location	Find_Location(Parser& parser, std::string& _host, std::string Path_Req);
 
 		void		handleDirectoryRequest(int clientSocket, const Request& Req, const std::string& _host, const std::string& Root_ReqPath, const Location& location);
-		void		handleFileRequest(int clientSocket, const std::string& filePath, Location& location);
-		void 		handleNotFound(int clientSocket, Location& location, Request& Req, const std::string& _host);
+		void		handleFileRequest(int clientSocket, const std::string& filePath, const Location& location);
+		void 		handleNotFound(int clientSocket, Location& location, const std::string& _host);
 		// std::string ReadFile();
 		~Response();
+
+		// organization
+		bool isMethodAllowed(const Location& location, const Request& Req);
+		bool isRequestBodySizeAllowed(const Location& location, const Request& Req);
+		std::string constructAbsolutePath(const Location& location, const Request& Req);
+		void sendMethodNotAllowedResponse(int clientSocket, const Location& location, const std::string& _host);
+		void sendRequestBodyTooLargeResponse(int clientSocket, const Location& location, const std::string& _host);
+		bool serveRequestedResource(int clientSocket, const Request& Req, const std::string& Root_ReqPath, const Location& location, const std::string& _host);
+		long		MaxBodySize(const Request& Req);
+		std::string	findHostFromHeaders(const Request& Req);
+		std::string	ReadFile(std::string&	ResPath);
+		
+		
+		
 };
 
 long	MaxBodySize(Request& Req);
