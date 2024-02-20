@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 21:01:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/20 21:45:21 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/20 21:53:52 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,6 @@ std::string	 AutoIndex(std::string ResPath, std::string ReqPath)
         // Read each entry in the directory
         while ((entry = readdir(directory)) != NULL)
 		{
-			// std::cout << "--->  " << entry->d_name << std::endl;
-			// std::cout << "date  : " << getModificationDate(ResPath + entry->d_name) << std::endl;
-			// std::cout << "size  : " << getFileSize(ResPath + entry->d_name) << std::endl;
 			d_names.push_back(entry->d_name);
 			d_dates.push_back(getModificationDate(ResPath + entry->d_name));
 			d_sizes.push_back(getFileSize(ResPath + entry->d_name));
