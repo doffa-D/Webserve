@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/21 11:42:00 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/21 13:24:50 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ class Response
 		std::string		ResPath;
 		std::string		response;
 		std::string		_host;
+		Request			Req;
 	public:
 		Response();
 		ResponseLine	getResLine() const;
@@ -77,35 +78,33 @@ class Response
 		void	setResHeader(ResponseHeader resheader);
 		void	setResBody(std::string resbody);
 		void	setResPath(std::string respath);
+
+		void	setReq(Request req) {Req = req;}
 		
-		void	ft_Response(int clientSocket, Request& Req, const Parser& parser);
-		// std::string	Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int File_Or_Str, Location location);
+		void	ft_Response(int clientSocket, const Parser& parser);
 		void	Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int File_Or_Str, Location location);
 		std::string	Error_HmlPage(const std::string& stat_code, const std::string& stat_msg);
 		// Location	Find_Location(Parser& parser, std::string& _host, std::string Path_Req);
 
-		void		handleDirectoryRequest(const Request& Req, const std::string& Root_ReqPath, const Location& location);
+		void		handleDirectoryRequest(const std::string& Root_ReqPath, const Location& location);
 		void		handleFileRequest(const std::string& filePath, const Location& location);
 		void 		handleNotFound(Location& location);
-		void		handleForbiden(const Request& Req, const Location& location);
+		void		handleForbidden(const Location& location);
 		// std::string ReadFile();
 		~Response();
 
 		// organization
-		bool 		isMethodAllowed(const Location& location, const Request& Req);
-		bool 		isRequestBodySizeAllowed(const Location& location, const Request& Req);
-		void 		sendMethodNotAllowedResponse(const Location& location);
-		void 		sendRequestBodyTooLargeResponse(const Location& location);
-		bool 		serveRequestedResource(const Request& Req, const std::string& Root_ReqPath, const Location& location);
-		long		MaxBodySize(const Request& Req);
-		std::string	findHostFromHeaders(const Request& Req);
+		bool 		isMethodAllowed(const Location& location);
+		bool 		isRequestBodySizeAllowed(const Location& location);
+		void 		handleMethodNotAllowed(const Location& location);
+		void 		handleBodyTooLarge(const Location& location);
+		bool 		serveRequestedResource(const std::string& Root_ReqPath, const Location& location);
+		long		MaxBodySize();
+		std::string	findHostFromHeaders();
 		std::string	ReadFile(std::string&	ResPath);
 		
-		
-		
+		void		handleErrorResponse(const Location& location, int errorCode, std::string errorMsg);
+		// void 		handleErrorResponse(std::string errorCode, const std::string& errorMessage, const Location& location);
 };
 
-long		MaxBodySize(Request& Req);
-std::string	findHostFromHeaders(const Request& Req);
-std::string	ReadFile(std::string&	ResPath);
 std::string	 AutoIndex(std::string ResPath, std::string ReqPath);

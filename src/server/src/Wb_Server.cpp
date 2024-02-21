@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/20 15:03:17 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/21 12:38:24 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,8 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 					request.Parse_Request(httpRequest);
 					
 					Response	response;
-					response.ft_Response(i, request, parsedData);
+					response.setReq(request);
+					response.ft_Response(i, parsedData);
 					// response.ft_Response(newsockfd, request, parser);
 					// std::cout << "Request : \n" << httpRequest << std::endl;
 				}

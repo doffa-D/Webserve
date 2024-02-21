@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/21 11:48:36 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/21 12:44:35 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ void	Response::Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int Fi
                 "\r\n" + ResHeader.getContentFile();
 }
 
-void	Response::handleDirectoryRequest(const Request& Req, const std::string& Root_ReqPath, const Location& location)
+void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Location& location)
 {
 	if(Req.getReqLine().getPath()[Req.getReqLine().getPath().size() - 1] != '/')
 	{
@@ -195,7 +195,7 @@ void	Response::handleDirectoryRequest(const Request& Req, const std::string& Roo
 		Fill_Response("200", "OK", 1, location);
 		return;
 	}
-	handleForbiden(Req, location);
+	handleForbidden(location);
 }
 
 void Response::handleFileRequest(const std::string& filePath, const Location& location)
