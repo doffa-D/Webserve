@@ -6,7 +6,7 @@
 /*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/18 22:50:19 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/21 10:51:57 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class CommonDirectives
 		string					access_log;
 		MapStringString			mimeTypes;
 		MapIntString			error_pages;
+		bool			_bool[2];
 		VecString 				allowed_methods;
 		string					upload;
 		MapStringString			cgi;
