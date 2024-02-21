@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/20 15:08:28 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/21 10:53:38 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ CommonDirectives::CommonDirectives(const string& _root, const bool& _autoindex ,
 	upload = _upload;
 	root_alias = false;
 	memset(check, 0, sizeof(check)); 
+	memset(_bool, 0, sizeof(_bool)); 
 }
 
 void	CommonDirectives::check_unexpected(const string& to_check, const string& direc)
@@ -174,6 +175,9 @@ void	CommonDirectives::setAccessLog(const string& _access_log)
 
 void	CommonDirectives::addErrorPage(const string& _error_pages)
 {
+	if (!_bool[0])
+		error_pages.clear();
+	_bool[0] = true;
 	VecString values = str_utils::ultimatSplit(_error_pages, " \t");
 	VecString::reverse_iterator r_it = values.rbegin();
 	string replacedBy = *r_it;
@@ -212,6 +216,9 @@ void	CommonDirectives::setAllowedMethod(const string& _allowed_methods)
 
 void	CommonDirectives::addMimeType(const string& _key, const string& _value)
 {
+	if (!_bool[1])
+		mimeTypes.clear();
+	_bool[1] = true;
 	VecString split = str_utils::ultimatSplit(_value, " \t");
 	VecString_iter it = split.begin();
 	for (;it != split.end(); it++)
