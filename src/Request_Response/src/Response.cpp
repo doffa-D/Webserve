@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/20 21:44:54 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/21 11:48:36 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,70 +174,34 @@ void	Response::Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int Fi
                 "\r\n" + ResHeader.getContentFile();
 }
 
-void	Response::handleDirectoryRequest(int clientSocket, const Request& Req, const std::string& _host, const std::string& Root_ReqPath, const Location& location)
+void	Response::handleDirectoryRequest(const Request& Req, const std::string& Root_ReqPath, const Location& location)
 {
 	if(Req.getReqLine().getPath()[Req.getReqLine().getPath().size() - 1] != '/')
 	{
 		ResHeader.setLocation("http://" + _host + Req.getReqLine().getPath() + "/");
 		ResPath = "";
 		Fill_Response("301", "Moved Permanently", 1, location);
-		send(clientSocket, response.c_str(), response.size(), 0);
-		// close(clientSocket);
 		return ;
 	}
 	ResPath = location.getIndexFilePathByRoot(Root_ReqPath); // this function kat9alb 3la file ila mal9atxe xi file kat3tina empty
 	if(ResPath.empty() == 0)
 	{
 		Fill_Response("200", "OK", 0, location);
+		return;
 	}
-	else if(location.getAutoIndex() == 1)
+	if(location.getAutoIndex() == 1)
 	{
 		ResPath = AutoIndex(Root_ReqPath, Req.getReqLine().getPath());
 		Fill_Response("200", "OK", 1, location);
+		return;
 	}
-	else
-	{
-		if(location.getErrorPages()[403].empty() == 1)
-		{
-			ResPath = Error_HmlPage("403", "Forbiden");
-			Fill_Response("403", "Forbiden", 1, location);
-		}
-		else
-		{
-			ResHeader.setLocation("http://" + _host +  Req.getReqLine().getPath() + location.getErrorPages()[403]);
-			ResPath = "";
-			Fill_Response("302", "Moved Temporarily", 1, location);
-		}
-	}
-	send(clientSocket, response.c_str(), response.size(), 0);
-	// close(clientSocket);
+	handleForbiden(Req, location);
 }
 
-void Response::handleFileRequest(int clientSocket, const std::string& filePath, const Location& location)
+void Response::handleFileRequest(const std::string& filePath, const Location& location)
 {
 	ResPath = filePath;
 	Fill_Response("200", "ok", 0, location);
-	send(clientSocket, response.c_str(), response.size(), 0);
-	// close(clientSocket);
 }
 
-void Response::handleNotFound(int clientSocket, Location& location, const std::string& _host)
-{
-	if(location.getErrorPages()[404].empty() == 1)
-	{
-		ResPath = Error_HmlPage("404", "Not Found");
-		Fill_Response("404", "Not Found", 1, location);
-	}
-	else
-	{
-		// ResHeader.setLocation("http://" + _host + Req.getReqLine().getPath() + "/");
-		// had line fo9ani ghaalt : 3laxe ? hna makhasnixe njoine Req.getReqLine().getPath()
-		// ghdi njone host m3a errorPage nixane
-		ResHeader.setLocation("http://" + _host + "/" + location.getErrorPages()[404]);
-		ResPath = "";
-		Fill_Response("302", "Moved Temporarily", 1, location);
-	}
-	
-	send(clientSocket, response.c_str(), response.size(), 0);
-	// close(clientSocket);
-}
+

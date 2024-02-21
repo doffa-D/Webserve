@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/20 21:49:29 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/21 11:47:49 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ bool Response::isMethodAllowed(const Location& location, const Request& Req)
 {
     std::vector<std::string> Methods = location.getAllowedMethods();
     std::string method = Req.getReqLine().getMethod();
-    return std::find(Methods.begin(), Methods.end(), method) != Methods.end();
+    return std::find(Methods.begin(), Methods.end(), method) != Methods.end(); // return true if MA and false if MNA
 }
 
 bool Response::isRequestBodySizeAllowed(const Location& location, const Request& Req)
@@ -24,44 +24,7 @@ bool Response::isRequestBodySizeAllowed(const Location& location, const Request&
     return MaxBodySize(Req) <= location.getClientMaxBodySize();
 }
 
-std::string Response::constructAbsolutePath(const Location& location, const Request& Req)
-{
-    return location.getRoot() + Req.getReqLine().getPath();
-}
-
-void Response::sendMethodNotAllowedResponse(int clientSocket, const Location& location, const std::string& _host)
-{
-    if (location.getErrorPages()[405].empty())
-	{
-        ResPath = Error_HmlPage("405", "Method Not Allowed");
-        Fill_Response("405", "Method Not Allowed", 1, location);
-    }
-	else
-	{
-        ResHeader.setLocation("http://" + _host + "/" + location.getErrorPages()[405]);
-        ResPath = "";
-        Fill_Response("302", "Moved Temporarily", 1, location);
-    }
-    send(clientSocket, response.c_str(), response.size(), 0);
-}
-
-void Response::sendRequestBodyTooLargeResponse(int clientSocket, const Location& location, const std::string& _host)
-{
-    if (location.getErrorPages()[413].empty())
-	{
-        ResPath = Error_HmlPage("413", "Content Too Large");
-        Fill_Response("413", "Content Too Large", 1, location);
-    } 
-	else
-	{
-        ResHeader.setLocation("http://" + _host + "/" + location.getErrorPages()[413]);
-        ResPath = "";
-        Fill_Response("302", "Moved Temporarily", 1, location);
-    }
-    send(clientSocket, response.c_str(), response.size(), 0);
-}
-
-bool Response::serveRequestedResource(int clientSocket, const Request& Req, const std::string& Root_ReqPath, const Location& location, const std::string& _host)
+bool Response::serveRequestedResource(const Request& Req, const std::string& Root_ReqPath, const Location& location)
 {
     std::ifstream File(Root_ReqPath.c_str());
     if (File.is_open())
@@ -70,9 +33,9 @@ bool Response::serveRequestedResource(int clientSocket, const Request& Req, cons
         if (stat(Root_ReqPath.c_str(), &fileInfo) == 0)
 		{
             if (S_ISDIR(fileInfo.st_mode))
-                handleDirectoryRequest(clientSocket, Req, _host, Root_ReqPath, location);
+                handleDirectoryRequest(Req, Root_ReqPath, location);
             else if (S_ISREG(fileInfo.st_mode))
-                handleFileRequest(clientSocket, Root_ReqPath, location);
+                handleFileRequest(Root_ReqPath, location);
             return true;
         }
     }
@@ -83,21 +46,25 @@ bool Response::serveRequestedResource(int clientSocket, const Request& Req, cons
 
 void Response::ft_Response(int clientSocket, Request& Req, const Parser& parser)
 {
-    std::string _host = findHostFromHeaders(Req);
+    _host = findHostFromHeaders(Req);
     Server server = parser.getServerbyHost(_host);
     Location location = server.getLocationByPath(Req.getReqLine().getPath());
-    
+
     if (!isMethodAllowed(location, Req))
 	{
-        sendMethodNotAllowedResponse(clientSocket, location, _host);
+        sendMethodNotAllowedResponse(location);
+        send(clientSocket, response.c_str(), response.size(), 0);
         return;
     }
     if (!isRequestBodySizeAllowed(location, Req))
 	{
-        sendRequestBodyTooLargeResponse(clientSocket, location, _host);
+        sendRequestBodyTooLargeResponse(location);
+        send(clientSocket, response.c_str(), response.size(), 0);
         return;
     }
-    std::string Root_ReqPath = constructAbsolutePath(location, Req);
-    if (!serveRequestedResource(clientSocket, Req, Root_ReqPath, location, _host))
-        handleNotFound(clientSocket, location, _host);
+    std::string Root_ReqPath = location.getRoot() + Req.getReqLine().getPath(); // construct Absolute Path
+    if (!serveRequestedResource(Req, Root_ReqPath, location))
+        handleNotFound(location);
+    
+    send(clientSocket, response.c_str(), response.size(), 0);
 }

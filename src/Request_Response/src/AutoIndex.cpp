@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 21:01:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/20 21:53:52 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/21 10:53:09 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ std::string getModificationDate(const std::string& filePath)
     // Extract the last modification time
     std::time_t modifiedTime = fileInfo.st_mtime;
     char dateStr[100];
-    std::strftime(dateStr, sizeof(dateStr), "%Y-%m-%d %H:%M:%S", std::localtime(&modifiedTime));
+    std::strftime(dateStr, sizeof(dateStr), "%Y-%m-%d %H:%M:%S", localtime(&modifiedTime));
     return dateStr;
 }
 

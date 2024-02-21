@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:54:30 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/20 21:31:02 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/21 11:12:29 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ long	Response::MaxBodySize(const Request& Req)
 		if(Req.getHttp_Header()[i].first == "Content-Length")
 			return atoi(Req.getHttp_Header()[i].second.c_str());// this return needs more checks, i think bad practice using atoi here
 	}
-	return 0; // in case not found Content-Length i return 0
+	return 0; // in case not found Content-Length is 0
 }
 
 std::string	Response::findHostFromHeaders(const Request& Req)
