@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/21 13:24:50 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/23 21:11:55 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ class Response
 		std::string		_host;
 		Request			Req;
 	public:
+		int	Reques;
+		std::vector<std::string> httpMethods;
 		Response();
 		ResponseLine	getResLine() const;
 		ResponseHeader	getResHeader() const;
@@ -90,6 +92,7 @@ class Response
 		void		handleFileRequest(const std::string& filePath, const Location& location);
 		void 		handleNotFound(Location& location);
 		void		handleForbidden(const Location& location);
+		void		handleBadRequest(const Location& location);
 		// std::string ReadFile();
 		~Response();
 

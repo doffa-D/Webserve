@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/21 12:38:24 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/23 21:27:21 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void Wb_Server::Setup_Server(int port_index)
 }
 
 
-void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
+void Wb_Server::listen_to_multiple_clients(const Parser& __unused parsedData)
 {
 	char buffer[1024];
 	fd_set fd_set_Read, Tmp_fd_set_Read;

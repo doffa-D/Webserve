@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 11:47:24 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/21 13:31:57 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/23 21:46:57 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,22 @@ void Response::handleErrorResponse(const Location& location, int errorCode, std:
     }
 }
 
+
+void    Response::handleBadRequest(const Location& location)
+{
+    if(std::find(httpMethods.begin(), httpMethods.end(), Req.getReqLine().getMethod()) == httpMethods.end())
+    {
+		handleErrorResponse(location, 400, "Bad Request");
+		Reques = 1;
+        return;
+    }
+	if(Req.getReqLine().getHttpVersion() != "HTTP/1.1")
+	{
+		handleErrorResponse(location, 400, "Bad Request");
+		Reques = 1;
+        return;
+	}
+}
 
 void Response::handleMethodNotAllowed(const Location& location)
 {

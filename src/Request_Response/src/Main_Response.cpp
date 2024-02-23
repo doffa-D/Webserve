@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/21 12:45:18 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/23 21:42:06 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,15 @@ bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Loc
     return false;
 }
 
+// bool Response::isRequestHeaderSizeAllowed(const Server& server)
+// {
+//     size_t MaxHeaderSize;
+    
+//     MaxHeaderSize = 
+//     return MaxBodySize() <= location.getHeaderMaxSize();
+// }
+
+
 
 
 void Response::ft_Response(int clientSocket, const Parser& parser)
@@ -50,6 +59,12 @@ void Response::ft_Response(int clientSocket, const Parser& parser)
     Server server = parser.getServerbyHost(_host);
     Location location = server.getLocationByPath(Req.getReqLine().getPath());
 
+    handleBadRequest(location);
+    if(Reques == 1)
+    {
+        send(clientSocket, response.c_str(), response.size(), 0);
+        return;
+    }
     if (!isMethodAllowed(location))
 	{
         handleMethodNotAllowed(location);
