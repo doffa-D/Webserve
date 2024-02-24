@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/23 21:27:21 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/24 15:59:35 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,9 @@ void Wb_Server::Setup_Server(int port_index)
 }
 
 
-void Wb_Server::listen_to_multiple_clients(const Parser& __unused parsedData)
+void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 {
-	char buffer[1024];
+	// char buffer[1024];
 	fd_set fd_set_Read, Tmp_fd_set_Read;
 	fd_set fd_set_write, Tmp_fd_set_write;
 	FD_ZERO(&fd_set_Read);
@@ -110,12 +110,13 @@ void Wb_Server::listen_to_multiple_clients(const Parser& __unused parsedData)
 				{
 					Request request;
 
+					httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
 					// httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
-					// httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
-					bzero(buffer, 1024);
-					int n = recv(i, buffer, 1024, 0);
-					std::string buf(buffer, n);
-					httpRequest += buf;
+					// bzero(buffer, 1024);
+					// int n = recv(i, buffer, 1024, 0);
+					// std::string buf(buffer, n);
+					// httpRequest += buf;
+					std::cout << "Request : \n" << httpRequest << std::endl;
 					request.Parse_Request(httpRequest);
 					
 					Response	response;
@@ -285,36 +286,36 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 		clients_request[client_index].buffer.append(body);
 		clients_request[client_index].bytes_read += valread;
 
-		if (clients_request[client_index].method == "POST")
-		{
-			if (clients_request[client_index].isChunked)
-			{
-				size_t searchLength = std::min(static_cast<size_t>(10), clients_request[client_index].bytes_read);
-				std::string substring = clients_request[client_index].buffer.substr(clients_request[client_index].bytes_read - searchLength, searchLength);
-				size_t foundPos = substring.rfind("\r\n0\r\n");
-				if (foundPos != std::string::npos)
-				{
-					FD_CLR(socket_fd, &fd_set_Read);
-					FD_SET(socket_fd, &fd_set_write);
-					std::string request = clients_request[client_index].buffer;
-					clients_request.erase(clients_request.begin() + client_index);
-					return request;
-				}
-			}
-			else
-			{
-				if (clients_request[client_index].bytes_read - clients_request[client_index].startFContent == clients_request[client_index].contentLength)
-				{
-					FD_CLR(socket_fd, &fd_set_Read);
-					FD_SET(socket_fd, &fd_set_write);
-					std::string request = clients_request[client_index].buffer;
-					clients_request.erase(clients_request.begin() + client_index);
-					return request;
-				}
-			}
-		}
-		else
-		{
+		// if (clients_request[client_index].method == "POST")
+		// {
+		// 	if (clients_request[client_index].isChunked)
+		// 	{
+		// 		size_t searchLength = std::min(static_cast<size_t>(10), clients_request[client_index].bytes_read);
+		// 		std::string substring = clients_request[client_index].buffer.substr(clients_request[client_index].bytes_read - searchLength, searchLength);
+		// 		size_t foundPos = substring.rfind("\r\n0\r\n");
+		// 		if (foundPos != std::string::npos)
+		// 		{
+		// 			FD_CLR(socket_fd, &fd_set_Read);
+		// 			FD_SET(socket_fd, &fd_set_write);
+		// 			std::string request = clients_request[client_index].buffer;
+		// 			clients_request.erase(clients_request.begin() + client_index);
+		// 			return request;
+		// 		}
+		// 	}
+		// 	else
+		// 	{
+		// 		if (clients_request[client_index].bytes_read - clients_request[client_index].startFContent == clients_request[client_index].contentLength)
+		// 		{
+		// 			FD_CLR(socket_fd, &fd_set_Read);
+		// 			FD_SET(socket_fd, &fd_set_write);
+		// 			std::string request = clients_request[client_index].buffer;
+		// 			clients_request.erase(clients_request.begin() + client_index);
+		// 			return request;
+		// 		}
+		// 	}
+		// }
+		// else
+		// {
 			size_t pos = clients_request[client_index].buffer.find("\r\n\r\n");
 			if (pos != std::string::npos)
 			{
@@ -324,7 +325,7 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 				clients_request.erase(clients_request.begin() + client_index);
 				return request;
 			}
-		}
+		// }
 	}
 
 	return "";

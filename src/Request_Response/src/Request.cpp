@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/22 19:27:46 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/24 15:26:00 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,9 @@ void	RequestLine::Parse_ReqLine(std::string line)
 
 
 Request::Request() : Referer(0), ReqLine(RequestLine()), Http_Header()
-{}
+{
+	ErrorHeader = 0;
+}
 
 Request::~Request()
 {
@@ -164,6 +166,7 @@ void	Request::Parse_Request(std::string& HttpRequest)
 	std::istringstream ss(HttpRequest);
 	std::string line;
 	std::getline(ss, line);
+	// std::cout << "Req Line  "  << line << std::endl;
 	ReqLine.Parse_ReqLine(line);
 	std::vector<std::pair<std::string, std::string> > Header;
 	
@@ -171,6 +174,7 @@ void	Request::Parse_Request(std::string& HttpRequest)
 	{
 		// Find the position of the colon in the line
         size_t pos = line.find(':');
+		// std::cout << " line  :   " <<  line  << std::endl;
 		if (pos != std::string::npos)
 		{
 			std::string key = line.substr(0, pos);
@@ -185,6 +189,13 @@ void	Request::Parse_Request(std::string& HttpRequest)
 			
 			// Store in the Vector
 			Header.push_back(std::make_pair(key, value));
+		}
+		else if(pos == std::string::npos && line != "\r") // check more the condition
+		{
+			// std::cout << "here\n";
+			// std::cout << "[" <<  line << "]" << std::endl;
+			ErrorHeader = 1;
+			return;
 		}
 	}
 	setHttp_Header(Header);

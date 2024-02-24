@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:12 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/18 00:24:39 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/24 10:22:39 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class Request
 		RequestLine ReqLine;
 		std::vector<std::pair<std::string, std::string> > Http_Header;
 	public:
+		int ErrorHeader;
 		Request();
 		~Request();
 		int		getReferer() const;
