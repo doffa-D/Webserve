@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/23 21:11:55 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/24 21:35:14 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ class Response
 		std::string		_host;
 		Request			Req;
 	public:
-		int	Reques;
+		int	ReqErr;
 		std::vector<std::string> httpMethods;
 		Response();
 		ResponseLine	getResLine() const;

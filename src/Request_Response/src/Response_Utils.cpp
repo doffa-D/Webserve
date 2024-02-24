@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:54:30 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/21 12:40:22 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/24 21:07:23 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ std::string	Response::findHostFromHeaders()
 	std::string	_host;
 	for(size_t i=0; i<Req.getHttp_Header().size(); i++)
 	{
-		if (Req.getHttp_Header().at(i).first == "Host")
+		if (ToUpperStr(Req.getHttp_Header().at(i).first) == "HOST")
 		{
 			_host = Req.getHttp_Header().at(i).second;
 			break;

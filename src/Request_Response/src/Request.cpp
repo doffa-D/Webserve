@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/24 15:26:00 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/24 20:01:07 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,31 @@ void	Request::PrintHttp_Header()
 	std::cout << "\n---------------------------------- ====== ---------------------------------------\n";
 }
 
+std::string	ToUpperStr(std::string str)
+{
+	std::string res = str;
+	for(size_t i=0; i<str.size(); i++)
+		res[i] = toupper(str[i]);
+	return res;
+}
+
+bool Request::LookingForKey()
+{
+	// Key to search for
+    std::string key_to_find = "HOST";
+
+    bool found = false;
+    for (size_t i = 0; i < getHttp_Header().size(); ++i)
+	{
+        if (ToUpperStr(getHttp_Header()[i].first) == key_to_find)
+		{
+            found = true;
+            break;
+        }
+    }
+	return found;
+}
+
 void	Request::Parse_Request(std::string& HttpRequest)
 {
 	// i think here i need take body with separating the body from HttpRequest like this
@@ -199,5 +224,10 @@ void	Request::Parse_Request(std::string& HttpRequest)
 		}
 	}
 	setHttp_Header(Header);
+	if(LookingForKey() == false)
+	{
+		ErrorHeader = 1;
+		return;
+	}
 	CheckReferer();
 }

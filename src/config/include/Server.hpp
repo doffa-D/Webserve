@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:32 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/18 00:54:57 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/24 18:42:38 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "Location.hpp"
 
 #define DEFAULT_IP "127.0.0.1"
-#define DEFAULT_PORT 8080
+#define DEFAULT_PORT 8090
 
 typedef vector<pair<string, Location> >	Locations;
 typedef vector<pair<Uint, int> >		IpPorts;

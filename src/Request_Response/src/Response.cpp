@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/23 21:12:02 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/24 21:35:54 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ Response::Response() : ResLine(ResponseLine()), ResHeader(ResponseHeader()), Res
 	httpMethods.push_back("CONNECT");
 	httpMethods.push_back("PATCH");
 
-	Reques = 0;
+	ReqErr = 0;
 
 	// httpMethods = {"GET", "POST", "DELETE", "PUT", "HEAD", "OPTIONS", "TRACE", "CONNECT", "PATCH"};
 }

@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/23 21:42:06 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/24 21:42:47 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,16 @@ void Response::ft_Response(int clientSocket, const Parser& parser)
     Location location = server.getLocationByPath(Req.getReqLine().getPath());
 
     handleBadRequest(location);
-    if(Reques == 1)
+    if(ReqErr == 1)
     {
         send(clientSocket, response.c_str(), response.size(), 0);
         return;
     }
+    // if(ReqErr == 1)
+    // {
+    //     send(clientSocket, response.c_str(), response.size(), 0);
+    //     return;
+    // }
     if (!isMethodAllowed(location))
 	{
         handleMethodNotAllowed(location);
