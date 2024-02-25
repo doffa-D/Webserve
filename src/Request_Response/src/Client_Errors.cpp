@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 11:47:24 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/25 12:36:39 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 14:57:07 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,4 +71,9 @@ void Response::handleForbidden(const Location& location)
 void Response::handleNotFound(Location& location)
 {
 	handleErrorResponse(location, 404, "Not Found");
+}
+
+void	Response::handleUriTooLong(Location& location)
+{
+	handleErrorResponse(location, 414, "URI Too Long");
 }

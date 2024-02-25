@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/25 11:56:54 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 15:47:39 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,16 +42,15 @@ bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Loc
     return false;
 }
 
-// bool Response::isRequestHeaderSizeAllowed(const Server& server)
-// {
-//     size_t MaxHeaderSize;
-    
-//     MaxHeaderSize = 
-//     return MaxBodySize() <= location.getHeaderMaxSize();
-// }
 
-
-
+bool    Response::isUriTooLong()
+{
+    size_t LenghtOfPath = Req.getReqLine().getPath().size();
+    size_t TmpLenghtIsDefinedInConfig = 10; // i need this from config file
+    if(LenghtOfPath > TmpLenghtIsDefinedInConfig)
+        return true;
+    return false;
+}
 
 void Response::ft_Response(int clientSocket, const Parser& parser)
 {
@@ -62,6 +61,12 @@ void Response::ft_Response(int clientSocket, const Parser& parser)
     handleBadRequest(location);
     if(ReqErr == 1)
     {
+        send(clientSocket, response.c_str(), response.size(), 0);
+        return;
+    }
+    if(isUriTooLong())
+    {
+        handleUriTooLong(location);
         send(clientSocket, response.c_str(), response.size(), 0);
         return;
     }
