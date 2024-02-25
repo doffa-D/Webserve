@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/24 21:42:47 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 11:56:54 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,6 @@ void Response::ft_Response(int clientSocket, const Parser& parser)
         send(clientSocket, response.c_str(), response.size(), 0);
         return;
     }
-    // if(ReqErr == 1)
-    // {
-    //     send(clientSocket, response.c_str(), response.size(), 0);
-    //     return;
-    // }
     if (!isMethodAllowed(location))
 	{
         handleMethodNotAllowed(location);
@@ -85,6 +80,5 @@ void Response::ft_Response(int clientSocket, const Parser& parser)
     std::string Root_ReqPath = location.getRoot() + Req.getReqLine().getPath(); // construct Absolute Path
     if (!serveRequestedResource(Root_ReqPath, location))
         handleNotFound(location);
-    
     send(clientSocket, response.c_str(), response.size(), 0);
 }

@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/24 21:35:54 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 11:58:23 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,11 @@ void	Response::setResBody(std::string resbody)
 void	Response::setResPath(std::string respath)
 {
 	ResPath = respath;
+}
+
+void	Response::setReq(Request req)
+{
+	Req = req;
 }
 
 std::string	Response::Error_HmlPage(const std::string& stat_code, const std::string& stat_msg)

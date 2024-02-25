@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 11:47:24 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/24 21:38:42 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 12:36:39 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void Response::handleErrorResponse(const Location& location, int errorCode, std:
 void    Response::handleBadRequest(const Location& location)
 {
 	std::string method = Req.getReqLine().getMethod();
-	// std::cout << "method " << method << std::endl;
     if(std::find(httpMethods.begin(), httpMethods.end(), method) == httpMethods.end())
     {
 		handleErrorResponse(location, 400, "Bad Request");
@@ -46,9 +45,8 @@ void    Response::handleBadRequest(const Location& location)
 		ReqErr = 1;
         return;
 	}
-	if(Req.ErrorHeader == 1)
+	if(Req.BadRequest == 1)
 	{
-		// std::cout << "Errooor in Header " << std::endl;
 		handleErrorResponse(location, 400, "Bad Request");
 		ReqErr = 1;
         return;

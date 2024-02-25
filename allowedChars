@@ -1,0 +1,105 @@
+Server is running
+Request : 
+GET / HTTP/1.1
+Host: 127.0.0.1:9085
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: "Not/A)Brand";v="99", "Google Chrome";v="115", "Chromium";v="115"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9,fr;q=0.8,ar;q=0.7
+
+
+Char :  A
+Char :  B
+Char :  C
+Char :  D
+Char :  E
+Char :  F
+Char :  G
+Char :  H
+Char :  I
+Char :  J
+Char :  K
+Char :  L
+Char :  M
+Char :  N
+Char :  O
+Char :  P
+Char :  Q
+Char :  R
+Char :  S
+Char :  T
+Char :  U
+Char :  V
+Char :  W
+Char :  X
+Char :  Y
+Char :  Z
+Char :  a
+Char :  b
+Char :  c
+Char :  d
+Char :  e
+Char :  f
+Char :  g
+Char :  h
+Char :  i
+Char :  j
+Char :  k
+Char :  l
+Char :  m
+Char :  n
+Char :  o
+Char :  p
+Char :  q
+Char :  r
+Char :  s
+Char :  t
+Char :  u
+Char :  v
+Char :  w
+Char :  x
+Char :  y
+Char :  z
+Char :  0
+Char :  1
+Char :  2
+Char :  3
+Char :  4
+Char :  5
+Char :  6
+Char :  7
+Char :  8
+Char :  9
+Char :  -
+Char :  .
+Char :  _
+Char :  ~
+Char :  :
+Char :  /
+Char :  ?
+Char :  #
+Char :  [
+Char :  ]
+Char :  @
+Char :  !
+Char :  $
+Char :  &
+Char :  '
+Char :  (
+Char :  )
+Char :  *
+Char :  +
+Char :  ,
+Char :  ;
+Char :  =
+ReqPath =  /

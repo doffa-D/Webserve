@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:12 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/24 21:08:45 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 12:17:20 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ class Request
 		RequestLine ReqLine;
 		std::vector<std::pair<std::string, std::string> > Http_Header;
 	public:
-		int ErrorHeader;
+		int BadRequest;
+		std::vector<char> allowedCharacters;
 		Request();
 		~Request();
 		int		getReferer() const;
@@ -56,6 +57,7 @@ class Request
 		void	CheckReferer();
 		void	PrintHttp_Header();
 		bool	LookingForKey();
+		bool	FoundDisallowedChar();
 		// void	Response(int clientSocket);
 };
 std::string	ToUpperStr(std::string str);

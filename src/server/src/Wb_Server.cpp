@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/24 15:59:35 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 12:30:27 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,13 +110,17 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 				{
 					Request request;
 
+					// for(size_t i=0; i<request.allowedCharacters.size(); i++)
+					// 	std::cout << "Char :  " << request.allowedCharacters[i] << std::endl;
+					// exit(1);
+
 					httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
 					// httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
 					// bzero(buffer, 1024);
 					// int n = recv(i, buffer, 1024, 0);
 					// std::string buf(buffer, n);
 					// httpRequest += buf;
-					std::cout << "Request : \n" << httpRequest << std::endl;
+					// std::cout << "Request : \n" << httpRequest << std::endl;
 					request.Parse_Request(httpRequest);
 					
 					Response	response;
@@ -244,7 +248,7 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 	{
 		close(socket_fd);
 		FD_CLR(socket_fd, &fd_set_Read);
-		clients_request.erase(clients_request.begin() + client_index);
+		clients_request.erase(clients_request.begin() + client_index); // This line crashes sometimes, needs more checks
 		return "";
 	}
 	if (valread > 0)

@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/24 21:35:14 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 11:58:28 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ class Response
 		void	setResBody(std::string resbody);
 		void	setResPath(std::string respath);
 
-		void	setReq(Request req) {Req = req;}
+		void	setReq(Request req);
 		
 		void	ft_Response(int clientSocket, const Parser& parser);
 		void	Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int File_Or_Str, Location location);

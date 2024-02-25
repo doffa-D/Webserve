@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/24 20:01:07 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 12:27:49 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,12 +98,29 @@ void	RequestLine::Parse_ReqLine(std::string line)
 }
 
 
-// part of Header 
+// part of Header Request 
 
 
 Request::Request() : Referer(0), ReqLine(RequestLine()), Http_Header()
 {
-	ErrorHeader = 0;
+	BadRequest = 0;
+	// Add uppercase letters
+    for (char c = 'A'; c <= 'Z'; c++)
+        allowedCharacters.push_back(c);
+    // Add lowercase letters
+    for (char c = 'a'; c <= 'z'; c++)
+        allowedCharacters.push_back(c);
+    // Add digits
+    for (char c = '0'; c <= '9'; c++)
+        allowedCharacters.push_back(c);
+	// Add other unreserved characters
+    const std::string unreservedChars = "-._~";
+    for (size_t i = 0; i < unreservedChars.size(); i++)
+        allowedCharacters.push_back(unreservedChars[i]);
+    // Add reserved characters
+	const std::string reservedChars = ":/?#[]@!$&'()*+,;=";
+    for (size_t i = 0; i < reservedChars.size(); i++)
+        allowedCharacters.push_back(reservedChars[i]);
 }
 
 Request::~Request()
@@ -181,25 +198,40 @@ bool Request::LookingForKey()
 	return found;
 }
 
-void	Request::Parse_Request(std::string& HttpRequest)
+bool	Request::FoundDisallowedChar()
 {
-	// i think here i need take body with separating the body from HttpRequest like this
-	// body = content of body
-	// HttpRequest Without body = HttpRequest - body
-	// Create an input string stream because getline not take string as a parametre
-	// 
+	bool	disallowedCharFound = false;
+	std::string	ReqPath = ReqLine.getPath();
+	// for (std::string::iterator it = ReqLine.getPath().begin(); it != ReqLine.getPath().end(); it++)
+	for(size_t i=0; i<ReqPath.size(); i++)
+	{
+		if(std::find(allowedCharacters.begin(), allowedCharacters.end(), ReqPath[i]) == allowedCharacters.end())
+		{
+			disallowedCharFound = true;
+			break;
+		}
+	}
+	return disallowedCharFound;
+}
+
+void	Request::Parse_Request(std::string& HttpRequest)
+{ 
 	std::istringstream ss(HttpRequest);
 	std::string line;
 	std::getline(ss, line);
-	// std::cout << "Req Line  "  << line << std::endl;
 	ReqLine.Parse_ReqLine(line);
+	// I Check any character not allowed in RequestPath
+	if(FoundDisallowedChar() == true)
+	{
+		BadRequest = 1;
+		return;
+	}
+	// I Fill request header and i check if i have a bad request 
 	std::vector<std::pair<std::string, std::string> > Header;
-	
 	while (std::getline(ss, line))
 	{
 		// Find the position of the colon in the line
         size_t pos = line.find(':');
-		// std::cout << " line  :   " <<  line  << std::endl;
 		if (pos != std::string::npos)
 		{
 			std::string key = line.substr(0, pos);
@@ -215,18 +247,16 @@ void	Request::Parse_Request(std::string& HttpRequest)
 			// Store in the Vector
 			Header.push_back(std::make_pair(key, value));
 		}
-		else if(pos == std::string::npos && line != "\r") // check more the condition
+		else if(pos == std::string::npos && line != "\r")
 		{
-			// std::cout << "here\n";
-			// std::cout << "[" <<  line << "]" << std::endl;
-			ErrorHeader = 1;
+			BadRequest = 1;
 			return;
 		}
 	}
 	setHttp_Header(Header);
 	if(LookingForKey() == false)
 	{
-		ErrorHeader = 1;
+		BadRequest = 1;
 		return;
 	}
 	CheckReferer();
