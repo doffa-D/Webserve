@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/25 12:27:49 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 19:45:12 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ Request::Request() : Referer(0), ReqLine(RequestLine()), Http_Header()
     for (size_t i = 0; i < unreservedChars.size(); i++)
         allowedCharacters.push_back(unreservedChars[i]);
     // Add reserved characters
-	const std::string reservedChars = ":/?#[]@!$&'()*+,;=";
+	const std::string reservedChars = ":/?#[]@!$&'()*+,;=%";
     for (size_t i = 0; i < reservedChars.size(); i++)
         allowedCharacters.push_back(reservedChars[i]);
 }

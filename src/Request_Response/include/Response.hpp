@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/25 14:55:45 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 18:32:18 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ class Response
 		// organization
 		bool 		isMethodAllowed(const Location& location);
 		bool 		isRequestBodySizeAllowed(const Location& location);
-		bool 		isUriTooLong();
+		bool 		isUriTooLong(const long& _value);
 		void 		handleMethodNotAllowed(const Location& location);
 		void 		handleBodyTooLarge(const Location& location);
 		void 		handleUriTooLong(Location& location);

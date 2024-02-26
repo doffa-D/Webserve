@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/25 12:30:27 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 20:45:10 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,11 +115,13 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 					// exit(1);
 
 					httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
+					
 					// httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
 					// bzero(buffer, 1024);
 					// int n = recv(i, buffer, 1024, 0);
 					// std::string buf(buffer, n);
 					// httpRequest += buf;
+					// std::cout << "Request :\n" << httpRequest << std::endl;
 					// std::cout << "Request : \n" << httpRequest << std::endl;
 					request.Parse_Request(httpRequest);
 					

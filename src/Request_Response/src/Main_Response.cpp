@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Main_Response.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/25 15:47:39 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 19:26:18 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,13 @@ bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Loc
 }
 
 
-bool    Response::isUriTooLong()
+bool    Response::isUriTooLong(const long& _value)
 {
     size_t LenghtOfPath = Req.getReqLine().getPath().size();
-    size_t TmpLenghtIsDefinedInConfig = 10; // i need this from config file
-    if(LenghtOfPath > TmpLenghtIsDefinedInConfig)
+	// cout << "_value: " << _value << endl;
+	// cout << "LenghtOfPath: " << LenghtOfPath << endl;
+    // size_t TmpLenghtIsDefinedInConfig = 10; // i need this from config file
+    if(LenghtOfPath > (size_t)_value)
         return true;
     return false;
 }
@@ -64,7 +66,7 @@ void Response::ft_Response(int clientSocket, const Parser& parser)
         send(clientSocket, response.c_str(), response.size(), 0);
         return;
     }
-    if(isUriTooLong())
+    if(isUriTooLong(server.getClientMaxHeaderBufferSize()))
     {
         handleUriTooLong(location);
         send(clientSocket, response.c_str(), response.size(), 0);

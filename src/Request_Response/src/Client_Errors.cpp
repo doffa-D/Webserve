@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client_Errors.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 11:47:24 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/25 14:57:07 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 19:49:46 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void Response::handleErrorResponse(const Location& location, int errorCode, std:
 void    Response::handleBadRequest(const Location& location)
 {
 	std::string method = Req.getReqLine().getMethod();
+	cout << "method: " << method << endl;
     if(std::find(httpMethods.begin(), httpMethods.end(), method) == httpMethods.end())
     {
 		handleErrorResponse(location, 400, "Bad Request");
