@@ -6,14 +6,14 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:53 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/25 18:23:02 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/26 12:26:45 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/header.hpp"
 
 
-Server::Server() : CommonDirectives("./", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG, UPLOAD), default_server(false), nullObject(false), client_max_header_buffer_size(1024 * 1024), is_set(false) {}
+Server::Server() : CommonDirectives("./", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG, UPLOAD), default_server(false), nullObject(false), client_max_uri(1024 * 1024), is_set(false) {}
 Server::~Server() {}
 Server::Server(const Server& _copy) : CommonDirectives(_copy) {*this = _copy;}
 Server& Server::operator=(const Server& _assignment)
@@ -24,7 +24,7 @@ Server& Server::operator=(const Server& _assignment)
 		ip_ports = _assignment.ip_ports;
 		locations = _assignment.locations;
 		nullObject = _assignment.nullObject;
-		client_max_header_buffer_size = _assignment.client_max_header_buffer_size;
+		client_max_uri = _assignment.client_max_uri;
 		is_set = _assignment.is_set;
 		CommonDirectives::operator=(_assignment);
 	}
@@ -161,21 +161,21 @@ void	Server::AddLocation(const string& path, const Location& _location)
 void	Server::setClientMaxHeaderBufferSize(const string& _value)
 {
 	if (is_set)
-		throw CustomException("directive is duplicate", "client_max_header_buffer_size");
+		throw CustomException("directive is duplicate", "client_max_uri");
 	char*	endp;
 	double	value = strtod(_value.c_str(), &endp);
 	string unit = endp;
 	str_utils::trim(unit);
 
 	if (value < 0)
-		throw CustomException("is invalid value for \"client_max_header_buffer_size\" directive", _value);
+		throw CustomException("is invalid value for \"client_max_uri\" directive", _value);
 
 	if (unit == "k" && value < MAX_BUFFER_SIZE * 1024 * 1024)
-		client_max_header_buffer_size = value * 1024;
+		client_max_uri = value * 1024;
 	else if ((unit == "m" || unit == "") && value < MAX_BUFFER_SIZE * 1024)
-		client_max_header_buffer_size = value * 1024 * 1024;
+		client_max_uri = value * 1024 * 1024;
 	else
-		throw CustomException("is invalid value for \"client_max_header_buffer_size\" directive", _value);
+		throw CustomException("is invalid value for \"client_max_uri\" directive", _value);
 	is_set = true;
 }
 
@@ -207,4 +207,4 @@ Location				Server::getLocationByPath(const string& _path)
 	return (l);
 }
 
-long		Server::getClientMaxHeaderBufferSize() const {return (client_max_header_buffer_size);}
+long		Server::getClientMaxHeaderBufferSize() const {return (client_max_uri);}

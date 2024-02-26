@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:32 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/25 18:16:11 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/26 12:26:45 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ class Server : public CommonDirectives
 		Locations			locations;
 		bool				default_server;
 		bool				nullObject;
-		long				client_max_header_buffer_size;
+		long				client_max_uri;
 		bool				is_set;
 		bool	isLocationAlreadyExists(const string& _path);
 		bool	isIpPortAlreadyExists(Uint _ip, int _port);

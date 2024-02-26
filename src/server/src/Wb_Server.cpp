@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/26 10:40:25 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/26 14:34:31 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void Wb_Server::Setup_Server(int port_index)
 	// std::cout << "Listening on port " << HostAndPorts[port_index].second << std::endl;
 }
 
-
+// #include <arpa/inet.h> to check later
 void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 {
 	std::string httpRequest = "";
@@ -100,9 +100,12 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 					}
 					else
 					{
+						// cout << "port: " << ntohs(address[i].sin_port) << endl;
+						// cout << "ip: " << str_utils::ip(ntohl(address[i].sin_addr.s_addr)) << endl;
 						fcntl(socket_fd_client, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 						FD_SET(socket_fd_client, &fd_set_Read);
 					}
+					
 				}
 				else
 				{
@@ -113,7 +116,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 			{
 				if (!httpRequest.empty())
 				{
-						// std::string htmlResponse = "hello world";
+						std::string htmlResponse = "hello world";
 					// try
 					// {
 						// std::cout << "request: " << httpRequest << std::endl;
@@ -148,12 +151,11 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 					
 					Response	response;
 					response.setReq(request);
-					std::string res = response.ft_Response(i, parsedData);
+					response.ft_Response(i, parsedData);
 
-					if (send_full_response(i, res) == true)
+					if (send_full_response(i, htmlResponse) == true)
 					{
 						FD_CLR(i, &fd_set_write);
-						// codition if connection is keep a live or close 
 						close(i);
 					}
 				}

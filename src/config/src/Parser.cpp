@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/25 18:19:59 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/26 13:00:54 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ void	parseMimeTypes(CommonDirectives& common, const string& filePath)
 	common.check_unexpected(vec[0], "include");
 	string _filePath = str_utils::remove_quotes(filePath);
 	std::ifstream mimeTypeFile(_filePath.c_str());
+	if (!str_utils::endsWith(_filePath, ".types"))
+		throw CustomException("MimeTypes must end with [.types] extension!!", _filePath);
 	if (mimeTypeFile.fail())
 		throw CustomException("Failed to open file!!", _filePath);
 	while (std::getline(mimeTypeFile, line, '\n'))
@@ -164,7 +166,7 @@ void	Parser::fillDirectives(Server& server, ListString_iter& it, bool& ok)
 		throw CustomException("Directive have invalid number of arguments", key);
 	if (key == "server_name")
 		server.setServerName(value);
-	else if (key == "client_max_header_buffer_size")
+	else if (key == "client_max_uri")
 		server.setClientMaxHeaderBufferSize(value);
 	else if (key == "listen")
 	{
@@ -308,10 +310,7 @@ Parser::Parser(int ac, char**av)
 	fillValideDirectives();
 	std::ifstream configFile(fileName.c_str());
 	if (configFile.fail())
-	{
-		std::cout << "no is here \n";
 		throw CustomException("Failed to open file!!", fileName);
-	}
 	while (std::getline(configFile, line, '\n'))
 	{
 		if (line.size() && line.find("#") != string::npos)
@@ -494,7 +493,7 @@ void	Parser::dump()
 	for (int i = 0; it != servers.end();it++)
 	{
 		cout << "==========================> Server[" << i << "] <==========================" << endl;
-		cout << "client_max_header_buffer_size: [" << it->getClientMaxHeaderBufferSize() << "]" << endl;
+		cout << "client_max_uri: [" << it->getClientMaxHeaderBufferSize() << "]" << endl;
 		cout << "server name: " << endl;
 		VecString server_names = it->getServerNames();
 		for (VecString_iter it = server_names.begin(); it != server_names.end();it++)
