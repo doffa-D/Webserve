@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/26 14:34:31 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/26 15:02:11 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 				else
 				{
 					httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
+					
 				}
 			}
 			else if (FD_ISSET(i, &Tmp_fd_set_write))
@@ -119,7 +120,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 						std::string htmlResponse = "hello world";
 					// try
 					// {
-						// std::cout << "request: " << httpRequest << std::endl;
+						std::cout << "request: " << httpRequest << std::endl;
 						
 						// std::map<std::string, std::string> env;
 						// env["SCRIPT_NAME"] = "ll.py"; //It will be the name of the file
@@ -151,9 +152,9 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 					
 					Response	response;
 					response.setReq(request);
-					response.ft_Response(i, parsedData);
+					std::string res = response.ft_Response(i, parsedData);
 
-					if (send_full_response(i, htmlResponse) == true)
+					if (send_full_response(i, res) == true)
 					{
 						FD_CLR(i, &fd_set_write);
 						close(i);
@@ -248,7 +249,7 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 	if (valread > 0)
 	{
 		buffer[valread] = '\0';
-		std::string body(buffer, valread);
+		std::string bufferr(buffer, valread);
 		if (client_index == -1)
 		{
 			Client newClient;
@@ -258,21 +259,21 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 			newClient.lastboundaryValue = "";
 			newClient.isFile = false;
 			newClient.bytes_read = 0;
-			ContentLength(body, newClient);
-			size_t method = body.find("POST");
+			ContentLength(bufferr, newClient);
+			size_t method = bufferr.find("POST");
 			if (method != std::string::npos)
 				newClient.method = "POST";
 			else
 				newClient.method = "GET";
-			size_t contentLengthPos = body.find("Transfer-Encoding: chunked");
+			size_t contentLengthPos = bufferr.find("Transfer-Encoding: chunked");
 			if (contentLengthPos != std::string::npos)
 				newClient.isChunked = true;
 			else
 				newClient.isChunked = false;
-			size_t start = body.find("\r\n\r\n");
+			size_t start = bufferr.find("\r\n\r\n");
 			if (start != std::string::npos)
 			{
-				newClient.header = body.substr(0, start + 4);
+				newClient.header = bufferr.substr(0, start + 4);
 				newClient.start = start + 4;
 			}
 			else
@@ -281,7 +282,7 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 			clients_request.push_back(newClient);
 			client_index = static_cast<int>(clients_request.size()) - 1;
 		}
-		clients_request[client_index].buffer.append(body);
+		clients_request[client_index].buffer.append(bufferr);
 		clients_request[client_index].bytes_read += valread;
 
 		if (clients_request[client_index].method == "POST")
