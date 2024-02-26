@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 09:04:45 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/19 16:24:42 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/25 18:11:12 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 #define ALLOWED_DIRECTIVES "server_name autoindex allowed_method \
 listen client_max_body_size error_log access_log error_page location root index \
-include upload redirection cgi alias"
+include upload redirection cgi alias client_max_header_buffer_size"
 
 #define LOCATION_DIRECTIVES "root index location alias allowed_method \
 autoindex client_max_body_size error_log access_log \

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/21 10:53:38 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/25 18:14:32 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,11 +138,11 @@ void	CommonDirectives::setClientMaxBodySize(const string& _client_max_body_size)
 	if (value < 0)
 		throw CustomException("is invalid value for \"client_max_body_size\" directive", _client_max_body_size);
 
-	if (unit == "k" && value < MAX_CLIENT_BODY_SIZE * 1024 * 1024)
+	if (unit == "k" && value < MAX_BUFFER_SIZE * 1024 * 1024)
 		client_max_body_size = value * 1024;
-	else if ((unit == "m" || unit == "") && value < MAX_CLIENT_BODY_SIZE * 1024)
+	else if ((unit == "m" || unit == "") && value < MAX_BUFFER_SIZE * 1024)
 		client_max_body_size = value * 1024 * 1024;
-	else if (unit == "g" && value < MAX_CLIENT_BODY_SIZE)
+	else if (unit == "g" && value < MAX_BUFFER_SIZE)
 		client_max_body_size = value * (1024 * 1024 * 1024);
 	else
 		throw CustomException("is invalid value for \"client_max_body_size\" directive", _client_max_body_size);

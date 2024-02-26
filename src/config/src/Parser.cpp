@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/19 16:55:13 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/25 18:19:59 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,8 @@ void	Parser::fillDirectives(Server& server, ListString_iter& it, bool& ok)
 		throw CustomException("Directive have invalid number of arguments", key);
 	if (key == "server_name")
 		server.setServerName(value);
+	else if (key == "client_max_header_buffer_size")
+		server.setClientMaxHeaderBufferSize(value);
 	else if (key == "listen")
 	{
 		ok = server.AddIpPort(value);
@@ -492,6 +494,7 @@ void	Parser::dump()
 	for (int i = 0; it != servers.end();it++)
 	{
 		cout << "==========================> Server[" << i << "] <==========================" << endl;
+		cout << "client_max_header_buffer_size: [" << it->getClientMaxHeaderBufferSize() << "]" << endl;
 		cout << "server name: " << endl;
 		VecString server_names = it->getServerNames();
 		for (VecString_iter it = server_names.begin(); it != server_names.end();it++)

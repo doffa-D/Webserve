@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/21 10:51:57 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/25 18:14:20 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "../../../include/header.hpp"
 
 
-#define MAX_CLIENT_BODY_SIZE 8589934592
+#define MAX_BUFFER_SIZE 8589934592
 #define ERROR_LOG "./logs/error_log.log"
 #define ACCESS_LOG "./logs/access_log.log"
 #define UPLOAD "./upload/"
