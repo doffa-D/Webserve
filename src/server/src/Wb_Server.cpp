@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/25 20:45:10 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/26 08:46:43 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 
 
-// Wb_Server::Wb_Server(std::vector<std::pair<Uint, int> > hAndP)
 Wb_Server::Wb_Server(const Parser& parsedData)
 {
 	std::vector<std::pair<Uint, int> > hAndP = parsedData.getHostsAndPorts();
@@ -35,8 +34,7 @@ void Wb_Server::Setup_Server(int port_index)
 	}
 
 	int opt = 1;
-	if (setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1 )
-	//|| setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt)) == -1)
+	if (setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1 || setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt)) == -1)
 	{
 		std::cout << "Failed to set socket options for port " << HostAndPorts[port_index].second << std::endl;
 		exit(EXIT_FAILURE);
@@ -66,7 +64,7 @@ void Wb_Server::Setup_Server(int port_index)
 
 void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 {
-	// char buffer[1024];
+	std::string httpRequest = "";
 	fd_set fd_set_Read, Tmp_fd_set_Read;
 	fd_set fd_set_write, Tmp_fd_set_write;
 	FD_ZERO(&fd_set_Read);
@@ -81,13 +79,13 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 	{
 		Tmp_fd_set_Read = fd_set_Read;
 		Tmp_fd_set_write = fd_set_write;
-		
+
 		if (select(FD_SETSIZE, &Tmp_fd_set_Read, &Tmp_fd_set_write, NULL, NULL) < 0)
 		{
 			perror("Error in select");
 			exit(1);
 		}
-		std::string httpRequest = "";
+
 		for (int i = 0; i < FD_SETSIZE; ++i)
 		{
 			if (FD_ISSET(i, &Tmp_fd_set_Read))
@@ -108,65 +106,57 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 				}
 				else
 				{
-					Request request;
-
-					// for(size_t i=0; i<request.allowedCharacters.size(); i++)
-					// 	std::cout << "Char :  " << request.allowedCharacters[i] << std::endl;
-					// exit(1);
-
 					httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
+				}
+			}
+			else if (FD_ISSET(i, &Tmp_fd_set_write))
+			{
+				if (!httpRequest.empty())
+				{
+						std::string htmlResponse = "hello world";
+					// try
+					// {
+						// std::cout << "request: " << httpRequest << std::endl;
+						
+						// std::map<std::string, std::string> env;
+						// env["SCRIPT_NAME"] = "ll.py"; //It will be the name of the file
+						// env["SCRIPT_FILENAME"] = "/Users/rrhnizar/Desktop/DofaCgi/ll.py"; //It will be the path of the file 
+						// env["CONTENT_TYPE"] = "application/x-www-form-urlencoded";
+						// env["REQUEST_METHOD"] = "POST";
+						// env["CONTENT_LENGTH"] = "12";
+						// env["QUERY_STRING"] = "";//It will be empty in the POST and fill it in GET so you can put the form parameter just if you have it
+						// env["SERVER_PROTOCOL"] = "HTTP/1.1"; 
+						// env["SERVER_NAME"] = "WebServer";
+						// env["REDIRECT_STATUS"] = "200";
 					
-					// httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
-					// bzero(buffer, 1024);
-					// int n = recv(i, buffer, 1024, 0);
-					// std::string buf(buffer, n);
-					// httpRequest += buf;
-					// std::cout << "Request :\n" << httpRequest << std::endl;
-					// std::cout << "Request : \n" << httpRequest << std::endl;
+						// std::string body = "Hello=Wollllrld!"; // it will be empty in GET !!!
+						// std::string bin = "/usr/bin/python3";
+
+						// CGI cgi_obj(body, env, bin);
+						// std::string respont = cgi_obj.fill_env();
+						// std::cout <<  respont << std::endl;
+						
+					// }
+					// catch(const std::exception& e)
+					// {
+					// 	std::cerr << e.what() << '\n';
+					// }
+					
+
+					Request request;
 					request.Parse_Request(httpRequest);
 					
 					Response	response;
 					response.setReq(request);
 					response.ft_Response(i, parsedData);
-					// response.ft_Response(newsockfd, request, parser);
-					// std::cout << "Request : \n" << httpRequest << std::endl;
+
+					if (send_full_response(i, htmlResponse) == true)
+					{
+						FD_CLR(i, &fd_set_write);
+						close(i);
+					}
 				}
 			}
-			// else if (FD_ISSET(i, &Tmp_fd_set_write))
-			// {
-			// 	if (!httpRequest.empty())
-			// 	{
-			// 		std::string htmlResponse = "hello world";
-			// 		// try
-			// 		// {
-			// 		// 	// std::cout << "request: " << httpRequest << std::endl;			
-			// 		// 	std::map<std::string, std::string> env;
-			// 		// 	env["SCRIPT_NAME"] = "ll.py"; //It will be the name of the file
-			// 		// 	env["SCRIPT_FILENAME"] = "/Users/rrhnizar/Desktop/DofaCgi/ll.py"; //It will be the path of the file 
-			// 		// 	env["CONTENT_TYPE"] = "application/x-www-form-urlencoded";
-			// 		// 	env["REQUEST_METHOD"] = "POST";
-			// 		// 	env["CONTENT_LENGTH"] = "12";
-			// 		// 	env["QUERY_STRING"] = "";//It will be empty in the POST and fill it in GET so you can put the form parameter just if you have it
-			// 		// 	env["SERVER_PROTOCOL"] = "HTTP/1.1"; 
-			// 		// 	env["SERVER_NAME"] = "WebServer";
-			// 		// 	env["REDIRECT_STATUS"] = "200";	
-			// 		// 	std::string body = "Hello=Wollllrld!"; // it will be empty in GET !!!
-			// 		// 	std::string bin = "/usr/bin/python3";
-			// 		// 	CGI cgi_obj(body, env, bin);
-			// 		// 	std::string respont = cgi_obj.fill_env();
-			// 		// 	std::cout <<  respont << std::endl;
-			// 		// }
-			// 		// catch(const std::exception& e)
-			// 		// {
-			// 		// 	std::cerr << e.what() << '\n';
-			// 		// }
-			// 		if (send_full_response(i, htmlResponse) == true)
-			// 		{
-			// 			FD_CLR(i, &fd_set_write);
-			// 			close(i);
-			// 		}
-			// 	}
-			// }
 		}
 	}
 }
@@ -226,7 +216,6 @@ bool Wb_Server::send_full_response(int socket_fd, std::string respont)
 	{
 		clients_respont.erase(clients_respont.begin() + client_index);
 	}
-
 	return respont_status;
 }
 
@@ -250,7 +239,7 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 	{
 		close(socket_fd);
 		FD_CLR(socket_fd, &fd_set_Read);
-		clients_request.erase(clients_request.begin() + client_index); // This line crashes sometimes, needs more checks
+		clients_request.erase(clients_request.begin() + client_index);
 		return "";
 	}
 	if (valread > 0)
@@ -292,36 +281,36 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 		clients_request[client_index].buffer.append(body);
 		clients_request[client_index].bytes_read += valread;
 
-		// if (clients_request[client_index].method == "POST")
-		// {
-		// 	if (clients_request[client_index].isChunked)
-		// 	{
-		// 		size_t searchLength = std::min(static_cast<size_t>(10), clients_request[client_index].bytes_read);
-		// 		std::string substring = clients_request[client_index].buffer.substr(clients_request[client_index].bytes_read - searchLength, searchLength);
-		// 		size_t foundPos = substring.rfind("\r\n0\r\n");
-		// 		if (foundPos != std::string::npos)
-		// 		{
-		// 			FD_CLR(socket_fd, &fd_set_Read);
-		// 			FD_SET(socket_fd, &fd_set_write);
-		// 			std::string request = clients_request[client_index].buffer;
-		// 			clients_request.erase(clients_request.begin() + client_index);
-		// 			return request;
-		// 		}
-		// 	}
-		// 	else
-		// 	{
-		// 		if (clients_request[client_index].bytes_read - clients_request[client_index].startFContent == clients_request[client_index].contentLength)
-		// 		{
-		// 			FD_CLR(socket_fd, &fd_set_Read);
-		// 			FD_SET(socket_fd, &fd_set_write);
-		// 			std::string request = clients_request[client_index].buffer;
-		// 			clients_request.erase(clients_request.begin() + client_index);
-		// 			return request;
-		// 		}
-		// 	}
-		// }
-		// else
-		// {
+		if (clients_request[client_index].method == "POST")
+		{
+			if (clients_request[client_index].isChunked)
+			{
+				size_t searchLength = std::min(static_cast<size_t>(10), clients_request[client_index].bytes_read);
+				std::string substring = clients_request[client_index].buffer.substr(clients_request[client_index].bytes_read - searchLength, searchLength);
+				size_t foundPos = substring.rfind("\r\n0\r\n");
+				if (foundPos != std::string::npos)
+				{
+					FD_CLR(socket_fd, &fd_set_Read);
+					FD_SET(socket_fd, &fd_set_write);
+					std::string request = clients_request[client_index].buffer;
+					clients_request.erase(clients_request.begin() + client_index);
+					return request;
+				}
+			}
+			else
+			{
+				if (clients_request[client_index].bytes_read - clients_request[client_index].startFContent == clients_request[client_index].contentLength)
+				{
+					FD_CLR(socket_fd, &fd_set_Read);
+					FD_SET(socket_fd, &fd_set_write);
+					std::string request = clients_request[client_index].buffer;
+					clients_request.erase(clients_request.begin() + client_index);
+					return request;
+				}
+			}
+		}
+		else
+		{
 			size_t pos = clients_request[client_index].buffer.find("\r\n\r\n");
 			if (pos != std::string::npos)
 			{
@@ -331,7 +320,7 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 				clients_request.erase(clients_request.begin() + client_index);
 				return request;
 			}
-		// }
+		}
 	}
 
 	return "";
