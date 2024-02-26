@@ -1,0 +1,6 @@
+kep-alive vs close fd_client
+check headers files relink
+check alias
+check rediretion
+check # in parsing
+bonus cookies and setions

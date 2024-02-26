@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/25 11:58:23 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/26 18:44:47 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,9 +180,10 @@ void	Response::Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int Fi
 	else
 		ResHeader.setContentFile(ResPath);
 	ResHeader.setContentLength(str_utils::to_string(ResHeader.getContentFile().size()));
-	size_t pos = ResPath.find('.');
+	// size_t pos = ResPath.find('.');
+	size_t pos = str_utils::r_find(ResPath, '.');
 	ResHeader.setContentType(location.getMimeTypeByKey(ResPath.substr(pos + 1)));//this line needs to more checks.
-
+	std::cout << ResPath.substr(pos + 1) << "   :    " << location.getMimeTypeByKey(ResPath.substr(pos + 1)) << std::endl;
 
 
 	response = ResLine.getHttpVersion() + " " + ResLine.getStatus_Code() + " " + ResLine.getStatus_Message() + "\r\n" +

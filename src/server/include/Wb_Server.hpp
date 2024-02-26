@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/17 23:57:30 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/26 18:08:40 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ struct Client
 	std::vector<std::string> parts;
 	bool isFile;
 	std::string header;
+	bool first_respont;
 };
 
 class Wb_Server

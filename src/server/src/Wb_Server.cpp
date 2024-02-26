@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/26 15:02:11 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/26 18:22:24 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,21 +60,68 @@ void Wb_Server::Setup_Server(int port_index)
 	fcntl(socket_fd_server[port_index], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 	// std::cout << "Listening on port " << HostAndPorts[port_index].second << std::endl;
 }
+std::string readFileContent(const std::string &filePath)
+{
+	std::ifstream fileStream(filePath);
+	if (!fileStream.is_open())
+	{
+		return ""; // Handle file not found or other errors
+	}
 
+	std::ostringstream contentStream;
+	contentStream << fileStream.rdbuf();
+	return contentStream.str();
+}
 // #include <arpa/inet.h> to check later
 void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 {
+	// (void)parsedData;
+	// 	std::string htmlResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+	// htmlResponse += "<!DOCTYPE html>\n";
+	// htmlResponse += "<html lang=\"en\">\n";
+	// htmlResponse += "  <head>\n";
+	// htmlResponse += "    <meta charset=\"UTF-8\" />\n";
+	// htmlResponse += "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
+	// htmlResponse += "    <title>Text File Content</title>\n";
+	// htmlResponse += "    <style>\n";
+	// htmlResponse += "      .square {\n";
+	// htmlResponse += "        width: 600px; /* Set your desired width */\n";
+	// htmlResponse += "        height: 1000px; /* Set your desired height */\n";
+	// htmlResponse += "        border: 2px solid #000; /* Set border style and color */\n";
+	// htmlResponse += "        padding: 10px; /* Add padding for better readability */\n";
+	// htmlResponse += "        overflow: auto; /* Add scrollbars if content overflows */\n";
+	// htmlResponse += "      }\n";
+	// htmlResponse += "    </style>\n";
+	// htmlResponse += "  </head>\n";
+	// htmlResponse += "  <body>\n";
+	// htmlResponse += "    <h1>Text File Content</h1>\n";
+
+	// // Read the content of the text file
+	// std::string textFilePath = "/goinfre/hdagdagu/600k.txt";
+	// std::string fileContent = readFileContent(textFilePath);
+
+	// // Include the file content in the HTML response within a square
+	// htmlResponse += "    <div class=\"square\">\n";
+	// htmlResponse += "      <pre>\n";
+	// htmlResponse += fileContent;
+	// htmlResponse += "      </pre>\n";
+	// htmlResponse += "    </div>\n";
+
+	// htmlResponse += "  </body>\n";
+	// htmlResponse += "</html>\n";
 	std::string httpRequest = "";
+	std::string resss = "";
 	fd_set fd_set_Read, Tmp_fd_set_Read;
 	fd_set fd_set_write, Tmp_fd_set_write;
 	FD_ZERO(&fd_set_Read);
 	FD_ZERO(&fd_set_write);
-
+	std::map<int,bool > checker;
 	for (int i = 0; i < Number_of_ports; i++)
 	{
 		FD_SET(socket_fd_server[i], &fd_set_Read);
 	}
 	std::cout << "Server is running"<< std::endl;
+
 	while (true)
 	{
 		Tmp_fd_set_Read = fd_set_Read;
@@ -104,6 +151,8 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 						// cout << "ip: " << str_utils::ip(ntohl(address[i].sin_addr.s_addr)) << endl;
 						fcntl(socket_fd_client, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 						FD_SET(socket_fd_client, &fd_set_Read);
+						checker[socket_fd_client] = true;
+
 					}
 					
 				}
@@ -115,12 +164,9 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 			}
 			else if (FD_ISSET(i, &Tmp_fd_set_write))
 			{
-				if (!httpRequest.empty())
-				{
-						std::string htmlResponse = "hello world";
 					// try
 					// {
-						std::cout << "request: " << httpRequest << std::endl;
+						// std::cout << "request: " << httpRequest << std::endl;
 						
 						// std::map<std::string, std::string> env;
 						// env["SCRIPT_NAME"] = "ll.py"; //It will be the name of the file
@@ -145,21 +191,24 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 					// {
 					// 	std::cerr << e.what() << '\n';
 					// }
-					
-
-					Request request;
-					request.Parse_Request(httpRequest);
-					
-					Response	response;
-					response.setReq(request);
-					std::string res = response.ft_Response(i, parsedData);
-
-					if (send_full_response(i, res) == true)
+					if (checker[i] == true)
 					{
+						Request request;
+						request.Parse_Request(httpRequest);
+						
+						Response	response;
+						response.setReq(request);
+						std::string res = response.ft_Response(i, parsedData);
+						resss = res;
+						checker[i] = false;
+					}
+					if (send_full_response(i, resss) == true)
+					{
+						checker[i] = true;
 						FD_CLR(i, &fd_set_write);
 						close(i);
 					}
-				}
+
 			}
 		}
 	}
@@ -243,80 +292,76 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 	{
 		close(socket_fd);
 		FD_CLR(socket_fd, &fd_set_Read);
-		clients_request.erase(clients_request.begin() + client_index);
+		if(client_index != -1)
+			clients_request.erase(clients_request.begin() + client_index);
 		return "";
 	}
-	if (valread > 0)
+
+	buffer[valread] = '\0';
+	std::string bufferr(buffer, valread);
+	if (client_index == -1)
 	{
-		buffer[valread] = '\0';
-		std::string bufferr(buffer, valread);
-		if (client_index == -1)
+		Client newClient;
+		newClient.fd = socket_fd;
+		newClient.fisrtboundaryValue = "";
+		newClient.header = "";
+		newClient.lastboundaryValue = "";
+		newClient.isFile = false;
+		newClient.bytes_read = 0;
+		newClient.contentLength = 0;
+		newClient.first_respont = true;
+		ContentLength(bufferr, newClient);
+		size_t contentLengthPos = bufferr.find("Transfer-Encoding: chunked");
+		if (contentLengthPos != std::string::npos)
+			newClient.isChunked = true;
+		else
+			newClient.isChunked = false;
+		size_t start = bufferr.find("\r\n\r\n");
+		if (start != std::string::npos)
 		{
-			Client newClient;
-			newClient.fd = socket_fd;
-			newClient.fisrtboundaryValue = "";
-			newClient.header = "";
-			newClient.lastboundaryValue = "";
-			newClient.isFile = false;
-			newClient.bytes_read = 0;
-			ContentLength(bufferr, newClient);
-			size_t method = bufferr.find("POST");
-			if (method != std::string::npos)
-				newClient.method = "POST";
-			else
-				newClient.method = "GET";
-			size_t contentLengthPos = bufferr.find("Transfer-Encoding: chunked");
-			if (contentLengthPos != std::string::npos)
-				newClient.isChunked = true;
-			else
-				newClient.isChunked = false;
-			size_t start = bufferr.find("\r\n\r\n");
-			if (start != std::string::npos)
-			{
-				newClient.header = bufferr.substr(0, start + 4);
-				newClient.start = start + 4;
-			}
-			else
-				newClient.start = 0;
-
-			clients_request.push_back(newClient);
-			client_index = static_cast<int>(clients_request.size()) - 1;
+			newClient.header = bufferr.substr(0, start + 4);
+			newClient.start = start + 4;
 		}
-		clients_request[client_index].buffer.append(bufferr);
-		clients_request[client_index].bytes_read += valread;
+		else
+			newClient.start = 0;
 
-		if (clients_request[client_index].method == "POST")
+		clients_request.push_back(newClient);
+		client_index = static_cast<int>(clients_request.size()) - 1;
+	}
+	clients_request[client_index].buffer.append(bufferr);
+	clients_request[client_index].bytes_read += valread;
+
+	if (clients_request[client_index].contentLength == 0)
+	{
+		size_t pos = clients_request[client_index].buffer.find("\r\n\r\n");
+		if (pos != std::string::npos)
 		{
-			if (clients_request[client_index].isChunked)
+			FD_CLR(socket_fd, &fd_set_Read);
+			FD_SET(socket_fd, &fd_set_write);
+			std::string request = clients_request[client_index].buffer;
+			clients_request.erase(clients_request.begin() + client_index);
+			return request;
+		}
+	}
+	else
+	{
+		if (clients_request[client_index].isChunked)
+		{
+			// size_t searchLength = std::min(static_cast<size_t>(10), clients_request[client_index].bytes_read);
+			// std::string substring = clients_request[client_index].buffer.substr(clients_request[client_index].bytes_read - searchLength, searchLength);
+			size_t foundPos = clients_request[client_index].buffer.rfind("\r\n0\r\n");
+			if (foundPos != std::string::npos)
 			{
-				size_t searchLength = std::min(static_cast<size_t>(10), clients_request[client_index].bytes_read);
-				std::string substring = clients_request[client_index].buffer.substr(clients_request[client_index].bytes_read - searchLength, searchLength);
-				size_t foundPos = substring.rfind("\r\n0\r\n");
-				if (foundPos != std::string::npos)
-				{
-					FD_CLR(socket_fd, &fd_set_Read);
-					FD_SET(socket_fd, &fd_set_write);
-					std::string request = clients_request[client_index].buffer;
-					clients_request.erase(clients_request.begin() + client_index);
-					return request;
-				}
-			}
-			else
-			{
-				if (clients_request[client_index].bytes_read - clients_request[client_index].startFContent == clients_request[client_index].contentLength)
-				{
-					FD_CLR(socket_fd, &fd_set_Read);
-					FD_SET(socket_fd, &fd_set_write);
-					std::string request = clients_request[client_index].buffer;
-					clients_request.erase(clients_request.begin() + client_index);
-					return request;
-				}
+				FD_CLR(socket_fd, &fd_set_Read);
+				FD_SET(socket_fd, &fd_set_write);
+				std::string request = clients_request[client_index].buffer;
+				clients_request.erase(clients_request.begin() + client_index);
+				return request;
 			}
 		}
 		else
 		{
-			size_t pos = clients_request[client_index].buffer.find("\r\n\r\n");
-			if (pos != std::string::npos)
+			if (clients_request[client_index].bytes_read - clients_request[client_index].startFContent == clients_request[client_index].contentLength)
 			{
 				FD_CLR(socket_fd, &fd_set_Read);
 				FD_SET(socket_fd, &fd_set_write);
@@ -326,7 +371,6 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 			}
 		}
 	}
-
 	return "";
 }
 
