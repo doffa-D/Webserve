@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Main_Response.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/25 19:26:18 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/26 10:35:44 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,9 @@ bool    Response::isUriTooLong(const long& _value)
     return false;
 }
 
-void Response::ft_Response(int clientSocket, const Parser& parser)
+std::string Response::ft_Response(int clientSocket, const Parser& parser)
 {
+    (void)clientSocket;
     _host = findHostFromHeaders();
     Server server = parser.getServerbyHost(_host);
     Location location = server.getLocationByPath(Req.getReqLine().getPath());
@@ -63,29 +64,36 @@ void Response::ft_Response(int clientSocket, const Parser& parser)
     handleBadRequest(location);
     if(ReqErr == 1)
     {
-        send(clientSocket, response.c_str(), response.size(), 0);
-        return;
+        // send(clientSocket, response.c_str(), response.size(), 0);
+        // return;
+        return response;
     }
     if(isUriTooLong(server.getClientMaxHeaderBufferSize()))
     {
         handleUriTooLong(location);
-        send(clientSocket, response.c_str(), response.size(), 0);
-        return;
+        return response;
+        // send(clientSocket, response.c_str(), response.size(), 0);
+        // return;
     }
     if (!isMethodAllowed(location))
 	{
         handleMethodNotAllowed(location);
-        send(clientSocket, response.c_str(), response.size(), 0);
-        return;
+        return response;
+        // send(clientSocket, response.c_str(), response.size(), 0);
+        // return;
     }
     if (!isRequestBodySizeAllowed(location))
 	{
         handleBodyTooLarge(location);
-        send(clientSocket, response.c_str(), response.size(), 0);
-        return;
+        return response;
+        // send(clientSocket, response.c_str(), response.size(), 0);
+        // return;
     }
     std::string Root_ReqPath = location.getRoot() + Req.getReqLine().getPath(); // construct Absolute Path
     if (!serveRequestedResource(Root_ReqPath, location))
         handleNotFound(location);
-    send(clientSocket, response.c_str(), response.size(), 0);
+    
+    return response;
+    // send_full_response(clientSocket, response.c_str());
+    // send(clientSocket, response.c_str(), response.size(), 0);
 }

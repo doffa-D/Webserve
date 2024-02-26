@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/26 08:46:43 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/26 10:40:25 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 			{
 				if (!httpRequest.empty())
 				{
-						std::string htmlResponse = "hello world";
+						// std::string htmlResponse = "hello world";
 					// try
 					// {
 						// std::cout << "request: " << httpRequest << std::endl;
@@ -148,11 +148,12 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 					
 					Response	response;
 					response.setReq(request);
-					response.ft_Response(i, parsedData);
+					std::string res = response.ft_Response(i, parsedData);
 
-					if (send_full_response(i, htmlResponse) == true)
+					if (send_full_response(i, res) == true)
 					{
 						FD_CLR(i, &fd_set_write);
+						// codition if connection is keep a live or close 
 						close(i);
 					}
 				}

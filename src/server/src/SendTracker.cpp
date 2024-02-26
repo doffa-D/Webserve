@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/16 15:40:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/18 00:20:27 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/26 10:31:45 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ bool SendTracker::writeNextChunk()
 {
     if (this->has_finished == true)
     {
-
         ssize_t bytesWritten = 0;
         size_t byt = response.length() - this->bytesWritten_;
         size_t size_to_send = std::min(static_cast<size_t>(SEND_BUFFER_SIZE), byt);
