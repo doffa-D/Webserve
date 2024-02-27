@@ -3,7 +3,7 @@ check headers files relink
 check alias
 check rediretion
 
+[done] check # in parsing
+[done] cgi override inside location
 bonus cookies and setions
-check # in parsing
-cgi override inside location
 get data of an already created socket_fd
