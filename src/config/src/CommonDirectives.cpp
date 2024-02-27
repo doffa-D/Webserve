@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/27 10:39:32 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/27 18:18:58 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,6 +250,7 @@ void	CommonDirectives::setCgi(const string& _cgi)
 {
 	if (check[9])
 		throw CustomException("directive is duplicate", "cgi");
+	cgi.clear();
 	VecString	split = str_utils::ultimatSplit(_cgi, " \t");
 
 	for (size_t i = 0; i < split.size(); i++)
