@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/27 11:56:45 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/27 16:05:05 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,16 @@ std::string Response::ft_Response(int clientSocket, const Parser& parser)
     _host = findHostFromHeaders();
     Server server = parser.getServerbyHost(_host);
     Location location = server.getLocationByPath(Req.getReqLine().getPath());
+
+    // cout << "Path: " << location.getUpload() << endl; /* get upload path of a certine 
+    //                                                         location if it has ben set in config file, else get defualt path*/
+    // MapStringString cgi = location.getCgi();
+
+    // string  extionsion ; // get extension
+    // if (cgi[extionsion].empty())
+    //     (void)extionsion;//normale way
+    // else
+    //     (void)extionsion;//cgi way
 
     handleBadRequest(location);
     if(ReqErr == 1)

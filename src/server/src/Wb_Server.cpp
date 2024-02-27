@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/27 13:42:16 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/27 16:08:26 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 	{
 		FD_SET(socket_fd_server[i], &fd_set_Read);
 	}
-	std::cout << "Server is running"<< std::endl;
+	std::cout << "Server is running" << std::endl;
 
 	while (true)
 	{
@@ -131,11 +131,11 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 			{
 					// try
 					// {
-						std::cout << "request: \n" << httpRequest << std::endl;
+						// std::cout << "request: " << httpRequest << std::endl;
 						
 						// std::map<std::string, std::string> env;
 						// env["SCRIPT_NAME"] = "ll.py"; //It will be the name of the file
-						// env["SCRIPT_FILENAME"] = "/Users/rrhnizar/Desktop/DofaCgi/ll.py"; //It will be the path of the file 
+						// env["SCRIPT_FILENAME"] = "./ll.py"; //It will be the path of the file 
 						// env["CONTENT_TYPE"] = "application/x-www-form-urlencoded";
 						// env["REQUEST_METHOD"] = "POST";
 						// env["CONTENT_LENGTH"] = "12";
@@ -161,12 +161,9 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 					{
 						Request request;
 						request.Parse_Request(httpRequest);
-						
 						Response	response;
 						response.setReq(request);
-						std::string res = response.ft_Response(i, parsedData);
-						resss = res;
-						std::cout << "size res  = " << resss.size() << std::endl;
+						resss = response.ft_Response(i, parsedData);
 						checker[i] = false;
 					}
 					if (send_full_response(i, resss) == true)
@@ -175,7 +172,6 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 						FD_CLR(i, &fd_set_write);
 						close(i);
 					}
-
 			}
 		}
 	}
