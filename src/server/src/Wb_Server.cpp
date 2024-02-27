@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/27 10:53:19 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/27 13:42:16 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,43 +72,8 @@ std::string readFileContent(const std::string &filePath)
 	contentStream << fileStream.rdbuf();
 	return contentStream.str();
 }
-// #include <arpa/inet.h> to check later
 void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 {
-	// (void)parsedData;
-	// 	std::string htmlResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
-	// htmlResponse += "<!DOCTYPE html>\n";
-	// htmlResponse += "<html lang=\"en\">\n";
-	// htmlResponse += "  <head>\n";
-	// htmlResponse += "    <meta charset=\"UTF-8\" />\n";
-	// htmlResponse += "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n";
-	// htmlResponse += "    <title>Text File Content</title>\n";
-	// htmlResponse += "    <style>\n";
-	// htmlResponse += "      .square {\n";
-	// htmlResponse += "        width: 600px; /* Set your desired width */\n";
-	// htmlResponse += "        height: 1000px; /* Set your desired height */\n";
-	// htmlResponse += "        border: 2px solid #000; /* Set border style and color */\n";
-	// htmlResponse += "        padding: 10px; /* Add padding for better readability */\n";
-	// htmlResponse += "        overflow: auto; /* Add scrollbars if content overflows */\n";
-	// htmlResponse += "      }\n";
-	// htmlResponse += "    </style>\n";
-	// htmlResponse += "  </head>\n";
-	// htmlResponse += "  <body>\n";
-	// htmlResponse += "    <h1>Text File Content</h1>\n";
-
-	// // Read the content of the text file
-	// std::string textFilePath = "/goinfre/hdagdagu/600k.txt";
-	// std::string fileContent = readFileContent(textFilePath);
-
-	// // Include the file content in the HTML response within a square
-	// htmlResponse += "    <div class=\"square\">\n";
-	// htmlResponse += "      <pre>\n";
-	// htmlResponse += fileContent;
-	// htmlResponse += "      </pre>\n";
-	// htmlResponse += "    </div>\n";
-
-	// htmlResponse += "  </body>\n";
-	// htmlResponse += "</html>\n";
 	std::string httpRequest = "";
 	std::string resss = "";
 	fd_set fd_set_Read, Tmp_fd_set_Read;
@@ -130,7 +95,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 		if (select(FD_SETSIZE, &Tmp_fd_set_Read, &Tmp_fd_set_write, NULL, NULL) < 0)
 		{
 			perror("Error in select");
-			exit(1);
+			exit(1); // respond with server error 
 		}
 
 		for (int i = 0; i < FD_SETSIZE; ++i)
@@ -143,7 +108,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 					if ((socket_fd_client = accept(i, (struct sockaddr *)&address[i], (socklen_t *)&addrlen)) < 0)
 					{
 						perror("accept");
-						exit(EXIT_FAILURE);
+						exit(EXIT_FAILURE); // respond with server error 
 					}
 					else
 					{
@@ -166,7 +131,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 			{
 					// try
 					// {
-						// std::cout << "request: \n" << httpRequest << std::endl;
+						std::cout << "request: \n" << httpRequest << std::endl;
 						
 						// std::map<std::string, std::string> env;
 						// env["SCRIPT_NAME"] = "ll.py"; //It will be the name of the file
@@ -191,6 +156,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 					// {
 					// 	std::cerr << e.what() << '\n';
 					// }
+					// std::cout << checker[i] << std::endl;
 					if (checker[i] == true)
 					{
 						Request request;
@@ -200,6 +166,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 						response.setReq(request);
 						std::string res = response.ft_Response(i, parsedData);
 						resss = res;
+						std::cout << "size res  = " << resss.size() << std::endl;
 						checker[i] = false;
 					}
 					if (send_full_response(i, resss) == true)
@@ -255,6 +222,7 @@ int Wb_Server::find_clinet_response(std::vector<SendTracker> &clients_respont, i
 
 bool Wb_Server::send_full_response(int socket_fd, std::string respont)
 {
+
 	int client_index = find_clinet_response(clients_respont, socket_fd);
 	bool respont_status;
 	if (client_index == -1)
