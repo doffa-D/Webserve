@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 09:04:45 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/26 13:00:42 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/27 23:41:42 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,12 @@ class	Parser
 		vector<Server>		servers;
 		VecString 			allowed_directives;
 		VecString 			location_valid_directives;
-		string				dataToParse;
 		ListString			tokens;
 		Parser();
 		Parser(const Parser& _copy);
 		Parser& operator=(const Parser& _assignment);
-		void			tokenizer();
+		string			remove_hashtag(const string& _line);
+		ListString		tokenizer(const string& dataToParse);
 		void			analyzer();
 		void			createFiles();
 		void			fillServerData(ListString_iter& it);
