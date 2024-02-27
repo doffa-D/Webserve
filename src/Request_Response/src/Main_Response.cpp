@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/26 10:35:44 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/27 11:56:45 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,14 @@ std::string Response::ft_Response(int clientSocket, const Parser& parser)
         // return;
     }
     std::string Root_ReqPath = location.getRoot() + Req.getReqLine().getPath(); // construct Absolute Path
+    // if(location.getRoot().empty())
+    // {
+    //     Root_ReqPath = Root_ReqPath.substr(1);
+    // }
+    // std::string Root_ReqPath = Req.getReqLine().getPath(); // construct Absolute Path
+    // std::cout << "Root_ReqPath  =  " << Root_ReqPath << std::endl;
     if (!serveRequestedResource(Root_ReqPath, location))
         handleNotFound(location);
-    
     return response;
     // send_full_response(clientSocket, response.c_str());
     // send(clientSocket, response.c_str(), response.size(), 0);

@@ -6,14 +6,14 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/16 15:38:24 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/18 00:20:35 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/27 11:53:26 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "../../../include/header.hpp" // in this header file we have all the libraries that we need
-#define SEND_BUFFER_SIZE 4096
+#define SEND_BUFFER_SIZE 1024
 // #include <algorithm>
 
 class SendTracker

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/26 18:44:47 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/27 12:01:13 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,16 +176,18 @@ void	Response::Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int Fi
 	ResLine.setStatus_Message(Stat_Msg);
 
 	if(File_Or_Str == 0)
+	{
+		size_t pos = str_utils::r_find(ResPath, '.');
 		ResHeader.setContentFile(ReadFile(ResPath));
+		ResHeader.setContentType(location.getMimeTypeByKey(ResPath.substr(pos + 1)));
+	}
 	else
+	{
 		ResHeader.setContentFile(ResPath);
+		ResHeader.setContentType("text/html");
+	}
 	ResHeader.setContentLength(str_utils::to_string(ResHeader.getContentFile().size()));
-	// size_t pos = ResPath.find('.');
-	size_t pos = str_utils::r_find(ResPath, '.');
-	ResHeader.setContentType(location.getMimeTypeByKey(ResPath.substr(pos + 1)));//this line needs to more checks.
-	std::cout << ResPath.substr(pos + 1) << "   :    " << location.getMimeTypeByKey(ResPath.substr(pos + 1)) << std::endl;
-
-
+	
 	response = ResLine.getHttpVersion() + " " + ResLine.getStatus_Code() + " " + ResLine.getStatus_Message() + "\r\n" +
                 "Content-Type: " + ResHeader.getContentType() + "\r\n" +
                 "Content-Length: " + ResHeader.getContentLength() + "\r\n" +

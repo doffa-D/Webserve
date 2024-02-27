@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:53 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/26 12:26:45 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/27 11:27:03 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/header.hpp"
 
 
-Server::Server() : CommonDirectives("./", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG, UPLOAD), default_server(false), nullObject(false), client_max_uri(1024 * 1024), is_set(false) {}
+Server::Server() : CommonDirectives(".", false, (1024 * 1024), ERROR_LOG, ACCESS_LOG, UPLOAD), default_server(false), nullObject(false), client_max_uri(1024 * 1024), is_set(false) {}
 Server::~Server() {}
 Server::Server(const Server& _copy) : CommonDirectives(_copy) {*this = _copy;}
 Server& Server::operator=(const Server& _assignment)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/26 18:22:24 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/27 10:53:19 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 			{
 					// try
 					// {
-						// std::cout << "request: " << httpRequest << std::endl;
+						// std::cout << "request: \n" << httpRequest << std::endl;
 						
 						// std::map<std::string, std::string> env;
 						// env["SCRIPT_NAME"] = "ll.py"; //It will be the name of the file
