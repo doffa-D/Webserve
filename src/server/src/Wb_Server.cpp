@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/28 12:12:47 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/02/28 21:26:41 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,13 +223,11 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 						FD_SET(socket_fd_client, &fd_set_Read);
 						checker[socket_fd_client] = true;
 
-					}
-					
+					}	
 				}
 				else
 				{
 					httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
-					
 				}
 			}
 			else if (FD_ISSET(i, &Tmp_fd_set_write))

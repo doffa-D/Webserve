@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/28 16:30:02 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/28 21:43:37 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 // part of Request Line 
 
-RequestLine::RequestLine() : Method(""), Path(""), HttpVersion("")
+RequestLine::RequestLine() : Method(""), Path(""), HttpVersion(""), Query_Params("")
 {}
 
 RequestLine::~RequestLine()
@@ -36,6 +36,11 @@ std::string	RequestLine::getHttpVersion() const
 	return HttpVersion;
 }
 
+std::string	RequestLine::getQuery_Params() const
+{
+	return Query_Params;
+}
+
 void	RequestLine::setMethod(std::string method)
 {
 	Method = method;
@@ -50,6 +55,7 @@ void	RequestLine::setHttpVersion(std::string httpversion)
 {
 	HttpVersion = httpversion;	
 }
+
 
 void	RequestLine::PrintReqLine()
 {
@@ -79,22 +85,23 @@ void	RequestLine::Parse_ReqLine(std::string line)
 		pos++;
 	if (pos != std::string::npos && pos != getPath().size() - 1)
 	{
-    	std::string queryparams = getPath().substr(pos);
+    	// std::string queryparams = getPath().substr(pos);
+    	Query_Params = getPath().substr(pos);
     	setPath(getPath().substr(0, TmpPos));
 		// here Parse query parameters and fill vector the Query_Params;
-		std::vector<std::string> split1 = str_utils::split(queryparams, '&');
-		for(size_t i=0; i<split1.size(); i++)
-		{
-			size_t p = split1[i].find('=');
-			if(p != std::string::npos)
-				Query_Params.push_back(std::make_pair(split1[i].substr(0, p), split1[i].substr(p + 1)));
-		}
-		for(size_t i=0; i<Query_Params.size(); i++)
-		{
-			std::cout << "Query String\n";
-			std::cout << "Key = " << Query_Params[i].first << "			";
-			std::cout << "Value = " << Query_Params[i].second << std::endl;
-		}
+		// std::vector<std::string> split1 = str_utils::split(queryparams, '&');
+		// for(size_t i=0; i<split1.size(); i++)
+		// {
+		// 	size_t p = split1[i].find('=');
+		// 	if(p != std::string::npos)
+		// 		Query_Params.push_back(std::make_pair(split1[i].substr(0, p), split1[i].substr(p + 1)));
+		// }
+		// for(size_t i=0; i<Query_Params.size(); i++)
+		// {
+		// 	std::cout << "Query String\n";
+		// 	std::cout << "Key = " << Query_Params[i].first << "			";
+		// 	std::cout << "Value = " << Query_Params[i].second << std::endl;
+		// }
 	}
 }
 
@@ -152,6 +159,11 @@ void	Request::setHttp_Header(std::map<std::string, std::string> http_header)
 RequestLine	Request::getReqLine() const
 {
 	return ReqLine;
+}
+
+std::string	Request::getBody() const
+{
+	return Body;
 }
 
 void	Request::CheckReferer()
@@ -266,17 +278,12 @@ void	Request::Parse_Request(std::string& HttpRequest)
 		if(line == "\r\n")
 			isBody = true;
 	}
-	std::cout << "Body : \n" << Body << std::endl;
+	// std::cout << "Body : \n" << Body << std::endl;
 	setHttp_Header(Header);
-	if(getHttp_Header()["host"].empty())
+	if(getHttp_Header()["Host"].empty())
 	{
 		BadRequest = 1;
 		return;
 	}
-	// if(LookingForKey() == false)
-	// {
-	// 	BadRequest = 1;
-	// 	return;
-	// }
 	CheckReferer();
 }
