@@ -7,11 +7,7 @@
   </head>
   <body>
     <h1>File Upload</h1>
-    <form
-      action="/upload.py"
-      method="get"
-      enctype="application/x-www-form-urlencoded"
-    >
+    <form method="post" enctype="application/x-www-form-urlencoded">
       <label for="file">Select a file:</label>
       <input type="file" name="file" id="file" required />
       <br />
@@ -20,8 +16,7 @@
   </body>
 </html>
 
-
- <!-- <!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

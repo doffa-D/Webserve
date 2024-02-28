@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+         #
+#    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/02/26 08:17:53 by kchaouki         ###   ########.fr        #
+#    Updated: 2024/02/27 18:21:34 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX = g++
 CFLAGS = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g3
-NAME = webserv
+NAME = webserve
 OBJDIR = .objFiles
 
 SRC_DIR = src
