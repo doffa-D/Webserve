@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/26 13:00:54 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/27 23:42:40 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,10 +243,11 @@ void	Parser::analyzer()
 	}
 }
 
-void	Parser::tokenizer() 
+ListString	Parser::tokenizer(const string& dataToParse) 
 {
 	string line;
 	size_t i = 0;
+	ListString _tokens;
 	while (i < dataToParse.size())
 	{
 		if (!strchr(";{}", dataToParse[i]))
@@ -267,9 +268,10 @@ void	Parser::tokenizer()
 		else
 			line += dataToParse[i++];
 		if (!str_utils::hasSpaceOnly(line))
-			tokens.push_back(str_utils::trim(line));
+			_tokens.push_back(str_utils::trim(line));
 		line.clear();
 	}
+	return (_tokens);
 }
 
 void	checkFiles(CommonDirectives common)
@@ -295,6 +297,31 @@ void	Parser::createFiles()
 	}
 }
 
+string	Parser::remove_hashtag(const string& _line)
+{
+	string copy;
+	if (_line.size())
+	{
+		ListString list = tokenizer(_line);
+		ListString_iter it = list.begin();
+		string	value;
+		for (; it != list.end();it++)
+		{
+			if ((*it)[0] == '#')
+				break ;
+			value = str_utils::trim(it->substr(str_utils::find_first_of(*it, " \t"), it->length()));
+			if (value[0] == '#')
+			{
+				copy += str_utils::trim(it->substr(0, str_utils::find_first_of(*it, " \t")));
+				break ;
+			}
+			copy += *it;
+		}
+		return (copy);
+	}
+	return (_line);
+}
+
 Parser::Parser(int ac, char**av)
 {
 	string line;
@@ -311,17 +338,16 @@ Parser::Parser(int ac, char**av)
 	std::ifstream configFile(fileName.c_str());
 	if (configFile.fail())
 		throw CustomException("Failed to open file!!", fileName);
+	string dataToParse;
 	while (std::getline(configFile, line, '\n'))
 	{
-		if (line.size() && line.find("#") != string::npos)
-			line = line.substr(0, line.find("#"));
-		str_utils::trim(line);
-		if (line.empty() || line[0] == '#')
+		line = str_utils::trim(remove_hashtag(line));
+		if (line.empty())
 			continue ;
 		dataToParse += line;
 		dataToParse += " ";
 	}
-	tokenizer();
+	tokens = tokenizer(dataToParse);
 	analyzer();
 	createFiles();
 }
