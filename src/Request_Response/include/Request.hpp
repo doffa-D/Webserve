@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:12 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/25 12:17:20 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/28 16:28:51 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,9 @@ class Request
 	private:
 		bool		Referer;
 		RequestLine ReqLine;
-		std::vector<std::pair<std::string, std::string> > Http_Header;
+		// std::vector<std::pair<std::string, std::string> > Http_Header;
+		std::map<std::string, std::string> Http_Header;
+		std::string Body;
 	public:
 		int BadRequest;
 		std::vector<char> allowedCharacters;
@@ -50,8 +52,10 @@ class Request
 		~Request();
 		int		getReferer() const;
 		void	settReferer(int referer);
-		std::vector<std::pair<std::string, std::string> > getHttp_Header() const;
-		void	setHttp_Header(std::vector<std::pair<std::string, std::string> > http_header);
+		// std::vector<std::pair<std::string, std::string> > getHttp_Header() const;
+		std::map<std::string, std::string> getHttp_Header() const;
+		// void	setHttp_Header(std::vector<std::pair<std::string, std::string> > http_header);
+		void	setHttp_Header(std::map<std::string, std::string> http_header);
 		RequestLine	getReqLine() const;
 		void	Parse_Request(std::string& HttpRequest);
 		void	CheckReferer();

@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/27 16:05:05 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/28 16:27:18 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ bool Response::isMethodAllowed(const Location& location)
 
 bool Response::isRequestBodySizeAllowed(const Location& location)
 {
-    return MaxBodySize() <= location.getClientMaxBodySize();
+    long MaxBodySize = atoi(Req.getHttp_Header()["Content-Length"].c_str());
+    return MaxBodySize <= location.getClientMaxBodySize();
 }
 
 bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Location& location)
@@ -57,7 +58,8 @@ bool    Response::isUriTooLong(const long& _value)
 std::string Response::ft_Response(int clientSocket, const Parser& parser)
 {
     (void)clientSocket;
-    _host = findHostFromHeaders();
+    // _host = findHostFromHeaders();
+    _host = Req.getHttp_Header()["Host"];
     Server server = parser.getServerbyHost(_host);
     Location location = server.getLocationByPath(Req.getReqLine().getPath());
 

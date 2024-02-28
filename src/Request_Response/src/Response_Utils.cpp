@@ -6,35 +6,35 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:54:30 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/24 21:07:23 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/28 16:30:32 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../include/header.hpp"
 
-long	Response::MaxBodySize()
-{
-	for(size_t i=0; i<Req.getHttp_Header().size(); i++)
-	{
-		if(Req.getHttp_Header()[i].first == "Content-Length")
-			return atoi(Req.getHttp_Header()[i].second.c_str());// this return needs more checks, i think bad practice using atoi here
-	}
-	return 0; // in case not found Content-Length is 0
-}
+// long	Response::MaxBodySize()
+// {
+// 	for(size_t i=0; i<Req.getHttp_Header().size(); i++)
+// 	{
+// 		if(Req.getHttp_Header()[i].first == "Content-Length")
+// 			return atoi(Req.getHttp_Header()[i].second.c_str());// this return needs more checks, i think bad practice using atoi here
+// 	}
+// 	return 0; // in case not found Content-Length is 0
+// }
 
-std::string	Response::findHostFromHeaders()
-{
-	std::string	_host;
-	for(size_t i=0; i<Req.getHttp_Header().size(); i++)
-	{
-		if (ToUpperStr(Req.getHttp_Header().at(i).first) == "HOST")
-		{
-			_host = Req.getHttp_Header().at(i).second;
-			break;
-		}
-	}
-	return _host;
-}
+// std::string	Response::findHostFromHeaders()
+// {
+// 	std::string	_host;
+// 	for(size_t i=0; i<Req.getHttp_Header().size(); i++)
+// 	{
+// 		if (ToUpperStr(Req.getHttp_Header().at(i).first) == "HOST")
+// 		{
+// 			_host = Req.getHttp_Header().at(i).second;
+// 			break;
+// 		}
+// 	}
+// 	return _host;
+// }
 
 std::string	Response::ReadFile(std::string&	ResPath)
 {

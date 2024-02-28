@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/25 19:45:12 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/28 16:30:02 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ void	RequestLine::Parse_ReqLine(std::string line)
 		}
 		for(size_t i=0; i<Query_Params.size(); i++)
 		{
+			std::cout << "Query String\n";
 			std::cout << "Key = " << Query_Params[i].first << "			";
 			std::cout << "Value = " << Query_Params[i].second << std::endl;
 		}
@@ -101,7 +102,7 @@ void	RequestLine::Parse_ReqLine(std::string line)
 // part of Header Request 
 
 
-Request::Request() : Referer(0), ReqLine(RequestLine()), Http_Header()
+Request::Request() : Referer(0), ReqLine(RequestLine()), Http_Header(), Body()
 {
 	BadRequest = 0;
 	// Add uppercase letters
@@ -137,12 +138,13 @@ void	Request::settReferer(int referer)
 	Referer = referer;
 }
 
-std::vector<std::pair<std::string, std::string> > Request::getHttp_Header() const
+// std::vector<std::pair<std::string, std::string> > Request::getHttp_Header() const
+std::map<std::string, std::string> Request::getHttp_Header() const
 {
 	return Http_Header;
 }
 
-void	Request::setHttp_Header(std::vector<std::pair<std::string, std::string> > http_header)
+void	Request::setHttp_Header(std::map<std::string, std::string> http_header)
 {
 	Http_Header = http_header;
 }
@@ -154,7 +156,7 @@ RequestLine	Request::getReqLine() const
 
 void	Request::CheckReferer()
 {
-	std::vector<std::pair<std::string, std::string> >::iterator it = Http_Header.begin();
+	std::map<std::string, std::string>::iterator it = Http_Header.begin();
 	for (; it != Http_Header.end(); it++)
     {
         if(strncmp(it->first.c_str(), "Referer", 7) == 0)
@@ -165,7 +167,7 @@ void	Request::CheckReferer()
 void	Request::PrintHttp_Header()
 {
 	std::cout << "\n---------------------------------- HTTP_Header ---------------------------------------\n";
-	std::vector<std::pair<std::string, std::string> >::iterator it = Http_Header.begin();
+	std::map<std::string, std::string>::iterator it = Http_Header.begin();
 	for (; it != Http_Header.end(); it++)
     {
 		std::cout << "Key: " << it->first << "   |   Value: " << it->second << std::endl;
@@ -181,22 +183,22 @@ std::string	ToUpperStr(std::string str)
 	return res;
 }
 
-bool Request::LookingForKey()
-{
-	// Key to search for
-    std::string key_to_find = "HOST";
+// bool Request::LookingForKey()
+// {
+// 	// Key to search for
+//     std::string key_to_find = "HOST";
 
-    bool found = false;
-    for (size_t i = 0; i < getHttp_Header().size(); ++i)
-	{
-        if (ToUpperStr(getHttp_Header()[i].first) == key_to_find)
-		{
-            found = true;
-            break;
-        }
-    }
-	return found;
-}
+//     bool found = false;
+//     for (size_t i = 0; i < getHttp_Header().size(); ++i)
+// 	{
+//         if (ToUpperStr(getHttp_Header()[i].) == key_to_find)
+// 		{
+//             found = true;
+//             break;
+//         }
+//     }
+// 	return found;
+// }
 
 bool	Request::FoundDisallowedChar()
 {
@@ -215,7 +217,8 @@ bool	Request::FoundDisallowedChar()
 }
 
 void	Request::Parse_Request(std::string& HttpRequest)
-{ 
+{
+	bool isBody = false;
 	std::istringstream ss(HttpRequest);
 	std::string line;
 	std::getline(ss, line);
@@ -227,9 +230,16 @@ void	Request::Parse_Request(std::string& HttpRequest)
 		return;
 	}
 	// I Fill request header and i check if i have a bad request 
-	std::vector<std::pair<std::string, std::string> > Header;
+	// std::vector<std::pair<std::string, std::string> > Header;
+	std::map<std::string, std::string> Header;
 	while (std::getline(ss, line))
 	{
+		line += "\n";
+		if(isBody)
+		{
+			Body += line;
+			continue;
+		}
 		// Find the position of the colon in the line
         size_t pos = line.find(':');
 		if (pos != std::string::npos)
@@ -239,25 +249,34 @@ void	Request::Parse_Request(std::string& HttpRequest)
 			// Remove leading and trailing whitespaces from key and value
 			// but is useless remove leading and trailing whitespaces because in nginx it's possible serve
 			// file with spaces or tab
-            key.erase(0, key.find_first_not_of(" \t\r"));
-            key.erase(key.find_last_not_of(" \t\r") + 1);
-            value.erase(0, value.find_first_not_of(" \t\r"));
-            value.erase(value.find_last_not_of(" \t\r") + 1);
+            key.erase(0, key.find_first_not_of(" \t\r\n"));
+            key.erase(key.find_last_not_of(" \t\r\n") + 1);
+            value.erase(0, value.find_first_not_of(" \t\r\n"));
+            value.erase(value.find_last_not_of(" \t\r\n") + 1);
 			
-			// Store in the Vector
-			Header.push_back(std::make_pair(key, value));
+			// Store in the map
+			Header[key] = value;
+			// Header.push_back(std::make_pair(key, value));
 		}
-		else if(pos == std::string::npos && line != "\r")
+		else if(pos == std::string::npos && line != "\r\n")
 		{
 			BadRequest = 1;
 			return;
 		}
+		if(line == "\r\n")
+			isBody = true;
 	}
+	std::cout << "Body : \n" << Body << std::endl;
 	setHttp_Header(Header);
-	if(LookingForKey() == false)
+	if(getHttp_Header()["host"].empty())
 	{
 		BadRequest = 1;
 		return;
 	}
+	// if(LookingForKey() == false)
+	// {
+	// 	BadRequest = 1;
+	// 	return;
+	// }
 	CheckReferer();
 }

@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/27 12:01:13 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/28 16:31:06 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,6 +207,8 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 	ResPath = location.getIndexFilePathByRoot(Root_ReqPath); // this function kat9alb 3la file ila mal9atxe xi file kat3tina empty
 	if(ResPath.empty() == 0)
 	{
+		// here i need to check if file to serve is CGI extension or no
+		// if file is a CGI extension i need to serve with Download option
 		Fill_Response("200", "OK", 0, location);
 		return;
 	}
