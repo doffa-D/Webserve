@@ -7,3 +7,5 @@ check rediretion
 [done] cgi override inside location
 bonus cookies and setions
 get data of an already created socket_fd
+
+headers can have multiple keys with the same value!!
