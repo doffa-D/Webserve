@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   SendTracker.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/16 15:38:24 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/28 17:50:57 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/29 12:41:23 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "../../../include/header.hpp" // in this header file we have all the libraries that we need
-#define SEND_BUFFER_SIZE 2024
+#define SEND_BUFFER_SIZE 131072
 // #include <algorithm>
 
 class SendTracker
