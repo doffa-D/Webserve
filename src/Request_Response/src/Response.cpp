@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/28 21:53:01 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/01 00:45:32 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void ResponseLine::setStatus_Message(std::string status_message)
 }
 
 // part of Response headre 
-ResponseHeader::ResponseHeader():ContentType(""), ContentLength(""), ContentFile(""), Location("")
+ResponseHeader::ResponseHeader():ContentType(""), ContentLength(""), ContentFile(""), Location(""), ContentDisposition("")
 {}
 
 ResponseHeader::~ResponseHeader()
@@ -95,6 +95,17 @@ void	ResponseHeader::setLocation(std::string	location)
 	Location = location;
 }
 
+
+void	ResponseHeader::setContentDisposition(std::string content_disposition)
+{
+	ContentDisposition = content_disposition;
+}
+
+
+std::string	ResponseHeader::getContentDisposition() const
+{
+	return ContentDisposition;
+}
 
 // part of Response 
 Response::Response() : ResLine(ResponseLine()), ResHeader(ResponseHeader()), ResBody(""), ResPath("")
@@ -169,17 +180,25 @@ std::string	Response::Error_HmlPage(const std::string& stat_code, const std::str
 	return Error_Page;
 }
 
-void	Response::Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int File_Or_Str, Location location)
+void	Response::Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int File_Or_Str, int isCgi, Location location)
 {
 	ResLine.setHttpVersion("HTTP/1.1");
 	ResLine.setStatus_Code(Stat_Code);
 	ResLine.setStatus_Message(Stat_Msg);
+
 
 	if(File_Or_Str == 0)
 	{
 		size_t pos = str_utils::r_find(ResPath, '.');
 		ResHeader.setContentFile(ReadFile(ResPath));
 		ResHeader.setContentType(location.getMimeTypeByKey(ResPath.substr(pos + 1)));
+		
+		if(isCgi == 1)
+		{
+			size_t  pos = str_utils::r_find(ResPath, '/');
+			std::string FileName = ResPath.substr(pos + 1);
+			ResHeader.setContentDisposition("attachment; filename=\"" + FileName + "\"");
+		}
 	}
 	else
 	{
@@ -191,6 +210,7 @@ void	Response::Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int Fi
 	response = ResLine.getHttpVersion() + " " + ResLine.getStatus_Code() + " " + ResLine.getStatus_Message() + "\r\n" +
                 "Content-Type: " + ResHeader.getContentType() + "\r\n" +
                 "Content-Length: " + ResHeader.getContentLength() + "\r\n" +
+				"Content-Disposition: " + ResHeader.getContentDisposition() + "\r\n" +
 				"Location: " + ResHeader.getLocation() + "\r\n" +
                 "\r\n" + ResHeader.getContentFile();
 }
@@ -201,19 +221,19 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 	{
 		ResHeader.setLocation("http://" + _host + Req.getReqLine().getPath() + "/");
 		ResPath = "";
-		Fill_Response("301", "Moved Permanently", 1, location);
+		Fill_Response("301", "Moved Permanently", 1, 0, location);
 		return ;
 	}
 	ResPath = location.getIndexFilePathByRoot(Root_ReqPath); // this function kat9alb 3la file ila mal9atxe xi file kat3tina empty
 	if(ResPath.empty() == 0)
 	{
-		Fill_Response("200", "OK", 0, location);
+		Fill_Response("200", "OK", 0, 0, location);
 		return;
 	}
 	if(location.getAutoIndex() == 1)
 	{
 		ResPath = AutoIndex(Root_ReqPath, Req.getReqLine().getPath());
-		Fill_Response("200", "OK", 1, location);
+		Fill_Response("200", "OK", 1, 0, location);
 		return;
 	}
 	handleForbidden(location);
@@ -221,9 +241,6 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 
 void Response::handleFileRequest(const std::string& filePath, const Location& location)
 {
-	// here i need to check if file to serve is CGI extension or no
-	// if file is a CGI extension i need to serve with Download option
-
 	MapStringString cgi = location.getCgi();
 
 	size_t pos = str_utils::r_find(filePath, '.');
@@ -232,18 +249,29 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
     if (bin.empty())
 	{
 		ResPath = filePath;
-		Fill_Response("200", "ok", 0, location);
+		// here i need respond with download file requested if method is post and file is backend file 
+		// here i need add this check ==> && ALLOWED_EXTENSION.find("Extension of file serve")
+		// but this method to storage the ALLOWED_EXTENSION is prevents me from search on Extension
+		// i need add check because i serve CGI file with download this file
+		// But you must download only the backend file such as (py, php, c, c++...)
+ 		if(Req.getReqLine().getMethod() == "POST") // this condition needs more checks 
+			Fill_Response("200", "ok", 0, 1, location);
+		else
+			Fill_Response("200", "ok", 0, 0, location);
         //normale way
 	}
     else
 	{
+		// std::cout << "filePath = " << filePath <<std::endl;
+		size_t _pos = str_utils::r_find(filePath, '/');
+		// std::cout << "filePath.substr(_pos + 1)  " << filePath.substr(_pos + 1) << std::endl;
 		std::map<std::string, std::string> env;
-		env["SCRIPT_NAME"] = "ll.py"; //It will be the name of the file ???
-		env["SCRIPT_FILENAME"] = "./ll.py"; //It will be the path of the file ??? 
-		
-		env["CONTENT_TYPE"] = Req.getHttp_Header()["CONTENT_TYPE"];
+		env["SCRIPT_NAME"] = filePath.substr(_pos + 1); //It will be the name of the file ???
+		env["SCRIPT_FILENAME"] = filePath; //It will be the path of the file ??? 
+
+		env["CONTENT_TYPE"] = Req.getHttp_Header()["Content-Type"];
 		env["REQUEST_METHOD"] = Req.getReqLine().getMethod();
-		env["CONTENT_LENGTH"] = Req.getHttp_Header()["CONTENT_LENGTH"];
+		env["CONTENT_LENGTH"] = Req.getHttp_Header()["Content-Length"];
 		env["QUERY_STRING"] = Req.getReqLine().getQuery_Params();//It will be empty in the POST and fill it in GET so you can put the form parameter just if you have it
 		env["SERVER_PROTOCOL"] = Req.getReqLine().getHttpVersion();
 		
@@ -251,15 +279,15 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
 		env["REDIRECT_STATUS"] = "200"; // ????
 	
 		std::string body = Req.getBody();// it will be empty in GET !!!
-		// std::string bin = "/usr/bin/python";
 		CGI cgi_obj(body, env, bin);
 		std::string respont = cgi_obj.fill_env();
-		// std::cout <<  respont << std::endl;
-		// here i need function that return respond of cgi
+		ResPath = respont;
+		// std::cout << "respont =  " << respont << std::endl;
+		Fill_Response("200", "OK", 1, 0, location);
         //cgi way
 	}
-	// ResPath = filePath;
-	// Fill_Response("200", "ok", 0, location);
 }
 
 
+
+//defining when  to handle upload the file yourself, and when to handle this with CGI

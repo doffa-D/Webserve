@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
+#    By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/02/29 12:37:00 by hdagdagu         ###   ########.fr        #
+#    Updated: 2024/02/29 18:34:56 by rrhnizar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,7 @@ SRCS = main.cpp \
 	$(SRC_DIR)/config/src/Server.cpp \
 	$(SRC_DIR)/server/src/Wb_Server.cpp \
 	$(SRC_DIR)/server/src/SendTracker.cpp \
+	$(SRC_DIR)/server/src/upload.cpp \
 	$(SRC_DIR)/CGI/src/CGI.cpp \
 	$(SRC_DIR)/Request_Response/src/Request.cpp \
 	$(SRC_DIR)/Request_Response/src/Response.cpp \

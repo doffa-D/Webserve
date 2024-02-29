@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/28 16:27:18 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/29 23:39:00 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,20 @@ bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Loc
     std::ifstream File(Root_ReqPath.c_str());
     if (File.is_open())
 	{
+        // here i need to call upload function
+        // 9bl khasni ntchecki wax kayn nit upload 
+        // ghadi ntchiki bu contentType 
+        // if contentType = multipart/form-data  &&  this Req Path not CGI  && Method is Post 
+        // Like this  :
+        
+        // size_t pos = str_utils::r_find(Root_ReqPath, '.');
+        // std::string bin = location.getCgi()[Root_ReqPath.substr(pos + 1)];
+        // if(Req.getHttp_Header()["Content_Type"] == "multipart/form-data; boundary=----WebKitFormBoundaryrC9WSnN7BxAHbwqw" && bin.empty() && Req.getReqLine().getMethod() == "POST")
+        // {
+        //     std::cout << "\n------------- here -----------\n";
+        //     // upload_file(Req.getBody(), location.getUpload(), Req.getHttp_Header());
+        // }
+        
         struct stat fileInfo;
         if (stat(Root_ReqPath.c_str(), &fileInfo) == 0)
 		{
@@ -47,18 +61,13 @@ bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Loc
 bool    Response::isUriTooLong(const long& _value)
 {
     size_t LenghtOfPath = Req.getReqLine().getPath().size();
-	// cout << "_value: " << _value << endl;
-	// cout << "LenghtOfPath: " << LenghtOfPath << endl;
-    // size_t TmpLenghtIsDefinedInConfig = 10; // i need this from config file
     if(LenghtOfPath > (size_t)_value)
         return true;
     return false;
 }
 
-std::string Response::ft_Response(int clientSocket, const Parser& parser)
+std::string Response::ft_Response(const Parser& parser)
 {
-    (void)clientSocket;
-    // _host = findHostFromHeaders();
     _host = Req.getHttp_Header()["Host"];
     Server server = parser.getServerbyHost(_host);
     Location location = server.getLocationByPath(Req.getReqLine().getPath());
@@ -75,42 +84,24 @@ std::string Response::ft_Response(int clientSocket, const Parser& parser)
 
     handleBadRequest(location);
     if(ReqErr == 1)
-    {
-        // send(clientSocket, response.c_str(), response.size(), 0);
-        // return;
         return response;
-    }
     if(isUriTooLong(server.getClientMaxHeaderBufferSize()))
     {
         handleUriTooLong(location);
         return response;
-        // send(clientSocket, response.c_str(), response.size(), 0);
-        // return;
     }
     if (!isMethodAllowed(location))
 	{
         handleMethodNotAllowed(location);
         return response;
-        // send(clientSocket, response.c_str(), response.size(), 0);
-        // return;
     }
     if (!isRequestBodySizeAllowed(location))
 	{
         handleBodyTooLarge(location);
         return response;
-        // send(clientSocket, response.c_str(), response.size(), 0);
-        // return;
     }
     std::string Root_ReqPath = location.getRoot() + Req.getReqLine().getPath(); // construct Absolute Path
-    // if(location.getRoot().empty())
-    // {
-    //     Root_ReqPath = Root_ReqPath.substr(1);
-    // }
-    // std::string Root_ReqPath = Req.getReqLine().getPath(); // construct Absolute Path
-    // std::cout << "Root_ReqPath  =  " << Root_ReqPath << std::endl;
     if (!serveRequestedResource(Root_ReqPath, location))
         handleNotFound(location);
     return response;
-    // send_full_response(clientSocket, response.c_str());
-    // send(clientSocket, response.c_str(), response.size(), 0);
 }

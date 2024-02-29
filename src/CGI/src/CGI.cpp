@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/17 22:25:45 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/29 21:09:44 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,11 @@ std::string CGI::fill_env()
 {
     int status;
     int fd[2];
-    pid_t pid;
+    int _fd[2];
+    std::string response = "";
 
-    if (pipe(fd) == -1)
+    pid_t pid;
+    if (pipe(fd) == -1 || pipe(_fd) == -1)
     {
         perror("pipe");
         throw std::runtime_error("500 internal server error");
@@ -59,12 +61,7 @@ std::string CGI::fill_env()
     if (pid == 0)
     {
 
-        if (dup2(fd[1], 1) == -1)
-        {
-            perror("dup2");
-            exit(1);
-        }
-        if (dup2(fd[0], 0) == -1)
+        if (dup2(fd[1], 1) == -1 || dup2(fd[0], 0) == -1 || dup2(_fd[1], 2) == -1)
         {
             perror("dup2");
             exit(1);
@@ -77,14 +74,12 @@ std::string CGI::fill_env()
         arge[2] = NULL;
         std::strcpy(arge[0], this->bin.c_str());
         std::strcpy(arge[1], this->env["SCRIPT_FILENAME"].c_str());
+        
         if (execve(this->bin.c_str(), arge, envp) == -1)
         {
             perror("execve");
             exit(1);
         }
-        close(fd[0]);
-        close(fd[1]);
-        exit(0);
     }
     else
     {
@@ -92,20 +87,30 @@ std::string CGI::fill_env()
         waitpid(pid, &status, 0);
         if (WEXITSTATUS(status) != 0)
         {
-            perror("waitpid");
-            // throw std::runtime_error("500 internal server error");
+            char buffer[1024];
+            close(_fd[1]);
+            while (true)
+            {
+                int byte = read(_fd[0], buffer, 1023);
+                if (byte <= 0)
+                    break;
+                buffer[byte] = '\0';
+                response += buffer;
+            }
         }
-        close(fd[1]);
-        char buffer[1024];
-        std::string response = "";
-        while (true)
+        else
         {
-            int byte = read(fd[0], buffer, 1023);
-            if (byte <= 0)
-                break;
-            buffer[byte] = '\0';
-            response += buffer;
+            close(fd[1]);
+            char buffer[1024];
+            while (true)
+            {
+                int byte = read(fd[0], buffer, 1023);
+                if (byte <= 0)
+                    break;
+                buffer[byte] = '\0';
+                response += buffer;
+            }
         }
-        return response;
     }
+    return response;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/29 12:40:46 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/01 00:09:46 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 			}
 			else if (FD_ISSET(i, &Tmp_fd_set_write))
 			{
-					// std::cout << httpRequest << std::endl;
+					// std::cout <<"Request : \n" << httpRequest << std::endl;
 					// std::string chunked;
 					// size_t pos = httpRequest.find("\r\n\r\n");
 					// std::string body = httpRequest.substr(pos + 4);
@@ -126,10 +126,10 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 					// 	chunked = "";
 					
 
-					// upload_file(body,"./upload",chunked,body.size(),boundary);						
+					// upload_file(body,"./upload",chunked,body.size(),boundary);			
 					// std::map<std::string, std::string> env;
-					// env["SCRIPT_NAME"] = "ll.py"; //It will be the name of the file
-					// env["SCRIPT_FILENAME"] = "./ll.py"; //It will be the path of the file 
+					// env["SCRIPT_NAME"] = "main.cpp"; //It will be the name of the file
+					// env["SCRIPT_FILENAME"] = "./main.cpp"; //It will be the path of the file 
 					// env["CONTENT_TYPE"] = "application/x-www-form-urlencoded";
 					// env["REQUEST_METHOD"] = "POST";
 					// env["CONTENT_LENGTH"] = "12";
@@ -143,8 +143,10 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 
 					// CGI cgi_obj(body, env, bin);
 					// std::string respont = cgi_obj.fill_env();
+					// std::cout << "======== " << std::endl;
 					// std::cout <<  respont << std::endl;
-
+					// std::cout << "======== " << std::endl;
+					
 					if (checker[i] == true)
 					{
 						// std::cout << "client: " <<httpRequest << std::endl;
@@ -152,7 +154,8 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 						request.Parse_Request(httpt[i]);
 						Response	response;
 						response.setReq(request);
-						resss = response.ft_Response(i, parsedData);
+						resss = response.ft_Response(parsedData);
+						// std::cout << "res : \n" << resss << std::endl;
 						checker[i] = false;
 					}
 					if (send_full_response(i, resss) == true)

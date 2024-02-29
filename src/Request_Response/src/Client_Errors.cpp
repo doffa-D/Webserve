@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client_Errors.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 11:47:24 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/26 11:59:03 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/02/29 22:23:27 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void Response::handleErrorResponse(const Location& location, int errorCode, std:
 	if (location.getErrorPages()[errorCode].empty())
 	{
         ResPath = Error_HmlPage(std::to_string(errorCode), errorMsg);
-        Fill_Response(std::to_string(errorCode), errorMsg, 1, location);
+        Fill_Response(std::to_string(errorCode), errorMsg, 1, 0, location);
     }
 	else
 	{
@@ -25,7 +25,7 @@ void Response::handleErrorResponse(const Location& location, int errorCode, std:
 		if(errorCode == 403)
 			ResHeader.setLocation("http://" + _host +  Req.getReqLine().getPath() + location.getErrorPages()[errorCode]);
         ResPath = "";
-        Fill_Response("302", "Moved Temporarily", 1, location);
+        Fill_Response("302", "Moved Temporarily", 1, 0, location);
     }
 }
 

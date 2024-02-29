@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/26 10:35:00 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/02/29 22:22:44 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,18 +43,21 @@ class ResponseHeader
 		std::string ContentLength;
 		std::string	ContentFile;
 		std::string	Location;
-	public:	
+		std::string	ContentDisposition;
+	public:
 		ResponseHeader();
 		~ResponseHeader();
 		std::string getContentType() const;
 		std::string getContentLength() const;
 		std::string getContentFile() const;
 		std::string	getLocation() const;
+		std::string	getContentDisposition() const;
 
 		void 	setContentType(std::string contenttype);
 		void 	setContentLength(std::string contentlength);
 		void	setContentFile(std::string contentfile);
 		void	setLocation(std::string	location);
+		void	setContentDisposition(std::string content_disposition);
 };
 
 class Response
@@ -63,6 +66,7 @@ class Response
 		ResponseLine 	ResLine;
 		ResponseHeader	ResHeader;
 		std::string		ResBody;
+		
 		std::string		ResPath;
 		std::string		response;
 		std::string		_host;
@@ -83,8 +87,8 @@ class Response
 
 		void	setReq(Request req);
 		
-		std::string	ft_Response(int clientSocket, const Parser& parser);
-		void	Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int File_Or_Str, Location location);
+		std::string	ft_Response(const Parser& parser);
+		void		Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int File_Or_Str, int isCgi, Location location);
 		std::string	Error_HmlPage(const std::string& stat_code, const std::string& stat_msg);
 		// Location	Find_Location(Parser& parser, std::string& _host, std::string Path_Req);
 
