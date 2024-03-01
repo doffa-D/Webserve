@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGI.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/29 21:09:44 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/01 18:17:24 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,25 +33,27 @@ CGI::CGI(std::string const &body, std::map<std::string, std::string> const &env,
 
 CGI::~CGI()
 {
-    // for (int i = 0; envp[i]; ++i)
-    //     delete[] envp[i];
-    // delete[] envp;
+    for (int i = 0; envp[i]; ++i)
+        delete[] envp[i];
+    delete[] envp;
 }
 
-std::string CGI::fill_env()
+std::pair<std::string, int> CGI::fill_env()
 {
     int status;
     int fd[2];
-    int _fd[2];
     std::string response = "";
 
     pid_t pid;
-    if (pipe(fd) == -1 || pipe(_fd) == -1)
+    if (pipe(fd) == -1)
     {
         perror("pipe");
         throw std::runtime_error("500 internal server error");
     }
+    fcntl(fd[0], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+
     pid = fork();
+
     if (pid == -1)
     {
         perror("fork");
@@ -61,7 +63,7 @@ std::string CGI::fill_env()
     if (pid == 0)
     {
 
-        if (dup2(fd[1], 1) == -1 || dup2(fd[0], 0) == -1 || dup2(_fd[1], 2) == -1)
+        if (dup2(fd[1], 1) == -1 || dup2(fd[0], 0) == -1)
         {
             perror("dup2");
             exit(1);
@@ -83,24 +85,32 @@ std::string CGI::fill_env()
     }
     else
     {
-        write(fd[1], body.c_str(), body.length());
-        waitpid(pid, &status, 0);
-        if (WEXITSTATUS(status) != 0)
+        if(read(fd[0], NULL, 0) != -1)
         {
-            char buffer[1024];
-            close(_fd[1]);
-            while (true)
+            size_t len = 0;
+            while(true)
             {
-                int byte = read(_fd[0], buffer, 1023);
-                if (byte <= 0)
+                size_t bytes_left = this->body.size() - len;
+                size_t bytes_to_write = std::min<size_t>(1024, bytes_left);
+                int byte = write(fd[1], &this->body.c_str()[len], bytes_to_write);
+                if (byte == -1)
+                {
+                    perror("write");
                     break;
-                buffer[byte] = '\0';
-                response += buffer;
+                }
+                if (byte == 0 || len >= this->body.size())
+                {
+                    break;
+                }
+                len += byte;
             }
-        }
-        else
-        {
-            close(fd[1]);
+            waitpid(pid, &status, 0);
+            if (WEXITSTATUS(status) != 0)
+            {
+                response = "500 internal server error";
+            }
+
+
             char buffer[1024];
             while (true)
             {
@@ -111,6 +121,10 @@ std::string CGI::fill_env()
                 response += buffer;
             }
         }
+        close(fd[1]);
+        close(fd[0]);
     }
-    return response;
+
+    return std::make_pair(response, WEXITSTATUS(status));
 }
+
