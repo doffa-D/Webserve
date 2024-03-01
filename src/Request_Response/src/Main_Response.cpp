@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Main_Response.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/02/29 23:39:00 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/01 17:49:29 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,22 +27,29 @@ bool Response::isRequestBodySizeAllowed(const Location& location)
 
 bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Location& location)
 {
+
     std::ifstream File(Root_ReqPath.c_str());
+	
     if (File.is_open())
 	{
+		std::string bnd  = Req.getHttp_Header()["Content-Type"];
+		// std::cout << "bnd  =   " << bnd << std::endl;
+		size_t pos = str_utils::r_find(bnd, '=');
+		std::string bondry = bnd.substr(pos + 1);
         // here i need to call upload function
         // 9bl khasni ntchecki wax kayn nit upload 
         // ghadi ntchiki bu contentType 
         // if contentType = multipart/form-data  &&  this Req Path not CGI  && Method is Post 
         // Like this  :
         
-        // size_t pos = str_utils::r_find(Root_ReqPath, '.');
-        // std::string bin = location.getCgi()[Root_ReqPath.substr(pos + 1)];
-        // if(Req.getHttp_Header()["Content_Type"] == "multipart/form-data; boundary=----WebKitFormBoundaryrC9WSnN7BxAHbwqw" && bin.empty() && Req.getReqLine().getMethod() == "POST")
-        // {
-        //     std::cout << "\n------------- here -----------\n";
-        //     // upload_file(Req.getBody(), location.getUpload(), Req.getHttp_Header());
-        // }
+		
+		
+		
+        size_t _pos = str_utils::r_find(Root_ReqPath, '.');
+        std::string bin = location.getCgi()[Root_ReqPath.substr(_pos + 1)];
+        if(bin.empty() && Req.getReqLine().getMethod() == "POST")
+			upload_file(Req.getBody(), "./upload", "", Req.getBody().size(), bondry);
+            // upload_file(Req.getBody(), location.getUpload(), Req.getHttp_Header());
         
         struct stat fileInfo;
         if (stat(Root_ReqPath.c_str(), &fileInfo) == 0)

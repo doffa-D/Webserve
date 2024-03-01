@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/01 00:45:32 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/01 16:07:09 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,7 +224,10 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 		Fill_Response("301", "Moved Permanently", 1, 0, location);
 		return ;
 	}
+	
+	// std::cout << "Root_ReqPath =  " << Root_ReqPath << std::endl;
 	ResPath = location.getIndexFilePathByRoot(Root_ReqPath); // this function kat9alb 3la file ila mal9atxe xi file kat3tina empty
+	// std::cout << "ResPath = " << ResPath <<  std::endl;
 	if(ResPath.empty() == 0)
 	{
 		Fill_Response("200", "OK", 0, 0, location);
@@ -241,11 +244,11 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 
 void Response::handleFileRequest(const std::string& filePath, const Location& location)
 {
-	MapStringString cgi = location.getCgi();
+	// MapStringString cgi = location.getCgi();
 
 	size_t pos = str_utils::r_find(filePath, '.');
-    string  extiension = filePath.substr(pos + 1); // get extension
-	string bin = cgi[extiension];
+    string  extension = filePath.substr(pos + 1); // get extension
+	string bin = location.getCgi()[extension];
     if (bin.empty())
 	{
 		ResPath = filePath;
@@ -254,7 +257,9 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
 		// but this method to storage the ALLOWED_EXTENSION is prevents me from search on Extension
 		// i need add check because i serve CGI file with download this file
 		// But you must download only the backend file such as (py, php, c, c++...)
- 		if(Req.getReqLine().getMethod() == "POST") // this condition needs more checks 
+		VecString	vec = str_utils::split(ALLOWED_EXTENSION, ' ');
+ 		if(Req.getReqLine().getMethod() == "POST" &&
+		   find(vec.begin(), vec.end(), extension) != vec.end()) // this condition needs more checks 
 			Fill_Response("200", "ok", 0, 1, location);
 		else
 			Fill_Response("200", "ok", 0, 0, location);
