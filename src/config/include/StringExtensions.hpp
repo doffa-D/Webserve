@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   StringExtensions.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 08:31:30 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/18 00:40:40 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/01 08:25:33 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <sys/time.h>
 #include <netdb.h> //getaddrinfo
 
 typedef std::string						string; 
@@ -67,4 +68,5 @@ namespace str_utils
 	VecString		proSplit(const string& toSplit);
 	bool			hasSpaceOnly(string& str);
 	bool			endsWith(const string& toCheck, const string& with);
+	string 			generateUniqueID();
 };
