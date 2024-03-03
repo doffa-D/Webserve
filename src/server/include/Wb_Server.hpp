@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/29 12:40:35 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/03 12:51:48 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ private:
 	std::vector<SendTracker> clients_respont;
 
 public:
-	// Wb_Server(std::vector<std::pair<Uint, int> > hAndP);
 	Wb_Server(const Parser& parsedData);
 	~Wb_Server();
 	void Setup_Server(int port_index);						   // Setup_Server function is used to setup the server

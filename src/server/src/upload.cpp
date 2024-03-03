@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:13:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/28 16:20:11 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/03 13:32:59 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void saveFile(std::string body, size_t filenamePos,std::string const &location)
 			std::ofstream file(filename.c_str());
 			if (file.is_open())
 			{
-				file << body.substr(firstContentPos + 4);
+				file << body.substr(firstContentPos + 4 , body.size() - firstContentPos - 6);
 				file.close();
 			}
 		}
@@ -73,45 +73,17 @@ std::string  split_request(std::string const &body,std::string const &boundary,s
 		{
 			param += "\r\n";
 			param += parts[i];
-			std::cout << "==>" << parts[i] << std::endl;	
 		}
 	}
 	return param;
 }
 
-std::string upload_file(std::string const &bodyyyyy,std::string const &location,std::string chunked,long long content_lenght,std::string boundary)
+std::string upload_file(std::string const &body,std::string const &location,MapStringString const &header)
 {
-	std::string body;
-	if(chunked == "chunked")
-	{
-		size_t startPos = 0;
-		size_t endPos = content_lenght;
-		while (startPos < endPos)
-		{
-			size_t sizePos = bodyyyyy.find("\r\n", startPos);
-			if (sizePos != std::string::npos)
-			{
-				std::string chunkSizeHex = bodyyyyy.substr(startPos, sizePos - startPos);
-				int chunkSize = std::stoi(chunkSizeHex, 0, 16);
-				
-				startPos = sizePos + 2;
-				if (startPos + chunkSize <= endPos)
-				{
-					std::string chunkData = bodyyyyy.substr(startPos, chunkSize);
-					body += chunkData;
-					startPos += chunkSize + 2;
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-	}
-	else
-	{
-		body = bodyyyyy;
-	}
+	std::string boundary = header.at("Content-Type");
+	size_t pos = boundary.find("boundary=");
+	boundary = boundary.substr(pos + 9);
+	std::cout << "location " << location << std::endl; 
 	return split_request(body,boundary,location);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Upload.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 09:48:02 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/29 18:32:56 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/03 13:13:14 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 
 
-std::string upload_file(std::string const &bodyyyyy,std::string const &location,std::string chunked,long long content_lenght,std::string boundary);
+std::string upload_file(std::string const &body,std::string const &location,MapStringString const &header);
 // struct request
 // {
 //     int fd;

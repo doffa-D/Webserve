@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/01 00:09:46 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/03 13:09:41 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ Wb_Server::Wb_Server(const Parser& parsedData)
 		Setup_Server(i);		  // Setup_Server function is used to setup the server
 	listen_to_multiple_clients(parsedData); // listen_to_multiple_clients function is used to listen to multiple clients_request
 }
-  #include <stdlib.h>
 void Wb_Server::Setup_Server(int port_index)
 {
 	socket_fd_server[port_index] = socket(AF_INET, SOCK_STREAM, 0);
@@ -113,58 +112,24 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 			}
 			else if (FD_ISSET(i, &Tmp_fd_set_write))
 			{
-					// std::cout <<"Request : \n" << httpRequest << std::endl;
-					// std::string chunked;
-					// size_t pos = httpRequest.find("\r\n\r\n");
-					// std::string body = httpRequest.substr(pos + 4);
-					// pos =  httpRequest.find("boundary=");
-					// std::string boundary = httpRequest.substr(pos + 9, httpRequest.find("\r\n",pos) - (pos + 9));
-					// pos = httpRequest.find("chunked");
-					// if (pos != std::string::npos)
-					// 	chunked = "chunked";
-					// else
-					// 	chunked = "";
-					
-
-					// upload_file(body,"./upload",chunked,body.size(),boundary);			
-					// std::map<std::string, std::string> env;
-					// env["SCRIPT_NAME"] = "main.cpp"; //It will be the name of the file
-					// env["SCRIPT_FILENAME"] = "./main.cpp"; //It will be the path of the file 
-					// env["CONTENT_TYPE"] = "application/x-www-form-urlencoded";
-					// env["REQUEST_METHOD"] = "POST";
-					// env["CONTENT_LENGTH"] = "12";
-					// env["QUERY_STRING"] = "";//It will be empty in the POST and fill it in GET so you can put the form parameter just if you have it
-					// env["SERVER_PROTOCOL"] = "HTTP/1.1"; 
-					// env["SERVER_NAME"] = "WebServer";
-					// env["REDIRECT_STATUS"] = "200";
-				
-					// std::string body = "Hello=Wollllrld!"; // it will be empty in GET !!!
-					// std::string bin = "/usr/bin/python3";
-
-					// CGI cgi_obj(body, env, bin);
-					// std::string respont = cgi_obj.fill_env();
-					// std::cout << "======== " << std::endl;
-					// std::cout <<  respont << std::endl;
-					// std::cout << "======== " << std::endl;
-					
-					if (checker[i] == true)
-					{
-						// std::cout << "client: " <<httpRequest << std::endl;
-						Request request;
-						request.Parse_Request(httpt[i]);
-						Response	response;
-						response.setReq(request);
-						resss = response.ft_Response(parsedData);
-						// std::cout << "res : \n" << resss << std::endl;
-						checker[i] = false;
-					}
-					if (send_full_response(i, resss) == true)
-					{
-						httpt.erase(i);
-						checker[i] = true;
-						FD_CLR(i, &fd_set_write);
-						close(i);
-					}
+				if (checker[i] == true)
+				{
+					// std::cout << "client: " <<httpRequest << std::endl;
+					Request request;
+					request.Parse_Request(httpt[i]);
+					Response	response;
+					response.setReq(request);
+					resss = response.ft_Response(parsedData);
+					// std::cout << "res : \n" << resss << std::endl;
+					checker[i] = false;
+				}
+				if (send_full_response(i, resss) == true)
+				{
+					httpt.erase(i);
+					checker[i] = true;
+					FD_CLR(i, &fd_set_write);
+					close(i);
+				}
 			}
 		}
 	}
@@ -242,7 +207,34 @@ int find_client(std::vector<Client> &clients_request, int socket_fd)
 	}
 	return client_index;
 }
+std::string unchunked_request(std::string const &request, int start,int bytes_read)
+{
+	std::string body;
+	size_t startPos = start;
+	size_t endPos = bytes_read;
 
+	while (startPos < endPos)
+	{
+		size_t sizePos = request.find("\r\n", startPos);
+		if (sizePos != std::string::npos)
+		{
+			std::string chunkSizeHex = request.substr(startPos, sizePos - startPos);
+			int chunkSize = std::stoi(chunkSizeHex, 0, 16);
+			startPos = sizePos + 2;
+			if (startPos + chunkSize <= endPos)
+			{
+				std::string chunkData = request.substr(startPos, chunkSize);
+				body += chunkData;
+				startPos += chunkSize + 2;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	return body;
+}
 std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_set &fd_set_write)
 {
 	char buffer[BUFFER_SIZE + 1];
@@ -303,8 +295,6 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 			FD_SET(socket_fd, &fd_set_write);
 			std::string request = clients_request[client_index].buffer;
 			clients_request.erase(clients_request.begin() + client_index);
-			// system("echo "" > file");
-			// std::cout << "server: " <<request << std::endl;
 			return request;
 		}
 	}
@@ -317,8 +307,11 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 			size_t foundPos = substring.rfind("\r\n0\r\n");
 			if (foundPos != std::string::npos)
 			{
+				std::string body = unchunked_request(clients_request[client_index].buffer, clients_request[client_index].start, clients_request[client_index].bytes_read);
+				clients_request[client_index].buffer = clients_request[client_index].header + body;
 				FD_CLR(socket_fd, &fd_set_Read);
 				FD_SET(socket_fd, &fd_set_write);
+
 				std::string request = clients_request[client_index].buffer;
 				clients_request.erase(clients_request.begin() + client_index);
 				return request;
