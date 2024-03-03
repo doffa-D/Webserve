@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/27 23:42:40 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/03 08:21:14 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,7 @@ void	Parser::fillServerData(ListString_iter& it)
 {
 	Server server;
 	bool	hasDefualtTage = false;
-	if (*(++it) != "{")
+	if (++it == tokens.end() || *(++it) != "{")
 		throw CustomException("Directive \"server\" has no opening \"{\"");
 	it++;
 	while (it != tokens.end() && *it != "}")
