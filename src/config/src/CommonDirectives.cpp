@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/04 15:33:27 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/04 15:50:49 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,12 +228,16 @@ void	CommonDirectives::addMimeType(const string& _key, const string& _value)
 void	CommonDirectives::setUpload(const string& _upload)
 {
 	if (check[8])
-		throw CustomException("directive is duplicate", "upload");
+		throw CustomException("directive is duplicate", "upload_pass");
 	VecString split = str_utils::ultimatSplit(_upload, " \t");
 	if (split.size() != 1)
-		throw CustomException("invalid number of arguments in \"upload\" directive");
-	check_unexpected(_upload, "upload");
+		throw CustomException("invalid number of arguments in \"upload_pass\" directive");
+	check_unexpected(_upload, "upload_pass");
 	upload = str_utils::remove_quotes(_upload);
+	if (access(upload.c_str(), F_OK))
+		throw CustomException("[" + upload + "] directory not found in \"upload_pass\" directive");
+	if (access(upload.c_str(), W_OK))
+		throw CustomException("[" + upload + "] directory has no permission in \"upload_pass\" directive");
 	check[8] = 1;
 }
 
@@ -249,7 +253,7 @@ static bool	isValideExtension(const string& to_check)
 void	CommonDirectives::setCgi(const string& _cgi)
 {
 	if (check[9])
-		throw CustomException("directive is duplicate", "cgi");
+		throw CustomException("directive is duplicate", "cgi_pass");
 	cgi.clear();
 	VecString	split = str_utils::ultimatSplit(_cgi, " \t");
 
@@ -257,12 +261,16 @@ void	CommonDirectives::setCgi(const string& _cgi)
 	{
 		VecString sp = str_utils::split(split[i], ':');
 		if (sp.size() != 2)
-			throw CustomException("invalid number of arguments in \"cgi\" directive", split[i]);
+			throw CustomException("invalid number of arguments in \"cgi_pass\" directive", split[i]);
 		if (!isValideExtension(str_utils::trim(sp[0])))
-			throw CustomException("[" + sp[0] + "] not a valid extension in \"cgi\" directive");
+			throw CustomException("[" + sp[0] + "] not a valid extension in \"cgi_pass\" directive");
 		pair<MapStringString::iterator, bool> res = cgi.insert(std::make_pair(sp[0], sp[1]));
+		if (access(sp[1].c_str(), F_OK))
+			throw CustomException("[" + sp[1] + "] bin not found in \"cgi_pass\" directive");
+		if (access(sp[1].c_str(), X_OK))
+			throw CustomException("[" + sp[1] + "] bin has no permission in \"cgi_pass\" directive");
 		if (!res.second)
-			throw CustomException("is duplicate value in \"cgi\" directive", split[i]);
+			throw CustomException("is duplicate value in \"cgi_pass\" directive", split[i]);
 	}
 	check[9] = 1;
 }
