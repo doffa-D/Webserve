@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/04 15:30:18 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/04 22:30:30 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -466,9 +466,9 @@ void	printCommonDirectives(const CommonDirectives& common, string befor)
 	for (VecString_iter it = indexes.begin(); it != indexes.end();it++)
 		cout << befor << "\t" << *it << endl;
 
-	cout << befor << "redirection: " << endl;
-	pair<int, string>	redirection = common.getRedirection();
-	cout << befor << "\tstatus: " << redirection.first << " path: " << redirection.second << endl;
+	cout << "redirection: " << endl;
+	string	redirection = common.getRedirection();
+	cout  << " path: " << redirection << endl;
 	
 
 	cout << befor << "autoindex: [" << common.getAutoIndex() << "]" << endl;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/04 15:50:49 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/04 22:28:07 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,13 +97,10 @@ void	CommonDirectives::setRedirection(const string& _redirection)
 	if (check[2])
 		throw CustomException("directive is duplicate", "redirection");
 	VecString split = str_utils::proSplit(_redirection);
-	if (split.size() != 2)
-		throw CustomException("invalid number of arguments in \"redirection\" directive\n\t Hint: must have a status code and a path to the final location");
-	int status = str_utils::to_int(split[0]);
-	if (!str_utils::is_number(split[0]) || status < 300 || status > 308 )
-		throw CustomException("first argument in \"redirection\" directive \n\t Hint: must be a status code between 300 and 308");
-	check_unexpected(split[1], "redirection");
-	redirection = std::make_pair(status, str_utils::remove_quotes(split[1]));
+	if (split.size() != 1)
+		throw CustomException("invalid number of arguments in \"redirection\" directive");
+	check_unexpected(split[0], "redirection");
+	redirection = str_utils::remove_quotes(split[0]);
 	check[2] = 1;
 }
 
@@ -295,7 +292,7 @@ VecString 			CommonDirectives::getIndexes() const
 	return (index);
 }
 
-pair<int, string>	CommonDirectives::getRedirection() const{return (redirection);}
+string	CommonDirectives::getRedirection() const{return (redirection);}
 MapStringString		CommonDirectives::getMimeTypes() const {return (mimeTypes);}
 string				CommonDirectives::getMimeTypeByKey(const string& _key) const
 {

@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/04 20:05:41 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/04 22:28:25 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,21 +77,9 @@ std::string Response::ft_Response(const Parser& parser)
 {
     _host = Req.getHttp_Header()["Host"];
     Server server = parser.getServerbyHost(_host);
-    pair<string, Location>  L = server.getLocationByPath(Req.getReqLine().getPath());
-    std::string LocationName = L.first;
-    Location location = L.second;
-    // Location location = server.getLocationByPath(Req.getReqLine().getPath());
-
-    // cout << "Path: " << location.getUpload() << endl; /* get upload path of a certine 
-    //                                                         location if it has ben set in config file, else get defualt path*/
-    // MapStringString cgi = location.getCgi();
-
-    // string  extionsion ; // get extension
-    // if (cgi[extionsion].empty())
-    //     (void)extionsion;//normale way
-    // else
-    //     (void)extionsion;//cgi way
-
+    pair<string, Location> Loc = server.getLocationByPath(Req.getReqLine().getPath());
+    std::string LocationName = Loc.first;
+    Location location = Loc.second;
     handleBadRequest(location);
     if(ReqErr == 1)
         return response;
@@ -105,12 +93,20 @@ std::string Response::ft_Response(const Parser& parser)
         handleBodyTooLarge(location);
         return response;
     }
-    // i need to check redirection here
     if (!isMethodAllowed(location))
 	{
         handleMethodNotAllowed(location);
         return response;
     }
+    string Redirection = location.getRedirection();
+    if(!Redirection.empty())
+    {
+        ResHeader.setLocation("http://" + _host + Redirection);
+		ResPath = "";
+        Fill_Response("303", "See Other", 1, 0, location);
+        return response;
+    }
+    
 
     std::string Root_ReqPath;
     std::string ReqPath = Req.getReqLine().getPath();

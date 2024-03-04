@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/04 15:28:30 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/04 22:26:46 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class CommonDirectives
 	private:
 		string					root;
 		VecString				index;
-		pair<int, string>		redirection;
+		string					redirection;
 		bool					autoindex;
 		long					client_max_body_size;
 		string					error_log;
@@ -74,7 +74,7 @@ class CommonDirectives
 		const string&		getAccessLog() const;
 		MapIntString		getErrorPages() const;
 		VecString			getIndexes() const;
-		pair<int, string>	getRedirection() const;
+		string				getRedirection() const;
 		MapStringString		getMimeTypes() const;
 		string				getMimeTypeByKey(const string& _key) const;
 		const string&		getUpload() const;
