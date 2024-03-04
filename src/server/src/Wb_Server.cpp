@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/03 13:09:41 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/04 11:34:22 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ void Wb_Server::Setup_Server(int port_index)
 	fcntl(socket_fd_server[port_index], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 }
 
-
 void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 {
 	std::string httpRequest = "";
@@ -67,7 +66,9 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 	FD_ZERO(&fd_set_Read);
 	FD_ZERO(&fd_set_write);
 	std::map<int,bool > checker;
-	std::map<int,std::string > httpt;
+	// std::map<int,std::string > httpt;
+	std::map<int, std::pair<std::string, bool> > httpt;
+
 	for (int i = 0; i < Number_of_ports; i++)
 	{
 		FD_SET(socket_fd_server[i], &fd_set_Read);
@@ -106,7 +107,14 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 				{
 					httpRequest = read_full_request(i, fd_set_Read, fd_set_write);
 					if(FD_ISSET(i, &fd_set_write))
-						httpt[i] = httpRequest;
+					{
+						httpt[i].first = httpRequest;
+						size_t pos = httpRequest.find("Connection: keep-alive\r\n");
+						if(pos != std::string::npos)
+							httpt[i].second = true;
+						else
+							httpt[i].second = false;
+					}
 					
 				}
 			}
@@ -114,21 +122,28 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 			{
 				if (checker[i] == true)
 				{
-					// std::cout << "client: " <<httpRequest << std::endl;
 					Request request;
-					request.Parse_Request(httpt[i]);
+					request.Parse_Request(httpt[i].first);
 					Response	response;
 					response.setReq(request);
 					resss = response.ft_Response(parsedData);
-					// std::cout << "res : \n" << resss << std::endl;
 					checker[i] = false;
 				}
 				if (send_full_response(i, resss) == true)
 				{
-					httpt.erase(i);
-					checker[i] = true;
 					FD_CLR(i, &fd_set_write);
-					close(i);
+					if(httpt[i].second == false)
+					{
+						checker[i] = true;
+						FD_CLR(i, &fd_set_write);
+						close(i);
+					}
+					else
+					{
+						httpt.erase(i);
+						checker[i] = true;
+						FD_SET(i, &fd_set_Read);
+					}
 				}
 			}
 		}
