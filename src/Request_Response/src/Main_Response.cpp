@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Main_Response.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/04 15:26:42 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/04 20:05:41 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,10 @@ std::string Response::ft_Response(const Parser& parser)
 {
     _host = Req.getHttp_Header()["Host"];
     Server server = parser.getServerbyHost(_host);
-    Location location = server.getLocationByPath(Req.getReqLine().getPath());
+    pair<string, Location>  L = server.getLocationByPath(Req.getReqLine().getPath());
+    std::string LocationName = L.first;
+    Location location = L.second;
+    // Location location = server.getLocationByPath(Req.getReqLine().getPath());
 
     // cout << "Path: " << location.getUpload() << endl; /* get upload path of a certine 
     //                                                         location if it has ben set in config file, else get defualt path*/
@@ -97,17 +100,27 @@ std::string Response::ft_Response(const Parser& parser)
         handleUriTooLong(location);
         return response;
     }
-    if (!isMethodAllowed(location))
-	{
-        handleMethodNotAllowed(location);
-        return response;
-    }
     if (!isRequestBodySizeAllowed(location))
 	{
         handleBodyTooLarge(location);
         return response;
     }
-    std::string Root_ReqPath = location.getRoot() + Req.getReqLine().getPath(); // construct Absolute Path
+    // i need to check redirection here
+    if (!isMethodAllowed(location))
+	{
+        handleMethodNotAllowed(location);
+        return response;
+    }
+
+    std::string Root_ReqPath;
+    std::string ReqPath = Req.getReqLine().getPath();
+    if(location.getAlias().empty())
+        Root_ReqPath = location.getRoot() + Req.getReqLine().getPath(); // construct Absolute Path
+    else
+    {
+        size_t found = ReqPath.find(LocationName);
+        Root_ReqPath = ReqPath.replace(found, LocationName.length(), location.getAlias());
+    }
     if (!serveRequestedResource(Root_ReqPath, location))
         handleNotFound(location);
     return response;

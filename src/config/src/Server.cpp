@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:53 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/27 11:27:03 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/04 19:37:55 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,19 +192,20 @@ IpPorts				Server::getIpPorts() const
 
 Locations				Server::getLocations() const {return (locations);}
 bool					Server::isDefaultServer() const {return (default_server);}
-Location				Server::getLocationByPath(const string& _path)
+pair<string, Location>	Server::getLocationByPath(const string& _path)
 {
 	Location l(*this);
+	pair<string, Location> L = std::make_pair("", l);
 	string tmp = _path;
 	while (tmp.size())
 	{
 		Locations::iterator it = locations.begin();
 		for (;it != locations.end();it++)
 			if (it->first == tmp)
-				return (it->second);
+				return (*it);
 		tmp = tmp.substr(0, str_utils::r_find(tmp, '/'));
 	}
-	return (l);
+	return (L);
 }
 
 long		Server::getClientMaxHeaderBufferSize() const {return (client_max_uri);}

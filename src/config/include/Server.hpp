@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:56:32 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/26 12:26:45 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/04 19:37:01 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ class Server : public CommonDirectives
 		void	AddLocation(const string& path, const Location& _location);
 		void	setClientMaxHeaderBufferSize(const string& _value);
 		/*==============>GETTERS<================*/
-		bool				isDefaultServer() const;
-		VecString			getServerNames() const;
-		IpPorts				getIpPorts() const;
-		Locations			getLocations() const;
-		Location			getLocationByPath(const string& _path);
-		long				getClientMaxHeaderBufferSize() const;						
+		bool					isDefaultServer() const;
+		VecString				getServerNames() const;
+		IpPorts					getIpPorts() const;
+		Locations				getLocations() const;
+		pair<string, Location>	getLocationByPath(const string& _path);
+		long					getClientMaxHeaderBufferSize() const;						
 };
