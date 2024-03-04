@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/27 18:18:58 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/04 15:33:27 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,7 +259,7 @@ void	CommonDirectives::setCgi(const string& _cgi)
 		if (sp.size() != 2)
 			throw CustomException("invalid number of arguments in \"cgi\" directive", split[i]);
 		if (!isValideExtension(str_utils::trim(sp[0])))
-			throw CustomException("not a valid extension in \"cgi\" directive");
+			throw CustomException("[" + sp[0] + "] not a valid extension in \"cgi\" directive");
 		pair<MapStringString::iterator, bool> res = cgi.insert(std::make_pair(sp[0], sp[1]));
 		if (!res.second)
 			throw CustomException("is duplicate value in \"cgi\" directive", split[i]);

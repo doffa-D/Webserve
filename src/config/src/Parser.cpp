@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/03 14:01:17 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/04 15:30:18 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,8 @@ void	parseMimeTypes(CommonDirectives& common, const string& filePath)
 void	fillCommonDirectives(CommonDirectives& common, const string& key, const string& value)
 {
 	std::string  keys[11] = {"root", "index", "autoindex",  "client_max_body_size", \
-							 "error_log", "access_log", "error_page", "allowed_method", "upload", \
-							 "redirection", "cgi"};
+							 "error_log", "access_log", "error_page", "allowed_method", "upload_pass", \
+							 "redirection", "cgi_pass"};
 
 	void	(CommonDirectives::*functionPtr[11])(const string&) = 
 			{&CommonDirectives::setRoot, &CommonDirectives::setIndex, 

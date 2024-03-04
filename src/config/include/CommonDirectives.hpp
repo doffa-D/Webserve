@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/27 15:16:24 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/04 15:28:30 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,12 @@
 
 #include "../../../include/header.hpp"
 
-
 #define MAX_BUFFER_SIZE 8589934592
 #define ERROR_LOG "./logs/error_log.log"
 #define ACCESS_LOG "./logs/access_log.log"
 #define UPLOAD "./upload/"
 #define ALLOWED_METHODS "GET POST DELETE"
-#define ALLOWED_EXTENSION "php py c cpp"
+#define ALLOWED_EXTENSION "php py pl"
 #define DEFAULT_INDEX "index.html"
 #define CHECK_SIZE 11
 
