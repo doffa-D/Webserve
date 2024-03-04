@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Main_Response.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/03 13:31:09 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/04 15:26:42 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Loc
         size_t _pos = str_utils::r_find(Root_ReqPath, '.');
         std::string bin = location.getCgi()[Root_ReqPath.substr(_pos + 1)];
         if(bin.empty() && Req.getReqLine().getMethod() == "POST")
-            upload_file(Req.getBody(),  "."+ location.getUpload(), Req.getHttp_Header());
+            upload_file(Req.getBody(),  location.getUpload(), Req.getHttp_Header());
 			// upload_file(Req.getBody(), "./upload", "", Req.getBody().size(), bondry);
         
         struct stat fileInfo;
