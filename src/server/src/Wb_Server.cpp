@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/04 11:34:22 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/04 11:39:47 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,8 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 					if(FD_ISSET(i, &fd_set_write))
 					{
 						httpt[i].first = httpRequest;
-						size_t pos = httpRequest.find("Connection: keep-alive\r\n");
+						std::string header = httpRequest.substr(0, httpRequest.find("\r\n\r\n"));
+						size_t pos = header.find("Connection: keep-alive\r\n");
 						if(pos != std::string::npos)
 							httpt[i].second = true;
 						else
@@ -132,17 +133,16 @@ void Wb_Server::listen_to_multiple_clients(const Parser&  parsedData)
 				if (send_full_response(i, resss) == true)
 				{
 					FD_CLR(i, &fd_set_write);
+					checker[i] = true;
 					if(httpt[i].second == false)
 					{
-						checker[i] = true;
 						FD_CLR(i, &fd_set_write);
 						close(i);
 					}
 					else
 					{
-						httpt.erase(i);
-						checker[i] = true;
 						FD_SET(i, &fd_set_Read);
+						httpt.erase(i);
 					}
 				}
 			}

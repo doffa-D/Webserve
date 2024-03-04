@@ -1,4 +1,4 @@
-kep-alive vs close fd_client
+[done] kep-alive vs close fd_client
 check headers files relink
 check alias
 check rediretion
