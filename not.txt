@@ -17,6 +17,6 @@ headers can have multiple keys with the same value!!
 
 Clean My Code .
 Handle delete Method .
-Handle Server Errors ==> 500 502 504 .
+[done] Handle Server Errors ==> 500 502 504 .
 Hnadke Acces_log and Error_log .
 
