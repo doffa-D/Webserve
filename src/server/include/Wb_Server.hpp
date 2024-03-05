@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/03 12:51:48 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/05 18:02:16 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,19 @@
 #define PORT 8080		 // the port users will be connecting to
 #define BACKLOG 5		 // how many pending connections queue will hold
 #define BUFFER_SIZE 1024 // the size of the buffer that will be used to store data
-						 
+#define KEEPALIVE_TIMEOUT 1 
 #ifndef SERVER_HP
 #define SERVER_HPP
+
+
+struct RequestClient
+{
+	std::string request;
+	std::string cookies;
+	time_t KeepAliveTimeOut;
+	bool keepAlive;
+};
+
 struct Client
 {
 	int fd;

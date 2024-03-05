@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/05 16:11:48 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/05 17:43:45 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,9 @@ int WaitCgi(pid_t pid, time_t BeginTime)
         result = waitpid(pid, &status, WNOHANG);
         if (result == 0)
         {
-            if (difftime(time(0), BeginTime) > 5) {
+            if (difftime(time(0), BeginTime) > 4) {
                 kill(pid, SIGKILL);
-                std::cout << "CGI process was killed" << std::endl;
+                std::cout << "CGI process was killed Timeout" << std::endl;
                 return CGI_TIMEOUT;
             }
         } 
@@ -78,8 +78,6 @@ std::pair<std::string, int> CGI::fill_env() {
     if (pipe(input) == -1 || pipe(output) == -1) {
         return std::make_pair("500 Internal Server Error", CGI_ERROR);
     }
-
-    int status = -1;
     pid_t pid = fork();
 
     if (pid == -1) {
@@ -134,7 +132,6 @@ std::pair<std::string, int> CGI::fill_env() {
             ssize_t bytesWritten = write(input[1], body.c_str() + totalBytesWritten, bytesToWrite - totalBytesWritten);
             if (bytesWritten == -1) {
                 close(input[1]);
-                waitpid(pid, &status, 0);
                 break;
             }
             totalBytesWritten += bytesWritten;
@@ -146,18 +143,14 @@ std::pair<std::string, int> CGI::fill_env() {
         switch (wait_status) {
             case CGI_TIMEOUT:
                 {
-                    std::cout << "CGI process was killed Timeout" << std::endl;
                     close(output[0]);
-                    response = "504 Gateway Timeout";
-                    break;
+                    return std::make_pair("504 Gateway Timeout", CGI_TIMEOUT);
                 }
             case CGI_ERROR:
                 {
                     close(output[0]);   
-                    response = "500 Internal Server Error";
                     wait_status = CGI_ERROR;
-                    std::cerr << "CGI process was ERROR " << wait_status << std::endl;
-                    break;
+                    return std::make_pair("500 Internal Server Error", CGI_ERROR);
                 }
             default:
                 {
@@ -166,6 +159,7 @@ std::pair<std::string, int> CGI::fill_env() {
                     while ((bytesRead = read(output[0], buffer, sizeof(buffer))) > 0) {
                         response.append(buffer, bytesRead);
                     }
+                    response.push_back('\0');
                     close(output[0]);
                     return std::make_pair(response, wait_status);
                 }

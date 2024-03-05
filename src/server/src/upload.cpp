@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:13:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/03 18:39:45 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/05 18:03:41 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void saveFile(std::string body, size_t filenamePos,std::string const &location)
 	if (filenamePos != std::string::npos)
 	{
 		std::string filename = extractFileName(body, filenamePos);
-		std::cout << location << std::endl;
+		// std::cout << location << std::endl;
 		filename = location + "/" + filename;
 		size_t firstContentPos = body.find("\r\n\r\n", filenamePos + 9);
 		if (firstContentPos != std::string::npos)
@@ -49,10 +49,8 @@ void saveFile(std::string body, size_t filenamePos,std::string const &location)
 	}
 }
 
-std::string  split_request(std::string const &body,std::string const &boundary,std::string const &location,MapStringString const &header)
+std::string  split_request(std::string const &body,std::string const &boundary,std::string const &location)
 {
-	(void)location;
-	(void)header;
 	std::string delimiter = "--" + boundary;
 	size_t pos = body.find(delimiter);
 	std::vector<std::string> parts;
@@ -100,12 +98,18 @@ std::string  split_request(std::string const &body,std::string const &boundary,s
 	return param;
 }
 
-std::string upload_file(std::string const &body,std::string const &location,MapStringString const &header)
+std::string upload_file(std::string const &body,std::string const &location,MapStringString header)
 {
-	std::string boundary = header.at("Content-Type");
-	size_t pos = boundary.find("boundary=");
-	boundary = boundary.substr(pos + 9);
-	return split_request(body,boundary,location,header);
+	std::string boundary = header["Content-Type"];
+	std::string param = "";
+	if(!boundary.empty())
+	{
+		size_t pos = boundary.find("boundary=");
+		boundary = boundary.substr(pos + 9);
+		param = split_request(body,boundary,location);
+
+	}
+	return param;
 }
 
 std::string readFileContent(const std::string &filePath)
