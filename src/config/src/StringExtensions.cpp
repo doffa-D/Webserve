@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 08:10:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/01 08:24:38 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/05 18:37:02 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,16 +196,4 @@ size_t	str_utils::r_find(const string& fileName, char to_find)
 		if (fileName[i] == to_find)
 			return (i);
 	return (i);
-}
-
-string str_utils::generateUniqueID()
-{
-	struct timeval current_timee;
-	gettimeofday(&current_timee, NULL);
-	std::srand(current_timee.tv_usec);
-    int random_number = std::rand() % 90000 + 10000;
-    string session_id = str_utils::to_string(current_timee.tv_sec) + "-" + 
-						str_utils::to_string(current_timee.tv_usec) + "-" +
-						str_utils::to_string(random_number);
-    return (session_id);
 }
