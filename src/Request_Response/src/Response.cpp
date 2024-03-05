@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/04 11:41:15 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/05 19:35:51 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,6 +242,44 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 	handleForbidden(location);
 }
 
+
+void	Response::Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, const Location& location)
+{
+	if(Cgi_Stat_Code == 0) // CGI Succes 
+	{
+		size_t pos = Cgi_Response.find("\r\n\r\n");
+		if(pos != std::string::npos) // it mean response fiha separater bin header o body
+		{
+			// make special response of CGI
+		}
+		else
+		{
+			ResPath = Cgi_Response;
+			Fill_Response("200", "OK", 1, 0, location);
+		}
+	}
+
+	if(Cgi_Stat_Code == -1) // sys call faild
+	{
+		ResPath = Error_HmlPage("500", "Internal Server Error");
+		Fill_Response("500", "Internal Server Error", 1, 0, location);
+		return ;
+	}
+	if(Cgi_Stat_Code == -5) // Gateway Timeout
+	{
+		ResPath = Error_HmlPage("504", "Gateway Timeout");
+		Fill_Response("504", "Gateway Timeout", 1, 0, location);
+		return ;
+	}
+	else
+	{
+		ResPath = Error_HmlPage("502", "Bad Gateway");
+		Fill_Response("502", "Bad Gateway", 1, 0, location);
+		return ;
+	}
+}
+
+
 void Response::handleFileRequest(const std::string& filePath, const Location& location)
 {
 	// MapStringString cgi = location.getCgi();
@@ -286,8 +324,9 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
 		std::string body = Req.getBody();// it will be empty in GET !!!
 		CGI cgi_obj(body, env, bin);
 		std::pair<std::string, int> respont = cgi_obj.fill_env();
-		ResPath = respont.first;
-		Fill_Response("200", "OK", 1, 0, location);
+		Check_CGI_Response(respont.first, respont.second, location);
+		// ResPath = respont.first;
+		// Fill_Response("200", "OK", 1, 0, location);
         //cgi way
 	}
 }
