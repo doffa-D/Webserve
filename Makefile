@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+         #
+#    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/02/29 18:34:56 by rrhnizar         ###   ########.fr        #
+#    Updated: 2024/03/05 18:27:52 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,10 @@ CXX = g++
 CFLAGS = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g3
 NAME = webserve
 OBJDIR = .objFiles
+
+UPLOAD_DIR := upload
+SESSION_DIR := session
+LOGS_DIR := logs
 
 SRC_DIR = src
 INCLUDE_DIR = include
@@ -69,6 +73,8 @@ ascii_art:
 
 
 $(NAME): $(OBJS)
+	@mkdir -p $(UPLOAD_DIR) $(SESSION_DIR) $(LOGS_DIR)
+	@echo "$(RED)Creating directories $(YELLOW)$(UPLOAD_DIR) $(SESSION_DIR) $(LOGS_DIR)$(NC)"
 	@echo "$(RED)$(NAME)$(YELLOW) Executable is ready$(NC)"
 	@$(CXX) $(CFLAGS) $(INCLUDES) $^ -o $@
 
@@ -82,13 +88,10 @@ clean:
 	@rm -rf $(OBJDIR)
 
 fclean: clean
-	@echo "$(RED)Removing executable $(NAME)$(NC)"
-	@rm -f $(NAME)
+	@echo "$(RED)Removing executable and directories  $(NAME) $(UPLOAD_DIR) $(SESSION_DIR) $(LOGS_DIR)$(NC)"
+	@rm -rf $(UPLOAD_DIR) $(SESSION_DIR) $(LOGS_DIR) $(NAME)
 
 re: fclean all
-
-run: $(NAME)
-	./$(NAME)
 
 watch:
 	@npx nodemon -x 'reset && make run' -e cpp,hpp

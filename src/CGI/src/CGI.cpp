@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/05 17:43:45 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/05 18:22:38 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,7 @@ std::pair<std::string, int> CGI::fill_env() {
                     }
                     response.push_back('\0');
                     close(output[0]);
+                    std::cout << wait_status << std::endl;
                     return std::make_pair(response, wait_status);
                 }
         }
