@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/05 19:35:51 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/05 23:37:48 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,23 +242,70 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 	handleForbidden(location);
 }
 
+void	Response::processCgiResponse(const std::string& Cgi_Response)
+{
+	std::map<string, string> Cgi_Header;
+	std::istringstream ss(Cgi_Response);
+	std::string line;
+	bool isBody = false;
+	while (std::getline(ss, line))
+	{
+		line += "\n";
+		if(isBody)
+		{
+			ResPath += line;
+			continue;
+		}
+		size_t pos = line.find(':');
+		if (pos != std::string::npos)
+		{
+			std::string key = line.substr(0, pos);
+    	    std::string value = line.substr(pos + 1);
+			// Storing at cgimap
+			Cgi_Header[key] = value;
+		}
+		if(line == "\r\n")
+			isBody = true;
+	}
+	response = "HTTP/1.1 200 OK\r\n";
+	if(!Cgi_Header["Content-Type"].empty())
+		ResHeader.setContentType(Cgi_Header["Content-Type"]);
+	else
+		ResHeader.setContentType("text/html\r\n");
+    response += "Content-Type: " + ResHeader.getContentType();
+	if(!Cgi_Header["Content-Length"].empty())
+	{
+		ResHeader.setContentLength(Cgi_Header["Content-Length"]);
+		response += "Content-Length: " + ResHeader.getContentLength();
+	}
+	if(!Cgi_Header["Content-Disposition"].empty())
+	{
+		ResHeader.setContentLength(Cgi_Header["Content-Disposition"]);
+		response += "Content-Disposition: " + ResHeader.getContentDisposition();
+	}
+	if(!Cgi_Header["Location"].empty())
+	{
+		ResHeader.setContentLength(Cgi_Header["Location"]);
+		response += "Location: " + ResHeader.getLocation();
+	}
+    response += "\r\n" + ResPath;
+}
+
 
 void	Response::Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, const Location& location)
 {
-	if(Cgi_Stat_Code == 0) // CGI Succes 
+	if(Cgi_Stat_Code == 0) // CGI Succes
 	{
 		size_t pos = Cgi_Response.find("\r\n\r\n");
 		if(pos != std::string::npos) // it mean response fiha separater bin header o body
-		{
-			// make special response of CGI
-		}
+			processCgiResponse(Cgi_Response);
 		else
 		{
 			ResPath = Cgi_Response;
 			Fill_Response("200", "OK", 1, 0, location);
 		}
+		return;
 	}
-
 	if(Cgi_Stat_Code == -1) // sys call faild
 	{
 		ResPath = Error_HmlPage("500", "Internal Server Error");
@@ -282,8 +329,6 @@ void	Response::Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, c
 
 void Response::handleFileRequest(const std::string& filePath, const Location& location)
 {
-	// MapStringString cgi = location.getCgi();
-
 	size_t pos = str_utils::r_find(filePath, '.');
     string  extension = filePath.substr(pos + 1); // get extension
 	string bin = location.getCgi()[extension];
@@ -325,9 +370,6 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
 		CGI cgi_obj(body, env, bin);
 		std::pair<std::string, int> respont = cgi_obj.fill_env();
 		Check_CGI_Response(respont.first, respont.second, location);
-		// ResPath = respont.first;
-		// Fill_Response("200", "OK", 1, 0, location);
-        //cgi way
 	}
 }
 

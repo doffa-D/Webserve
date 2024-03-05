@@ -1,0 +1,1 @@
+print("Content-Type: text/html\r\n")
