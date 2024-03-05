@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   header.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:24:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/18 22:59:26 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/04 18:01:05 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HEADER_HPP
 #define HEADER_HPP
 
+#include <time.h>
+#include <signal.h>
 #include <sys/socket.h> // For socket functions
 #include <netinet/in.h> // For sockaddr_in
 #include <sys/wait.h> // For waitpid

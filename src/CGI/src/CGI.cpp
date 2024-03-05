@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/03 12:31:28 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/04 16:00:46 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,44 +38,60 @@ CGI::~CGI()
     delete[] envp;
 }
 
-short WaitCgi(pid_t prc_id, time_t BeginTime)
+int WaitCgi(pid_t pid, time_t BeginTime)
 {
     int status;
-    int process;
-
-    process = waitpid(prc_id, &status, WNOHANG);
-    if (process == prc_id && (WIFSIGNALED(status) || WIFEXITED(status)))
-        return CGI_SUCCESS;
-    if (difftime(time(0), BeginTime) >= 5)
-    { 
-        kill(prc_id, SIGKILL);
-        return CGI_TIMEOUT;
-    }
-    return CGI_WAITING;
+    pid_t result;
+    do {
+        result = waitpid(pid, &status, WNOHANG);
+        if (result == -1)
+        {
+            return CGI_ERROR;
+        } 
+        else if (result == 0)
+        {
+            if (difftime(time(0), BeginTime) > 5) {
+                kill(pid, SIGKILL);
+                std::cout << "CGI process was killed" << std::endl;
+                return CGI_TIMEOUT;
+            }
+        } 
+        else
+        {
+            if (WIFEXITED(status))
+            {
+                return WEXITSTATUS(status);
+            }
+            else
+            {
+                std::cerr << "CGI process was signaled" << std::endl;
+                return CGI_SIGNALED;
+            }
+        }
+    } while (result == 0);
+    return CGI_UNKNOWN_ERROR;
 }
+
 
 std::pair<std::string, int> CGI::fill_env() {
     int input[2];
     int output[2];
     time_t BeginTime;
     BeginTime = time(0);
-    std::string response = "";
 
-    if(pipe(input) == -1 || pipe(output) == -1) {
-        perror("pipe");
-        return std::make_pair("500 internal server error", -1);
+    if (pipe(input) == -1 || pipe(output) == -1) {
+        return std::make_pair("500 Internal Server Error", CGI_ERROR);
     }
 
     int status = -1;
     pid_t pid = fork();
 
     if (pid == -1) {
-        perror("fork");
         close(input[0]);
         close(input[1]);
         close(output[0]);
         close(output[1]);
-        return std::make_pair("500 internal server error", -1);
+        return std::make_pair("500 Internal Server Error", CGI_ERROR);
 
     }
     if (pid == 0) {
@@ -88,7 +104,8 @@ std::pair<std::string, int> CGI::fill_env() {
 
             close(input[0]);
             close(output[1]);
-            return std::make_pair("500 internal server error", -1);
+            return std::make_pair("500 Internal Server Error", CGI_ERROR);
+
         }
 
         close(input[0]);
@@ -104,50 +121,60 @@ std::pair<std::string, int> CGI::fill_env() {
             delete[] arge[0];
             delete[] arge[1];
             delete[] arge;
-            return std::make_pair("500 internal server error", -1);
+            return std::make_pair("500 Internal Server Error", CGI_ERROR);
+
         }
 
         if (execve(this->bin.c_str(), arge, envp) == -1) {
-            return std::make_pair("500 internal server error", -1);
+            return std::make_pair("500 Internal Server Error", CGI_ERROR);
         }
-    }
-    else 
-    {
+    } else {
         close(input[0]);
         close(output[1]);
 
         size_t totalBytesWritten = 0;
         size_t bytesToWrite = body.length();
-        while (totalBytesWritten < bytesToWrite)
-        {
+        while (totalBytesWritten < bytesToWrite) {
             ssize_t bytesWritten = write(input[1], body.c_str() + totalBytesWritten, bytesToWrite - totalBytesWritten);
-            if (bytesWritten == -1) 
-            {
+            if (bytesWritten == -1) {
                 close(input[1]);
                 waitpid(pid, &status, 0);
-                return std::make_pair("500 internal server error", -1);
+                break;
             }
             totalBytesWritten += bytesWritten;
         }
         close(input[1]);
 
-        while ((status = WaitCgi(pid, BeginTime)) == CGI_WAITING);
-            
-        if (status == CGI_SUCCESS)
-        {
-            char buffer[1024];
-            ssize_t bytesRead;
-            while ((bytesRead = read(output[0], buffer, sizeof(buffer))) > 0) {
-                response.append(buffer, bytesRead);
-            }
+        int wait_status = WaitCgi(pid, BeginTime);
+        std::string response = "";
+        switch (wait_status) {
+            case CGI_SUCCESS:
+                {
+                    char buffer[1024];
+                    ssize_t bytesRead;
+                    while ((bytesRead = read(output[0], buffer, sizeof(buffer))) > 0) {
+                        response.append(buffer, bytesRead);
+                    }
+                    close(output[0]);
+                    return std::make_pair(response, CGI_SUCCESS);
+                }
+            case CGI_TIMEOUT:
+                {
+                    close(output[0]);
+                    response = "504 Gateway Timeout";
+                    break;
+                }
+            case CGI_ERROR:
+            case CGI_SIGNALED:
+            case CGI_UNKNOWN_ERROR:
+            default:
+                {
+                    close(output[0]);
+                    response = "500 Internal Server Error";
+                    break;
+                }
         }
-        else if (status == CGI_TIMEOUT)
-        {
-            return std::make_pair("504 Gateway Timeout", -1);
-        }
-
-        close(output[0]);
+        return std::make_pair(response, wait_status);
     }
-
-    return std::make_pair(response, status);
+    return std::make_pair("500 Internal Server Error", CGI_ERROR);
 }
