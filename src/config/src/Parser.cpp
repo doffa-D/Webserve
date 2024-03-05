@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/03 14:01:17 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/04 22:30:30 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,8 @@ void	parseMimeTypes(CommonDirectives& common, const string& filePath)
 void	fillCommonDirectives(CommonDirectives& common, const string& key, const string& value)
 {
 	std::string  keys[11] = {"root", "index", "autoindex",  "client_max_body_size", \
-							 "error_log", "access_log", "error_page", "allowed_method", "upload", \
-							 "redirection", "cgi"};
+							 "error_log", "access_log", "error_page", "allowed_method", "upload_pass", \
+							 "redirection", "cgi_pass"};
 
 	void	(CommonDirectives::*functionPtr[11])(const string&) = 
 			{&CommonDirectives::setRoot, &CommonDirectives::setIndex, 
@@ -466,9 +466,9 @@ void	printCommonDirectives(const CommonDirectives& common, string befor)
 	for (VecString_iter it = indexes.begin(); it != indexes.end();it++)
 		cout << befor << "\t" << *it << endl;
 
-	cout << befor << "redirection: " << endl;
-	pair<int, string>	redirection = common.getRedirection();
-	cout << befor << "\tstatus: " << redirection.first << " path: " << redirection.second << endl;
+	cout << "redirection: " << endl;
+	string	redirection = common.getRedirection();
+	cout  << " path: " << redirection << endl;
 	
 
 	cout << befor << "autoindex: [" << common.getAutoIndex() << "]" << endl;

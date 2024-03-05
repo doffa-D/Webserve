@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Main_Response.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/03 13:31:09 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/04 22:28:25 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Loc
         size_t _pos = str_utils::r_find(Root_ReqPath, '.');
         std::string bin = location.getCgi()[Root_ReqPath.substr(_pos + 1)];
         if(bin.empty() && Req.getReqLine().getMethod() == "POST")
-            upload_file(Req.getBody(),  "."+ location.getUpload(), Req.getHttp_Header());
+            upload_file(Req.getBody(),  location.getUpload(), Req.getHttp_Header());
 			// upload_file(Req.getBody(), "./upload", "", Req.getBody().size(), bondry);
         
         struct stat fileInfo;
@@ -77,18 +77,9 @@ std::string Response::ft_Response(const Parser& parser)
 {
     _host = Req.getHttp_Header()["Host"];
     Server server = parser.getServerbyHost(_host);
-    Location location = server.getLocationByPath(Req.getReqLine().getPath());
-
-    // cout << "Path: " << location.getUpload() << endl; /* get upload path of a certine 
-    //                                                         location if it has ben set in config file, else get defualt path*/
-    // MapStringString cgi = location.getCgi();
-
-    // string  extionsion ; // get extension
-    // if (cgi[extionsion].empty())
-    //     (void)extionsion;//normale way
-    // else
-    //     (void)extionsion;//cgi way
-
+    pair<string, Location> Loc = server.getLocationByPath(Req.getReqLine().getPath());
+    std::string LocationName = Loc.first;
+    Location location = Loc.second;
     handleBadRequest(location);
     if(ReqErr == 1)
         return response;
@@ -97,17 +88,35 @@ std::string Response::ft_Response(const Parser& parser)
         handleUriTooLong(location);
         return response;
     }
-    if (!isMethodAllowed(location))
-	{
-        handleMethodNotAllowed(location);
-        return response;
-    }
     if (!isRequestBodySizeAllowed(location))
 	{
         handleBodyTooLarge(location);
         return response;
     }
-    std::string Root_ReqPath = location.getRoot() + Req.getReqLine().getPath(); // construct Absolute Path
+    if (!isMethodAllowed(location))
+	{
+        handleMethodNotAllowed(location);
+        return response;
+    }
+    string Redirection = location.getRedirection();
+    if(!Redirection.empty())
+    {
+        ResHeader.setLocation("http://" + _host + Redirection);
+		ResPath = "";
+        Fill_Response("303", "See Other", 1, 0, location);
+        return response;
+    }
+    
+
+    std::string Root_ReqPath;
+    std::string ReqPath = Req.getReqLine().getPath();
+    if(location.getAlias().empty())
+        Root_ReqPath = location.getRoot() + Req.getReqLine().getPath(); // construct Absolute Path
+    else
+    {
+        size_t found = ReqPath.find(LocationName);
+        Root_ReqPath = ReqPath.replace(found, LocationName.length(), location.getAlias());
+    }
     if (!serveRequestedResource(Root_ReqPath, location))
         handleNotFound(location);
     return response;

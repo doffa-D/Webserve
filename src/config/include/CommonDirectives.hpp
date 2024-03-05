@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 11:13:37 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/27 15:16:24 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/04 22:26:46 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,12 @@
 
 #include "../../../include/header.hpp"
 
-
 #define MAX_BUFFER_SIZE 8589934592
 #define ERROR_LOG "./logs/error_log.log"
 #define ACCESS_LOG "./logs/access_log.log"
 #define UPLOAD "./upload/"
 #define ALLOWED_METHODS "GET POST DELETE"
-#define ALLOWED_EXTENSION "php py c cpp"
+#define ALLOWED_EXTENSION "php py pl"
 #define DEFAULT_INDEX "index.html"
 #define CHECK_SIZE 11
 
@@ -29,7 +28,7 @@ class CommonDirectives
 	private:
 		string					root;
 		VecString				index;
-		pair<int, string>		redirection;
+		string					redirection;
 		bool					autoindex;
 		long					client_max_body_size;
 		string					error_log;
@@ -75,7 +74,7 @@ class CommonDirectives
 		const string&		getAccessLog() const;
 		MapIntString		getErrorPages() const;
 		VecString			getIndexes() const;
-		pair<int, string>	getRedirection() const;
+		string				getRedirection() const;
 		MapStringString		getMimeTypes() const;
 		string				getMimeTypeByKey(const string& _key) const;
 		const string&		getUpload() const;
