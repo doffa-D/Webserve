@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/04 16:00:46 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/05 16:11:48 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,7 @@ int WaitCgi(pid_t pid, time_t BeginTime)
     pid_t result;
     do {
         result = waitpid(pid, &status, WNOHANG);
-        if (result == -1)
-        {
-            return CGI_ERROR;
-        } 
-        else if (result == 0)
+        if (result == 0)
         {
             if (difftime(time(0), BeginTime) > 5) {
                 kill(pid, SIGKILL);
@@ -65,11 +61,11 @@ int WaitCgi(pid_t pid, time_t BeginTime)
             else
             {
                 std::cerr << "CGI process was signaled" << std::endl;
-                return CGI_SIGNALED;
+                return CGI_ERROR;
             }
         }
     } while (result == 0);
-    return CGI_UNKNOWN_ERROR;
+    return CGI_ERROR;
 }
 
 
@@ -148,7 +144,22 @@ std::pair<std::string, int> CGI::fill_env() {
         int wait_status = WaitCgi(pid, BeginTime);
         std::string response = "";
         switch (wait_status) {
-            case CGI_SUCCESS:
+            case CGI_TIMEOUT:
+                {
+                    std::cout << "CGI process was killed Timeout" << std::endl;
+                    close(output[0]);
+                    response = "504 Gateway Timeout";
+                    break;
+                }
+            case CGI_ERROR:
+                {
+                    close(output[0]);   
+                    response = "500 Internal Server Error";
+                    wait_status = CGI_ERROR;
+                    std::cerr << "CGI process was ERROR " << wait_status << std::endl;
+                    break;
+                }
+            default:
                 {
                     char buffer[1024];
                     ssize_t bytesRead;
@@ -156,25 +167,9 @@ std::pair<std::string, int> CGI::fill_env() {
                         response.append(buffer, bytesRead);
                     }
                     close(output[0]);
-                    return std::make_pair(response, CGI_SUCCESS);
-                }
-            case CGI_TIMEOUT:
-                {
-                    close(output[0]);
-                    response = "504 Gateway Timeout";
-                    break;
-                }
-            case CGI_ERROR:
-            case CGI_SIGNALED:
-            case CGI_UNKNOWN_ERROR:
-            default:
-                {
-                    close(output[0]);
-                    response = "500 Internal Server Error";
-                    break;
+                    return std::make_pair(response, wait_status);
                 }
         }
-        return std::make_pair(response, wait_status);
     }
     return std::make_pair("500 Internal Server Error", CGI_ERROR);
 }

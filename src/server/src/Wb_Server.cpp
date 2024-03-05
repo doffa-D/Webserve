@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/04 18:54:35 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/05 15:44:38 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
                         request.sessionID = "";
                         Client[i] = request;
                         std::string header = Client[i].request.substr(0, Client[i].request.find("\r\n\r\n"));
-                        std::cout << header << std::endl;
+                        // std::cout << header << std::endl;
                         size_t pos = header.find("Connection: keep-alive\r\n");
                         if (pos != std::string::npos)
                             Client[i].keepAlive = true;
