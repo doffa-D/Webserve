@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/05 18:11:37 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/05 18:43:37 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,53 @@ void Wb_Server::Setup_Server(int port_index)
 	fcntl(socket_fd_server[port_index], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 }
 
+static void	TrackCookie(const std::string& res, RequestClient& tracker)
+{
+	string SID;
+	size_t pos = res.find("\r\n\r\n");
+	if (pos != string::npos)
+	{
+		std::string header =  res.substr(0, pos);
+		// cout << header << endl;	
+		std::string to_find = "Set-Cookie: ";
+		size_t _pos = header.find(to_find);
+		if (_pos != string::npos)
+		{
+			std::string attribute = header.substr(_pos, header.length());
+			attribute = attribute.substr(0, attribute.find("\r\n"));
+			attribute = attribute.substr(to_find.length(), attribute.length());
+			VecString vec = str_utils::split(attribute, ';');
+			for (size_t i = 0; i < vec.size();i++)
+			{
+				vec[i] = str_utils::trim(vec[i]);
+				VecString _vec = str_utils::split(vec[i], '=');
+				if (_vec.size() == 2 && _vec[0] == "SID")
+				{
+					SID = _vec[1];
+					break ;
+				}
+			}
+			// cout << "SID: [" << SID << "]" << endl;
+			tracker.cookies = SID;
+			tracker.session_begin_time = time(0);
+		}
+	}
+}
+
+static void	check_session_expiration(time_t start_time, string fileName)
+{
+	std::ifstream sessionFile(fileName.c_str());
+	if (sessionFile.fail())
+		return ;
+	string line, _line;
+	while (std::getline(sessionFile, line, '\n'))
+		if (strnstr(line.c_str(), "expires:", 8) != NULL)
+			break ;
+	unsigned long _time = str_utils::to_Ulong(line.substr(str_utils::find_first_of(line, " \t"), line.length()));
+	time_t current_time = time(0);
+	if (current_time - start_time >= (time_t)_time)
+		std::remove(fileName.c_str());
+}
 
 void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 {
@@ -96,6 +143,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
         }
         for (int SocketID = 3; SocketID < FD_SETSIZE; ++SocketID)
         {
+			check_session_expiration(Client[SocketID].session_begin_time, Client[SocketID].cookies);
 		 	if(Client[SocketID].keepAlive == true && difftime(time(0) , Client[SocketID].KeepAliveTimeOut) > KEEPALIVE_TIMEOUT)
 			{
 				close(SocketID);
@@ -165,7 +213,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
                     FD_CLR(SocketID, &fd_set_write);
                     checker[SocketID] = true;
 					Client[SocketID].KeepAliveTimeOut = time(0);
-
+					TrackCookie(ClientRespont, Client[SocketID]);
                     if (Client[SocketID].keepAlive == false)
                     {
                         FD_CLR(SocketID, &fd_set_write);

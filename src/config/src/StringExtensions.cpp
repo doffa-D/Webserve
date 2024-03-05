@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 08:10:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/05 18:37:02 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/05 18:45:47 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,12 @@ string	str_utils::to_string(int value)
 }
 
 int	str_utils::to_int(const string& value)
+{
+	double ret = strtod(value.c_str(), NULL);
+	return (ret);
+}
+
+unsigned long	str_utils::to_Ulong(const string& value)
 {
 	double ret = strtod(value.c_str(), NULL);
 	return (ret);

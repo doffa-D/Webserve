@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 08:31:30 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/05 18:37:07 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/05 18:46:04 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ namespace str_utils
 	std::string		ip(Uint value);
 	string			to_string(int value);
 	int				to_int(const string& value);
+	unsigned long	to_Ulong(const string& value);
 	size_t			find_first_of(const string& str, const string& charset);
 	string&			trim(string& str);
 	string			trim(const string& str);
