@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/06 19:09:41 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/06 19:13:23 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,7 @@ void logging(std::string FilePath,bool isError,std::string Message,MapStringStri
 	std::string host = header["Host"];
 	std::string level = isError ? "[error]" : "[success]";
 	std::string timeStr = ctime(&now);
-	timeStr[strlen(timeStr.c_str()) - 1] = '\0';
-
+    timeStr.erase(timeStr.find_last_not_of("\n") + 1);
     std::string uri = "\'" + URI.getMethod() + " " + URI.getPath() + " " + URI.getHttpVersion() + "\'";
 	std::string logmessage = level + " " + timeStr + " " + Message + " " + uri + " " + host;
 	std::ofstream logFile;

@@ -6,7 +6,7 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/03/06 12:04:57 by hdagdagu         ###   ########.fr        #
+#    Updated: 2024/03/06 19:13:57 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -74,7 +74,6 @@ ascii_art:
 
 $(NAME): $(OBJS)
 	@mkdir -p $(UPLOAD_DIR) $(SESSION_DIR) $(LOGS_DIR)
-	@echo "$(RED)Creating directories $(YELLOW)$(UPLOAD_DIR) $(SESSION_DIR) $(LOGS_DIR)$(NC)"
 	@echo "$(RED)$(NAME)$(YELLOW) Executable is ready$(NC)"
 	@$(CXX) $(CFLAGS) $(INCLUDES) $^ -o $@
 
