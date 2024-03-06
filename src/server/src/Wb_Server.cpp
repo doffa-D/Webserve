@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/05 18:43:37 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/06 12:16:33 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,20 @@
 
 Wb_Server::Wb_Server(const Parser& parsedData)
 {
-	std::vector<std::pair<Uint, int> > hAndP = parsedData.getHostsAndPorts();
-	this->HostAndPorts = hAndP;
-	this->Number_of_ports = hAndP.size();
-	for (size_t i = 0; i < hAndP.size(); i++)
-		Setup_Server(i);		  // Setup_Server function is used to setup the server
 	try
 	{
+		std::vector<std::pair<Uint, int> > hAndP = parsedData.getHostsAndPorts();
+		this->HostAndPorts = hAndP;
+		this->Number_of_ports = hAndP.size();
+		this->bindFailed = 0;
+		for (size_t i = 0; i < hAndP.size(); i++)
+			Setup_Server(i);		  // Setup_Server function is used to setup the server
 		listen_to_multiple_clients(parsedData); // listen_to_multiple_clients function is used to listen to multiple clients_request
-
 	}
 	catch (const std::exception &e)
 	{
-		std::cerr << e.what() << '\n';
+		std::cerr << e.what() << std::endl;
+		exit(1);
 	}
 }
 void Wb_Server::Setup_Server(int port_index)
@@ -34,15 +35,14 @@ void Wb_Server::Setup_Server(int port_index)
 	socket_fd_server[port_index] = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_fd_server[port_index] == -1)
 	{
-		std::cout << "Failed to create socket for port " << HostAndPorts[port_index].second;
-		perror("");
-
+		std::string error = "[ socket: Port: " + std::to_string(HostAndPorts[port_index].second) + " ]";
+		perror(error.c_str());
 	}
 	int opt = 1;
 	if (setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1 || setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt)) == -1)
 	{
-		std::cout << "Failed to set socket options for port " << HostAndPorts[port_index].second;
-		perror("");
+		std::string error = "[ setsockopt: Port: " + std::to_string(HostAndPorts[port_index].second) + " ]";
+		perror(error.c_str());
 	}
 
 	address[port_index].sin_family = AF_INET;
@@ -51,18 +51,31 @@ void Wb_Server::Setup_Server(int port_index)
 
 	if (bind(socket_fd_server[port_index], (struct sockaddr *)&address[port_index], sizeof(address[port_index])) == -1)
 	{
-		std::cout << "Failed to bind to port " << HostAndPorts[port_index].second;
-		perror("");
+		std::string error = "[ bind: Port: " + std::to_string(HostAndPorts[port_index].second) + " ]";
+
+		this->bindFailed++;
+		perror(error.c_str());
 
 	}
 
 	if (listen(socket_fd_server[port_index], 10) == -1)
 	{
-		std::cout << "Failed to listen on port " << HostAndPorts[port_index].second;
-		perror("");
+		std::string error = "[ listen: Port: " + std::to_string(HostAndPorts[port_index].second) + " ]";
+		perror(error.c_str());
+
 
 	}
-	fcntl(socket_fd_server[port_index], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+	if(fcntl(socket_fd_server[ port_index], F_SETFL, O_NONBLOCK, FD_CLOEXEC) == -1)
+	{
+		std::string error = "[ fcntl: Port: " + std::to_string(HostAndPorts[port_index].second) + " ]";
+		perror(error.c_str());
+
+	}
+	if(this->bindFailed == this->Number_of_ports)
+	{
+		std::cerr << "[ All ports are already in use ]" << std::endl;
+		exit(1);
+	}
 }
 
 static void	TrackCookie(const std::string& res, RequestClient& tracker)
@@ -91,7 +104,6 @@ static void	TrackCookie(const std::string& res, RequestClient& tracker)
 					break ;
 				}
 			}
-			// cout << "SID: [" << SID << "]" << endl;
 			tracker.cookies = SID;
 			tracker.session_begin_time = time(0);
 		}
@@ -115,13 +127,10 @@ static void	check_session_expiration(time_t start_time, string fileName)
 
 void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 {
-    std::string httpRequest = "";
-    std::string ClientRespont = "";
     fd_set fd_set_Read, Tmp_fd_set_Read;
     fd_set fd_set_write, Tmp_fd_set_write;
     FD_ZERO(&fd_set_Read);
     FD_ZERO(&fd_set_write);
-    std::map<int, bool> checker;
     std::map<int, RequestClient> Client;
 	struct timeval timeout;
 
@@ -135,97 +144,109 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
     {
         Tmp_fd_set_Read = fd_set_Read;
         Tmp_fd_set_write = fd_set_write;
-        timeout.tv_sec = 1; 
+        timeout.tv_sec = 3; 
         timeout.tv_usec = 0;
-        if (select(FD_SETSIZE, &Tmp_fd_set_Read, &Tmp_fd_set_write, NULL, &timeout) < 0)
+		for(int SocketID = 3; SocketID < FD_SETSIZE; SocketID++)
+		{
+			check_session_expiration(Client[SocketID].session_begin_time, Client[SocketID].cookies);
+			if(Client[SocketID].CheckSeend == "finish")
+			{
+				if(Client[SocketID].keepAlive == true && difftime(time(0) , Client[SocketID].KeepAliveTimeOut) > KEEPALIVE_TIMEOUT)
+				{
+					close(SocketID);
+					FD_CLR(SocketID, &Tmp_fd_set_write);
+					FD_CLR(SocketID, &Tmp_fd_set_Read);
+					FD_CLR(SocketID, &fd_set_Read);
+					FD_CLR(SocketID, &fd_set_write);
+					Client.erase(SocketID);
+				}
+			}
+		}
+		int ready = select(FD_SETSIZE, &Tmp_fd_set_Read, &Tmp_fd_set_write, NULL, &timeout);
+        if (ready < 0)
         {
             perror("Error in select");
         }
-        for (int SocketID = 3; SocketID < FD_SETSIZE; ++SocketID)
-        {
-			check_session_expiration(Client[SocketID].session_begin_time, Client[SocketID].cookies);
-		 	if(Client[SocketID].keepAlive == true && difftime(time(0) , Client[SocketID].KeepAliveTimeOut) > KEEPALIVE_TIMEOUT)
+		else if (ready > 0)
+		{
+			for (int SocketID = 3; SocketID < FD_SETSIZE; ++SocketID)
 			{
-				close(SocketID);
-				FD_CLR(SocketID, &Tmp_fd_set_write);
-				FD_CLR(SocketID, &Tmp_fd_set_Read);
-				FD_CLR(SocketID, &fd_set_Read);
-				FD_CLR(SocketID, &fd_set_write);
-				Client.erase(SocketID);
-			}
-            else if (FD_ISSET(SocketID, &Tmp_fd_set_Read))
-            {
-                if (check_socket(SocketID) == true)
-                {
-                    socklen_t addrlen = sizeof(address[SocketID]);
-                    if ((socket_fd_client = accept(SocketID, (struct sockaddr *)&address[SocketID], (socklen_t *)&addrlen)) < 0)
-                    {
-                        perror("accept ");
-                    }
-                    else
-                    {
-                        fcntl(socket_fd_client, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
-                        FD_SET(socket_fd_client, &fd_set_Read);
-                        checker[socket_fd_client] = true;
-                    }
-                }
-                else
-                {
-                    httpRequest = read_full_request(SocketID, fd_set_Read, fd_set_write);
-                    if (FD_ISSET(SocketID, &fd_set_write))
-                    {
-                        RequestClient requestClient;
-                        std::string header;
-						size_t pos = httpRequest.find("\r\n\r\n");
-						if(pos != std::string::npos)
+				if (FD_ISSET(SocketID, &Tmp_fd_set_Read))
+				{
+					if (check_socket(SocketID) == true)
+					{
+						socklen_t addrlen = sizeof(address[SocketID]);
+						if ((socket_fd_client = accept(SocketID, (struct sockaddr *)&address[SocketID], (socklen_t *)&addrlen)) < 0)
 						{
-							header = httpRequest.substr(0,pos);
-                        	size_t pos = header.find("Connection: keep-alive\r\n");
-							if (pos != std::string::npos)
-							{
-								requestClient.keepAlive = true;
-								requestClient.KeepAliveTimeOut = time(0);
-							}
-							else
-								requestClient.keepAlive = false;
-
+							perror("accept ");
 						}
-						requestClient.request = httpRequest;
-						requestClient.cookies = "";
-						requestClient.KeepAliveTimeOut = time(0);
-                        Client[SocketID] = requestClient;
-                    }
-                }
-            }
-            else if (FD_ISSET(SocketID, &Tmp_fd_set_write))
-            {
-                if (checker[SocketID] == true)
-                {
-                    Request request;
-                    request.Parse_Request(Client[SocketID].request);
-                    Response response;
-                    response.setReq(request);
-                    ClientRespont = response.ft_Response(parsedData);
-                    checker[SocketID] = false;
-                }
-                if (send_full_response(SocketID, ClientRespont) == true)
-                {
-                    FD_CLR(SocketID, &fd_set_write);
-                    checker[SocketID] = true;
-					Client[SocketID].KeepAliveTimeOut = time(0);
-					TrackCookie(ClientRespont, Client[SocketID]);
-                    if (Client[SocketID].keepAlive == false)
-                    {
-                        FD_CLR(SocketID, &fd_set_write);
-                        close(SocketID);
-                        Client.erase(SocketID);
-                    }
-                    else
-                    {
-                        FD_SET(SocketID, &fd_set_Read);
-                    }
-                }
-            }
+						else
+						{
+							fcntl(socket_fd_client, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+							FD_SET(socket_fd_client, &fd_set_Read);
+						}
+					}
+					else
+					{
+					    std::string httpRequest = "";
+
+						httpRequest = read_full_request(SocketID, fd_set_Read, fd_set_write);
+						if (FD_ISSET(SocketID, &fd_set_write))
+						{
+							RequestClient requestClient;
+							std::string header;
+							size_t pos = httpRequest.find("\r\n\r\n");
+							if(pos != std::string::npos)
+							{
+								header = httpRequest.substr(0,pos);
+								size_t pos = header.find("Connection: keep-alive\r\n");
+								if (pos != std::string::npos)
+								{
+									requestClient.keepAlive = true;
+									requestClient.KeepAliveTimeOut = time(0);
+								}
+								else
+									requestClient.keepAlive = false;
+
+							}
+							requestClient.request = httpRequest;
+							requestClient.cookies = "";
+							requestClient.KeepAliveTimeOut = time(0);
+							requestClient.CheckSeend = "init";
+							Client[SocketID] = requestClient;
+						}
+					}
+				}
+				else if (FD_ISSET(SocketID, &Tmp_fd_set_write))
+				{
+					if (Client[SocketID].CheckSeend == "init")
+					{
+						Request request;
+						request.Parse_Request(Client[SocketID].request);
+						Response response;
+						response.setReq(request);
+						Client[SocketID].ClientRespont = response.ft_Response(parsedData);
+						Client[SocketID].CheckSeend = "send";
+					}
+					if (send_full_response(SocketID, Client[SocketID].ClientRespont) == true)
+					{
+						FD_CLR(SocketID, &fd_set_write);
+						Client[SocketID].CheckSeend = "finish";
+						Client[SocketID].KeepAliveTimeOut = time(0);
+						TrackCookie(Client[SocketID].ClientRespont, Client[SocketID]);
+						if (Client[SocketID].keepAlive == false)
+						{
+							FD_CLR(SocketID, &fd_set_write);
+							close(SocketID);
+							Client.erase(SocketID);
+						}
+						else
+						{
+							FD_SET(SocketID, &fd_set_Read);
+						}
+					}
+				}
+			}
         }
     }
 }

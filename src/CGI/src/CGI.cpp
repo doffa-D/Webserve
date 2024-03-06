@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGI.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/05 23:35:15 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/06 11:38:30 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,6 @@ std::pair<std::string, int> CGI::fill_env() {
         close(input[1]);
 
         int wait_status = WaitCgi(pid, BeginTime);
-        std::string response = "";
         switch (wait_status) {
             case CGI_TIMEOUT:
                 {
@@ -154,6 +153,7 @@ std::pair<std::string, int> CGI::fill_env() {
                 }
             default:
                 {
+                    std::string response = "";
                     char buffer[1024];
                     ssize_t bytesRead;
                     while ((bytesRead = read(output[0], buffer, sizeof(buffer))) > 0) {
@@ -161,7 +161,6 @@ std::pair<std::string, int> CGI::fill_env() {
                     }
                     response.push_back('\0');
                     close(output[0]);
-                    std::cout << "wait_status =  " <<  wait_status << std::endl;
                     return std::make_pair(response, wait_status);
                 }
         }

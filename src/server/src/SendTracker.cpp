@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   SendTracker.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/16 15:40:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/02/28 18:54:59 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/06 11:49:30 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ bool SendTracker::writeNextChunk()
         {
             this->bytesWritten_ += bytesWritten;
         }
-        // std::cout << "this is the second time " << this->bytesWritten_ << "  " << response.length() << std::endl;
         if (this->bytesWritten_ < static_cast<ssize_t>(response.length()))
         {
             this->has_finished = false;
@@ -70,11 +69,6 @@ bool SendTracker::writeNextChunk()
         }
         else if (this->bytesWritten_ >= static_cast<ssize_t>(response.length()))
         {
-            // std::cout << this->bytesWritten_ << " " << response.length() << std::endl;
-
-            // std::cout << "Data sent successfully" << std::endl;
-            // exit(0);
-
             this->has_finished = true;
             return true;
         }

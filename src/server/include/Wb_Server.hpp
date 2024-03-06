@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/05 18:42:26 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/06 12:05:24 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../include/header.hpp" // in this header file we have all the libraries that we need
-// #include "../../Request_Response/Request.hpp"
-// #include "../../Request_Response/Response.hpp"
+#include "../../../include/header.hpp" 
 
 #define PORT 8080		 // the port users will be connecting to
 #define BACKLOG 5		 // how many pending connections queue will hold
@@ -29,6 +27,9 @@ struct RequestClient
 	time_t session_begin_time;
 	time_t KeepAliveTimeOut;
 	bool keepAlive;
+	std::string CheckSeend;
+	std::string ClientRespont;
+	std::string Host;
 };
 
 struct Client
@@ -61,11 +62,11 @@ private:
 	sockaddr_in address[FD_SETSIZE];			   // address is the address of the server socket
 	std::string sBuffer;						   // sBuffer is the buffer that will be used to store data as a string
 	std::string HtmlFile;						   // HtmlFile is the html file that will be sent to the client
-	// std::map<std::string, std::string> MIME_types; // MIME_types is the map that will be used to store the mime types
 	Wb_Server();
 	char *argv;
 	std::vector<Client> clients_request;
 	std::vector<SendTracker> clients_respont;
+	int bindFailed;
 
 public:
 	Wb_Server(const Parser& parsedData);

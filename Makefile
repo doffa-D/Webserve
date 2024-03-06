@@ -6,7 +6,7 @@
 #    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/03/05 18:27:52 by hdagdagu         ###   ########.fr        #
+#    Updated: 2024/03/06 12:04:57 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -94,7 +94,7 @@ fclean: clean
 re: fclean all
 
 watch:
-	@npx nodemon -x 'reset && make run' -e cpp,hpp
+	@npx nodemon -x 'reset && ./webserve' -e cpp,hpp
 
 
 
