@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Main_Response.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/06 19:13:23 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/06 19:31:34 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ bool Response::isRequestBodySizeAllowed(const Location& location)
     long MaxBodySize = atoi(Req.getHttp_Header()["Content-Length"].c_str());
     return MaxBodySize <= location.getClientMaxBodySize();
 }
-void logging(std::string FilePath,bool isError,std::string Message,MapStringString header,RequestLine URI)
+void logging(std::string FilePath,bool isError,std::string Message,Request Request)
 {
 	time_t now = time(0);
-	std::string host = header["Host"];
+	std::string host = Request.getHttp_Header()["Host"];
 	std::string level = isError ? "[error]" : "[success]";
 	std::string timeStr = ctime(&now);
     timeStr.erase(timeStr.find_last_not_of("\n") + 1);
-    std::string uri = "\'" + URI.getMethod() + " " + URI.getPath() + " " + URI.getHttpVersion() + "\'";
+    std::string uri = "\'" + Request.getReqLine().getMethod() + " " + Request.getReqLine().getPath() + " " + Request.getReqLine().getHttpVersion() + "\'";
 	std::string logmessage = level + " " + timeStr + " " + Message + " " + uri + " " + host;
 	std::ofstream logFile;
     if(!FilePath.empty())
@@ -78,7 +78,7 @@ bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Loc
         if(bin.empty() && Req.getReqLine().getMethod() == "POST")
         {
             upload_file(Req.getBody(),  location.getUpload(), Req.getHttp_Header());
-            logging(location.getErrorLog(),true,"file saved successfully",Req.getHttp_Header(),Req.getReqLine());
+            logging(location.getErrorLog(),true,"file saved successfully",Req);
 
         }
         
