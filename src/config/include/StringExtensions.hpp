@@ -35,6 +35,9 @@ typedef MapStringString::iterator		MapStringString_iter;
 typedef MapIntString::iterator			MapIntString_iter;
 typedef std::vector<string>				VecString;
 typedef VecString::iterator				VecString_iter;
+typedef std::pair<string, string>		PairStringString;
+typedef std::vector<PairStringString>	VecStringString;
+typedef VecStringString::iterator		VecStringString_iter;
 typedef std::vector<int> 				VecInt;
 typedef VecInt::iterator 				VecInt_iter;
 typedef std::list<string>				ListString;
@@ -60,6 +63,7 @@ namespace str_utils
 	string			to_string(int value);
 	int				to_int(const string& value);
 	unsigned long	to_Ulong(const string& value);
+	time_t			to_Time_t(const char* dateString);
 	size_t			find_first_of(const string& str, const string& charset);
 	string&			trim(string& str);
 	string			trim(const string& str);

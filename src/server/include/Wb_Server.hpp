@@ -22,14 +22,13 @@
 
 struct RequestClient
 {
-	std::string request;
-	std::string cookies;
-	time_t session_begin_time;
-	time_t KeepAliveTimeOut;
-	bool keepAlive;
-	std::string CheckSeend;
-	std::string ClientRespont;
-	std::string Host;
+	std::string		request;
+	VecStringString	cookie_tracker;
+	time_t			KeepAliveTimeOut;
+	bool			keepAlive;
+	std::string		CheckSeend;
+	std::string		ClientRespont;
+	std::string		Host;
 };
 
 struct Client

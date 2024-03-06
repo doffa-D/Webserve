@@ -112,6 +112,15 @@ unsigned long	str_utils::to_Ulong(const string& value)
 	return (ret);
 }
 
+time_t	str_utils::to_Time_t(const char* dateString)
+{
+    struct tm tm;
+    memset(&tm, 0, sizeof(struct tm));
+    if (strptime(dateString, "%a, %d-%b-%Y %H:%M:%S GMT", &tm) != NULL)
+        return mktime(&tm);
+    return (time_t)-1;
+}
+
 bool	str_utils::is_number(const string& value)
 {
 	for (size_t i = 0; i < value.size();i++)
@@ -119,7 +128,6 @@ bool	str_utils::is_number(const string& value)
 			return (false);
 	return (true);
 }
-
 
 Uint	str_utils::ip(int n1, int n2, int n3, int n4)
 {
