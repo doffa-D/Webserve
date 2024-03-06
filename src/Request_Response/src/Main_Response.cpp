@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/05 18:03:36 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/06 19:09:41 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,37 @@ bool Response::isRequestBodySizeAllowed(const Location& location)
     long MaxBodySize = atoi(Req.getHttp_Header()["Content-Length"].c_str());
     return MaxBodySize <= location.getClientMaxBodySize();
 }
+void logging(std::string FilePath,bool isError,std::string Message,MapStringString header,RequestLine URI)
+{
+	time_t now = time(0);
+	std::string host = header["Host"];
+	std::string level = isError ? "[error]" : "[success]";
+	std::string timeStr = ctime(&now);
+	timeStr[strlen(timeStr.c_str()) - 1] = '\0';
 
+    std::string uri = "\'" + URI.getMethod() + " " + URI.getPath() + " " + URI.getHttpVersion() + "\'";
+	std::string logmessage = level + " " + timeStr + " " + Message + " " + uri + " " + host;
+	std::ofstream logFile;
+    if(!FilePath.empty())
+    {
+        if(isError)
+            logFile.open(FilePath, std::ios::out | std::ios::app);
+        else
+            logFile.open(FilePath, std::ios::out | std::ios::app);
+
+
+        if (logFile.is_open())
+        {
+            logFile << logmessage << std::endl;
+            logFile.close();
+        }
+        else
+        {
+            std::cerr << "Unable to open log file" << std::endl;
+        }
+    }
+	std::cout << logmessage << std::endl;
+}
 bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Location& location)
 {
 
@@ -44,12 +74,14 @@ bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Loc
         
 		
 		
-		
         size_t _pos = str_utils::r_find(Root_ReqPath, '.');
         std::string bin = location.getCgi()[Root_ReqPath.substr(_pos + 1)];
         if(bin.empty() && Req.getReqLine().getMethod() == "POST")
+        {
             upload_file(Req.getBody(),  location.getUpload(), Req.getHttp_Header());
-			// upload_file(Req.getBody(), "./upload", "", Req.getBody().size(), bondry);
+            logging(location.getErrorLog(),true,"file saved successfully",Req.getHttp_Header(),Req.getReqLine());
+
+        }
         
         struct stat fileInfo;
         if (stat(Root_ReqPath.c_str(), &fileInfo) == 0)

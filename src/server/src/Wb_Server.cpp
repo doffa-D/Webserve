@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/06 12:16:33 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/06 19:08:33 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,20 +110,20 @@ static void	TrackCookie(const std::string& res, RequestClient& tracker)
 	}
 }
 
-static void	check_session_expiration(time_t start_time, string fileName)
-{
-	std::ifstream sessionFile(fileName.c_str());
-	if (sessionFile.fail())
-		return ;
-	string line, _line;
-	while (std::getline(sessionFile, line, '\n'))
-		if (strnstr(line.c_str(), "expires:", 8) != NULL)
-			break ;
-	unsigned long _time = str_utils::to_Ulong(line.substr(str_utils::find_first_of(line, " \t"), line.length()));
-	time_t current_time = time(0);
-	if (current_time - start_time >= (time_t)_time)
-		std::remove(fileName.c_str());
-}
+// static void	check_session_expiration(time_t start_time, string fileName)
+// {
+// 	std::ifstream sessionFile(fileName.c_str());
+// 	if (sessionFile.fail())
+// 		return ;
+// 	string line, _line;
+// 	while (std::getline(sessionFile, line, '\n'))
+// 		if (strnstr(line.c_str(), "expires:", 8) != NULL)
+// 			break ;
+// 	unsigned long _time = str_utils::to_Ulong(line.substr(str_utils::find_first_of(line, " \t"), line.length()));
+// 	time_t current_time = time(0);
+// 	if (current_time - start_time >= (time_t)_time)
+// 		std::remove(fileName.c_str());
+// }
 
 void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 {
@@ -146,32 +146,49 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
         Tmp_fd_set_write = fd_set_write;
         timeout.tv_sec = 3; 
         timeout.tv_usec = 0;
-		for(int SocketID = 3; SocketID < FD_SETSIZE; SocketID++)
-		{
-			check_session_expiration(Client[SocketID].session_begin_time, Client[SocketID].cookies);
-			if(Client[SocketID].CheckSeend == "finish")
-			{
-				if(Client[SocketID].keepAlive == true && difftime(time(0) , Client[SocketID].KeepAliveTimeOut) > KEEPALIVE_TIMEOUT)
-				{
-					close(SocketID);
-					FD_CLR(SocketID, &Tmp_fd_set_write);
-					FD_CLR(SocketID, &Tmp_fd_set_Read);
-					FD_CLR(SocketID, &fd_set_Read);
-					FD_CLR(SocketID, &fd_set_write);
-					Client.erase(SocketID);
-				}
-			}
-		}
 		int ready = select(FD_SETSIZE, &Tmp_fd_set_Read, &Tmp_fd_set_write, NULL, &timeout);
         if (ready < 0)
         {
             perror("Error in select");
         }
+		else if(ready == 0)
+		{
+			for(int SocketID = 3; SocketID < FD_SETSIZE; SocketID++)
+			{
+				// check_session_expiration(Client[SocketID].session_begin_time, Client[SocketID].cookies);
+				if(Client[SocketID].CheckSeend == "finish")
+				{
+					if(Client[SocketID].keepAlive == true && difftime(time(0) , Client[SocketID].KeepAliveTimeOut) > KEEPALIVE_TIMEOUT)
+					{
+						close(SocketID);
+						FD_CLR(SocketID, &Tmp_fd_set_write);
+						FD_CLR(SocketID, &Tmp_fd_set_Read);
+						FD_CLR(SocketID, &fd_set_Read);
+						FD_CLR(SocketID, &fd_set_write);
+						Client.erase(SocketID);
+					}
+				}
+			}
+
+		}
 		else if (ready > 0)
 		{
 			for (int SocketID = 3; SocketID < FD_SETSIZE; ++SocketID)
 			{
-				if (FD_ISSET(SocketID, &Tmp_fd_set_Read))
+				// check_session_expiration(Client[SocketID].session_begin_time, Client[SocketID].cookies);
+				if(Client[SocketID].CheckSeend == "finish")
+				{
+					if(Client[SocketID].keepAlive == true && difftime(time(0) , Client[SocketID].KeepAliveTimeOut) > KEEPALIVE_TIMEOUT)
+					{
+						close(SocketID);
+						FD_CLR(SocketID, &Tmp_fd_set_write);
+						FD_CLR(SocketID, &Tmp_fd_set_Read);
+						FD_CLR(SocketID, &fd_set_Read);
+						FD_CLR(SocketID, &fd_set_write);
+						Client.erase(SocketID);
+					}
+				}
+				else if (FD_ISSET(SocketID, &Tmp_fd_set_Read))
 				{
 					if (check_socket(SocketID) == true)
 					{
@@ -214,6 +231,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 							requestClient.KeepAliveTimeOut = time(0);
 							requestClient.CheckSeend = "init";
 							Client[SocketID] = requestClient;
+
 						}
 					}
 				}
@@ -226,7 +244,6 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 						Response response;
 						response.setReq(request);
 						Client[SocketID].ClientRespont = response.ft_Response(parsedData);
-						Client[SocketID].CheckSeend = "send";
 					}
 					if (send_full_response(SocketID, Client[SocketID].ClientRespont) == true)
 					{
