@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/07 17:42:02 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/07 19:56:57 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,8 +170,6 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 				{
 					if(Client[SocketID].keepAlive == true && difftime(time(0) , Client[SocketID].KeepAliveTimeOut) > KEEPALIVE_TIMEOUT)
 					{
-						std::cout << "close" << std::endl;
-
 						close(SocketID);
 						FD_CLR(SocketID, &Tmp_fd_set_write);
 						FD_CLR(SocketID, &Tmp_fd_set_Read);
@@ -192,7 +190,6 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 				{
 					if(Client[SocketID].keepAlive == true && difftime(time(0) , Client[SocketID].KeepAliveTimeOut) > KEEPALIVE_TIMEOUT)
 					{
-						std::cout << "close" << std::endl;
 						close(SocketID);
 						FD_CLR(SocketID, &Tmp_fd_set_write);
 						FD_CLR(SocketID, &Tmp_fd_set_Read);
@@ -223,13 +220,10 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 					else
 					{
 					    std::string httpRequest = "";
-						// std::cout << "====================" << std::endl;
 
 						httpRequest = read_full_request(SocketID, fd_set_Read, fd_set_write);
-						std::cout << "SocketID: " << SocketID << std::endl;
 						if (FD_ISSET(SocketID, &fd_set_write))
 						{
-							std::cout << "read request" << std::endl;
 							RequestClient requestClient;
 							std::string header;
 							size_t pos = httpRequest.find("\r\n\r\n");
@@ -265,7 +259,6 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 						Response response;
 						response.setReq(request);
 						Client[SocketID].ClientRespont = response.ft_Response(parsedData);
-						std::cout << "send response" << std::endl;
 						// CookieTracker(Client[SocketID]);
 					}
 					if (send_full_response(Client,SocketID) == true)
@@ -383,7 +376,6 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 	client_index = find_client(clients_request, socket_fd);
 
 	ssize_t valread = recv(socket_fd, buffer, BUFFER_SIZE, 0);
-	// std::cout << "byte: "<< clients_request[client_index].bytes_read << " valread: " << valread <<  " SocketID: " << socket_fd<< std::endl;
 	if (valread < 0)
 	{
 		close(socket_fd);
@@ -406,6 +398,7 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 		newClient.bytes_read = 0;
 		newClient.contentLength = 0;
 		newClient.first_respont = true;
+		newClient.CompleteHeader = false;
 		ContentLength(bufferr, newClient);
 		size_t contentLengthPos = bufferr.find("Transfer-Encoding: chunked");
 		if (contentLengthPos != std::string::npos)
@@ -416,44 +409,38 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 		if (start != std::string::npos)
 		{
 			newClient.header = bufferr.substr(0, start + 4);
-			newClient.start = start + 4;
+			newClient.start = start;
+			newClient.CompleteHeader = true;
 		}
 		else
-			newClient.start = 0;
+			newClient.CompleteHeader = false;
 
 		clients_request.push_back(newClient);
 		client_index = static_cast<int>(clients_request.size()) - 1;
 	}
 	clients_request[client_index].buffer.append(bufferr);
-	clients_request[client_index].buffer.push_back('\0');
 	clients_request[client_index].bytes_read += valread;
-
-	if (clients_request[client_index].contentLength == 0)
+	if(clients_request[client_index].CompleteHeader == false)
 	{
-		size_t pos = clients_request[client_index].buffer.find("\r\n\r\n");
-		if (pos != std::string::npos)
+		size_t start = clients_request[client_index].buffer.find("\r\n\r\n");
+		if (start != std::string::npos)
 		{
-			FD_CLR(socket_fd, &fd_set_Read);
-			FD_SET(socket_fd, &fd_set_write);
-			std::string request = clients_request[client_index].buffer;
-			clients_request.erase(clients_request.begin() + client_index);
-			return request;
+			clients_request[client_index].header = clients_request[client_index].buffer.substr(0, start + 4);
+			clients_request[client_index].start = start;
+			clients_request[client_index].CompleteHeader = true;
 		}
+		else
+			clients_request[client_index].CompleteHeader = false;
 	}
-	else
+	if(clients_request[client_index].CompleteHeader == true)
 	{
-		if (clients_request[client_index].isChunked)
+		if (clients_request[client_index].contentLength == 0)
 		{
-			size_t searchLength = std::min(static_cast<size_t>(10), clients_request[client_index].bytes_read);
-			std::string substring = clients_request[client_index].buffer.substr(clients_request[client_index].bytes_read - searchLength, searchLength);
-			size_t foundPos = substring.rfind("\r\n0\r\n");
-			if (foundPos != std::string::npos)
+			size_t pos = clients_request[client_index].buffer.find("\r\n\r\n");
+			if (pos != std::string::npos)
 			{
-				std::string body = unchunked_request(clients_request[client_index].buffer, clients_request[client_index].start, clients_request[client_index].bytes_read);
-				clients_request[client_index].buffer = clients_request[client_index].header + body;
 				FD_CLR(socket_fd, &fd_set_Read);
 				FD_SET(socket_fd, &fd_set_write);
-
 				std::string request = clients_request[client_index].buffer;
 				clients_request.erase(clients_request.begin() + client_index);
 				return request;
@@ -461,13 +448,33 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 		}
 		else
 		{
-			if (clients_request[client_index].bytes_read - clients_request[client_index].startFContent == clients_request[client_index].contentLength)
+			if (clients_request[client_index].isChunked)
 			{
-				FD_CLR(socket_fd, &fd_set_Read);
-				FD_SET(socket_fd, &fd_set_write);
-				std::string request = clients_request[client_index].buffer;
-				clients_request.erase(clients_request.begin() + client_index);
-				return request;
+				size_t searchLength = std::min(static_cast<size_t>(10), clients_request[client_index].bytes_read);
+				std::string substring = clients_request[client_index].buffer.substr(clients_request[client_index].bytes_read - searchLength, searchLength);
+				size_t foundPos = substring.rfind("\r\n0\r\n");
+				if (foundPos != std::string::npos)
+				{
+					std::string body = unchunked_request(clients_request[client_index].buffer, clients_request[client_index].start, clients_request[client_index].bytes_read);
+					clients_request[client_index].buffer = clients_request[client_index].header + body;
+					FD_CLR(socket_fd, &fd_set_Read);
+					FD_SET(socket_fd, &fd_set_write);
+
+					std::string request = clients_request[client_index].buffer;
+					clients_request.erase(clients_request.begin() + client_index);
+					return request;
+				}
+			}
+			else
+			{
+				if (clients_request[client_index].bytes_read - clients_request[client_index].start >= clients_request[client_index].contentLength)
+				{
+					FD_CLR(socket_fd, &fd_set_Read);
+					FD_SET(socket_fd, &fd_set_write);
+					std::string request = clients_request[client_index].buffer;
+					clients_request.erase(clients_request.begin() + client_index);
+					return request;
+				}
 			}
 		}
 	}

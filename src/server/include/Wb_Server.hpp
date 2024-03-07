@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/07 16:54:46 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/07 19:33:53 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ struct Client
 	bool isFile;
 	std::string header;
 	bool first_respont;
+	bool CompleteHeader;
 };
 
 class Wb_Server
