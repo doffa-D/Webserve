@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/07 15:06:57 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/07 18:47:16 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ class Response
 		void	setReq(Request req);
 		
 		std::string	ft_Response(const Parser& parser);
-		void		Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int File_Or_Str, int isCgi, Location location);
+		void		Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int File_Or_Str, Location location);
 		std::string	Error_HmlPage(const std::string& stat_code, const std::string& stat_msg);
 		// Location	Find_Location(Parser& parser, std::string& _host, std::string Path_Req);
 

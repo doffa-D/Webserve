@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Main_Response.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/07 13:06:54 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/07 18:48:50 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ std::string Response::ft_Response(const Parser& parser)
     {
         ResHeader.setLocation("http://" + _host + Redirection);
 		ResPath = "";
-        Fill_Response("303", "See Other", 1, 0, location);
+        Fill_Response("303", "See Other", 1, location);
         return response;
     }
     
