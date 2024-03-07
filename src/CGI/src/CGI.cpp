@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/06 11:38:30 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/07 16:57:08 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int WaitCgi(pid_t pid, time_t BeginTime)
     int status;
     pid_t result;
     do {
+        std::cout << "Waiting for CGI process" << std::endl;
         result = waitpid(pid, &status, WNOHANG);
         if (result == 0)
         {

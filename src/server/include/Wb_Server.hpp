@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/07 16:24:23 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/07 16:54:46 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #define PORT 8080		 // the port users will be connecting to
 #define BACKLOG 5		 // how many pending connections queue will hold
 #define BUFFER_SIZE 1024 // the size of the buffer that will be used to store data
-#define KEEPALIVE_TIMEOUT 0.1
+#define KEEPALIVE_TIMEOUT 1
 #ifndef SERVER_HP
 #define SERVER_HPP
 

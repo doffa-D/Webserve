@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/07 16:45:25 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/07 17:42:02 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
     {
         Tmp_fd_set_Read = fd_set_Read;
         Tmp_fd_set_write = fd_set_write;
-        timeout.tv_sec = 3; 
+        timeout.tv_sec = 1; 
         timeout.tv_usec = 0;
 		int ready = select(FD_SETSIZE, &Tmp_fd_set_Read, &Tmp_fd_set_write, NULL, &timeout);
         if (ready < 0)
@@ -170,6 +170,8 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 				{
 					if(Client[SocketID].keepAlive == true && difftime(time(0) , Client[SocketID].KeepAliveTimeOut) > KEEPALIVE_TIMEOUT)
 					{
+						std::cout << "close" << std::endl;
+
 						close(SocketID);
 						FD_CLR(SocketID, &Tmp_fd_set_write);
 						FD_CLR(SocketID, &Tmp_fd_set_Read);
@@ -190,6 +192,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 				{
 					if(Client[SocketID].keepAlive == true && difftime(time(0) , Client[SocketID].KeepAliveTimeOut) > KEEPALIVE_TIMEOUT)
 					{
+						std::cout << "close" << std::endl;
 						close(SocketID);
 						FD_CLR(SocketID, &Tmp_fd_set_write);
 						FD_CLR(SocketID, &Tmp_fd_set_Read);
@@ -209,17 +212,24 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 						}
 						else
 						{
-							fcntl(socket_fd_client, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+							if(fcntl(socket_fd_client, F_SETFL, O_NONBLOCK, FD_CLOEXEC) == -1)
+							{
+								std::string error = "[ fcntl: Port: " + std::to_string(HostAndPorts[SocketID].second) + " ]";
+								perror(error.c_str());
+							}
 							FD_SET(socket_fd_client, &fd_set_Read);
 						}
 					}
 					else
 					{
 					    std::string httpRequest = "";
+						// std::cout << "====================" << std::endl;
 
 						httpRequest = read_full_request(SocketID, fd_set_Read, fd_set_write);
+						std::cout << "SocketID: " << SocketID << std::endl;
 						if (FD_ISSET(SocketID, &fd_set_write))
 						{
+							std::cout << "read request" << std::endl;
 							RequestClient requestClient;
 							std::string header;
 							size_t pos = httpRequest.find("\r\n\r\n");
@@ -239,7 +249,6 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 							requestClient.request = httpRequest;
 							requestClient.SocketID = SocketID;
 							requestClient.byteSent = 0;
-							// requestClient.cookies = "";
 							requestClient.KeepAliveTimeOut = time(0);
 							requestClient.CheckSeend = "init";
 							Client[SocketID] = requestClient;
@@ -256,6 +265,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 						Response response;
 						response.setReq(request);
 						Client[SocketID].ClientRespont = response.ft_Response(parsedData);
+						std::cout << "send response" << std::endl;
 						// CookieTracker(Client[SocketID]);
 					}
 					if (send_full_response(Client,SocketID) == true)
@@ -372,8 +382,9 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 	int client_index = -1;
 	client_index = find_client(clients_request, socket_fd);
 
-	int valread = recv(socket_fd, buffer, BUFFER_SIZE, 0);
-	if (valread <= 0)
+	ssize_t valread = recv(socket_fd, buffer, BUFFER_SIZE, 0);
+	// std::cout << "byte: "<< clients_request[client_index].bytes_read << " valread: " << valread <<  " SocketID: " << socket_fd<< std::endl;
+	if (valread < 0)
 	{
 		close(socket_fd);
 		FD_CLR(socket_fd, &fd_set_Read);
@@ -414,6 +425,7 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 		client_index = static_cast<int>(clients_request.size()) - 1;
 	}
 	clients_request[client_index].buffer.append(bufferr);
+	clients_request[client_index].buffer.push_back('\0');
 	clients_request[client_index].bytes_read += valread;
 
 	if (clients_request[client_index].contentLength == 0)
