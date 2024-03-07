@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/05 23:37:48 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/07 12:55:48 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,53 +242,82 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 	handleForbidden(location);
 }
 
+std::string    FindValueOfKey(std::vector <std::pair<string, string> > Cgi_Header, std::string Key)
+{
+    std::vector <std::pair<string, string> >::iterator it;
+    for(it = Cgi_Header.begin(); it != Cgi_Header.end(); it++)
+    {
+        if(it->first == Key)
+		{
+			// std::string re = it->second;
+			// if(Key == "Status")
+			// 	Cgi_Header.erase(it);
+            return it->second;
+		}
+    }
+    return "";
+}
+
+bool    CheckKeyinHeader(std::vector <std::pair<string, string> > Cgi_Header, std::string Key)
+{
+	// std::cout << "key =  " << Key << std::endl;
+    std::vector <std::pair<string, string> >::iterator it;
+    for(it = Cgi_Header.begin(); it != Cgi_Header.end(); it++)
+    {
+		// std::cout << "Key =  " << it->first << std::endl;
+        if(it->first == Key)
+            return true;
+    }
+    return false;
+}
+
 void	Response::processCgiResponse(const std::string& Cgi_Response)
 {
-	std::map<string, string> Cgi_Header;
-	std::istringstream ss(Cgi_Response);
-	std::string line;
-	bool isBody = false;
-	while (std::getline(ss, line))
+	// std::cout << "Cgi_Response :  \n " << Cgi_Response << std::endl;
+	std::vector <std::pair<string, string> > Cgi_Header;
+    std::string    Header;
+    std::string Body;
+
+    std::istringstream ss(Cgi_Response);
+    std::string line;
+    bool isBody = false;
+    while (std::getline(ss, line))
+    {
+        line += "\n";
+        if(isBody)
+        {
+            Body += line;
+            continue;
+        }
+        if(line.find("Status") == std::string::npos)
+            Header += line;
+        size_t pos = line.find(':');
+        if (pos != std::string::npos)
+        {
+            std::string key = line.substr(0, pos);
+            std::string value = line.substr(pos + 1);
+			key.erase(0, key.find_first_not_of(" \t"));
+            key.erase(key.find_last_not_of(" \t") + 1);
+            value.erase(0, value.find_first_not_of(" \t"));
+            value.erase(value.find_last_not_of(" \t") + 1);
+            // Storing at cgvector
+            Cgi_Header.push_back(std::make_pair(key, value));
+        }
+        if(line == "\r\n")
+            isBody = true;
+    }
+    if(!CheckKeyinHeader(Cgi_Header, "Status"))
+        response = "HTTP/1.1 200 OK\r\n";
+    else
 	{
-		line += "\n";
-		if(isBody)
-		{
-			ResPath += line;
-			continue;
-		}
-		size_t pos = line.find(':');
-		if (pos != std::string::npos)
-		{
-			std::string key = line.substr(0, pos);
-    	    std::string value = line.substr(pos + 1);
-			// Storing at cgimap
-			Cgi_Header[key] = value;
-		}
-		if(line == "\r\n")
-			isBody = true;
+        response = "HTTP/1.1 " + FindValueOfKey(Cgi_Header, "Status");
 	}
-	response = "HTTP/1.1 200 OK\r\n";
-	if(!Cgi_Header["Content-Type"].empty())
-		ResHeader.setContentType(Cgi_Header["Content-Type"]);
-	else
-		ResHeader.setContentType("text/html\r\n");
-    response += "Content-Type: " + ResHeader.getContentType();
-	if(!Cgi_Header["Content-Length"].empty())
-	{
-		ResHeader.setContentLength(Cgi_Header["Content-Length"]);
-		response += "Content-Length: " + ResHeader.getContentLength();
-	}
-	if(!Cgi_Header["Content-Disposition"].empty())
-	{
-		ResHeader.setContentLength(Cgi_Header["Content-Disposition"]);
-		response += "Content-Disposition: " + ResHeader.getContentDisposition();
-	}
-	if(!Cgi_Header["Location"].empty())
-	{
-		ResHeader.setContentLength(Cgi_Header["Location"]);
-		response += "Location: " + ResHeader.getLocation();
-	}
-    response += "\r\n" + ResPath;
+    if(!CheckKeyinHeader(Cgi_Header, "Content-Length"))
+        response += "Content-Length: " + std::to_string(Body.size()) + "\r\n";
+    if(!CheckKeyinHeader(Cgi_Header, "Content-Type") && !CheckKeyinHeader(Cgi_Header, "Location"))
+        response += "Content-Type: text/html\r\n";
+	// std::cout << "header : \n" << response + Header;
+    response += Header + "\r\n" + Body;
 }
 
 
@@ -363,12 +392,16 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
 		env["QUERY_STRING"] = Req.getReqLine().getQuery_Params();//It will be empty in the POST and fill it in GET so you can put the form parameter just if you have it
 		env["SERVER_PROTOCOL"] = Req.getReqLine().getHttpVersion();
 		
+		env["HTTP_COOKIE"] = Req.getHttp_Header()["Cookie"];
 		env["SERVER_NAME"] = "WebServer"; // ????
 		env["REDIRECT_STATUS"] = "200"; // ????
 	
 		std::string body = Req.getBody();// it will be empty in GET !!!
 		CGI cgi_obj(body, env, bin);
 		std::pair<std::string, int> respont = cgi_obj.fill_env();
+		// response = "HTTP/1.1 200 OK\r\n";
+		// response += respont.first;
+		// std::cout << "response : \n" << response << std::endl;
 		Check_CGI_Response(respont.first, respont.second, location);
 	}
 }
