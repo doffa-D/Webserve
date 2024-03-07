@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/07 19:56:57 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/07 20:36:22 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void Wb_Server::Setup_Server(int port_index)
 
 	}
 
-	if (listen(socket_fd_server[port_index], 10) == -1)
+	if (listen(socket_fd_server[port_index], 128) == -1)
 	{
 		std::string error = "[ listen: Port: " + std::to_string(HostAndPorts[port_index].second) + " ]";
 		perror(error.c_str());
