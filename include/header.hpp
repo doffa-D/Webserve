@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:24:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/04 18:01:05 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/07 10:10:59 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 #include <sys/socket.h> // For socket functions
 #include <netinet/in.h> // For sockaddr_in
 #include <sys/wait.h> // For waitpid
+#include <sys/statvfs.h>
+
 // ===========Config============= //
 
 #include "../src/config/include/StringExtensions.hpp"

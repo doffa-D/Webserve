@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/07 12:49:45 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/07 13:06:54 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,23 @@ bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Loc
         std::string bin = location.getCgi()[Root_ReqPath.substr(_pos + 1)];
         if(bin.empty() && Req.getReqLine().getMethod() == "POST")
         {
-            upload_file(Req.getBody(),  location.getUpload(), Req.getHttp_Header());
-            logging(location.getErrorLog(),true,"file saved successfully",Req);
+            struct statvfs buffer;
+            if (location.getUpload().c_str() != NULL && statvfs(location.getUpload().c_str(), &buffer) == 0) 
+            {
+                unsigned long freeSpace = buffer.f_bavail * buffer.f_frsize; // free space:
+                if(Req.getBody().size() > freeSpace)
+                {
+                    logging(location.getErrorLog(),true,"No space left on device",Req);
+                }
+                else
+                {
+                    logging(location.getAccessLog(),false,"file saved successfully",Req);
+                    upload_file(Req.getBody(),  location.getUpload(), Req.getHttp_Header());
+                }
+            } else {
+                logging(location.getErrorLog(),true,"Failed to get disk space information",Req);
+            }
+
 
         }
         
