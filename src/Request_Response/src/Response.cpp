@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/07 12:55:48 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/07 15:15:50 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void ResponseLine::setStatus_Message(std::string status_message)
 }
 
 // part of Response headre 
-ResponseHeader::ResponseHeader():ContentType(""), ContentLength(""), ContentFile(""), Location(""), ContentDisposition("")
+ResponseHeader::ResponseHeader():ContentType(""), ContentLength(""), ContentFile(""), Location("")
 {}
 
 ResponseHeader::~ResponseHeader()
@@ -93,18 +93,6 @@ void ResponseHeader::setContentFile(std::string contentfile)
 void	ResponseHeader::setLocation(std::string	location)
 {
 	Location = location;
-}
-
-
-void	ResponseHeader::setContentDisposition(std::string content_disposition)
-{
-	ContentDisposition = content_disposition;
-}
-
-
-std::string	ResponseHeader::getContentDisposition() const
-{
-	return ContentDisposition;
 }
 
 // part of Response 
@@ -186,19 +174,13 @@ void	Response::Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int Fi
 	ResLine.setStatus_Code(Stat_Code);
 	ResLine.setStatus_Message(Stat_Msg);
 
+	(void)isCgi;
 
 	if(File_Or_Str == 0)
 	{
 		size_t pos = str_utils::r_find(ResPath, '.');
 		ResHeader.setContentFile(ReadFile(ResPath));
 		ResHeader.setContentType(location.getMimeTypeByKey(ResPath.substr(pos + 1)));
-		
-		if(isCgi == 1)
-		{
-			size_t  pos = str_utils::r_find(ResPath, '/');
-			std::string FileName = ResPath.substr(pos + 1);
-			ResHeader.setContentDisposition("attachment; filename=\"" + FileName + "\"");
-		}
 	}
 	else
 	{
@@ -210,7 +192,6 @@ void	Response::Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int Fi
 	response = ResLine.getHttpVersion() + " " + ResLine.getStatus_Code() + " " + ResLine.getStatus_Message() + "\r\n" +
                 "Content-Type: " + ResHeader.getContentType() + "\r\n" +
                 "Content-Length: " + ResHeader.getContentLength() + "\r\n" +
-				"Content-Disposition: " + ResHeader.getContentDisposition() + "\r\n" +
 				"Location: " + ResHeader.getLocation() + "\r\n" +
                 "\r\n" + ResHeader.getContentFile();
 }
@@ -248,23 +229,16 @@ std::string    FindValueOfKey(std::vector <std::pair<string, string> > Cgi_Heade
     for(it = Cgi_Header.begin(); it != Cgi_Header.end(); it++)
     {
         if(it->first == Key)
-		{
-			// std::string re = it->second;
-			// if(Key == "Status")
-			// 	Cgi_Header.erase(it);
             return it->second;
-		}
     }
     return "";
 }
 
 bool    CheckKeyinHeader(std::vector <std::pair<string, string> > Cgi_Header, std::string Key)
 {
-	// std::cout << "key =  " << Key << std::endl;
     std::vector <std::pair<string, string> >::iterator it;
     for(it = Cgi_Header.begin(); it != Cgi_Header.end(); it++)
     {
-		// std::cout << "Key =  " << it->first << std::endl;
         if(it->first == Key)
             return true;
     }
@@ -273,7 +247,6 @@ bool    CheckKeyinHeader(std::vector <std::pair<string, string> > Cgi_Header, st
 
 void	Response::processCgiResponse(const std::string& Cgi_Response)
 {
-	// std::cout << "Cgi_Response :  \n " << Cgi_Response << std::endl;
 	std::vector <std::pair<string, string> > Cgi_Header;
     std::string    Header;
     std::string Body;
@@ -316,7 +289,6 @@ void	Response::processCgiResponse(const std::string& Cgi_Response)
         response += "Content-Length: " + std::to_string(Body.size()) + "\r\n";
     if(!CheckKeyinHeader(Cgi_Header, "Content-Type") && !CheckKeyinHeader(Cgi_Header, "Location"))
         response += "Content-Type: text/html\r\n";
-	// std::cout << "header : \n" << response + Header;
     response += Header + "\r\n" + Body;
 }
 
@@ -364,24 +336,12 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
     if (bin.empty())
 	{
 		ResPath = filePath;
-		// here i need respond with download file requested if method is post and file is backend file 
-		// here i need add this check ==> && ALLOWED_EXTENSION.find("Extension of file serve")
-		// but this method to storage the ALLOWED_EXTENSION is prevents me from search on Extension
-		// i need add check because i serve CGI file with download this file
-		// But you must download only the backend file such as (py, php, c, c++...)
-		VecString	vec = str_utils::split(ALLOWED_EXTENSION, ' ');
- 		if(Req.getReqLine().getMethod() == "POST" &&
-		   find(vec.begin(), vec.end(), extension) != vec.end()) // this condition needs more checks 
-			Fill_Response("200", "ok", 0, 1, location);
-		else
-			Fill_Response("200", "ok", 0, 0, location);
+		Fill_Response("200", "ok", 0, 0, location);
         //normale way
 	}
     else
 	{
-		// std::cout << "filePath = " << filePath <<std::endl;
 		size_t _pos = str_utils::r_find(filePath, '/');
-		// std::cout << "filePath.substr(_pos + 1)  " << filePath.substr(_pos + 1) << std::endl;
 		std::map<std::string, std::string> env;
 		env["SCRIPT_NAME"] = filePath.substr(_pos + 1); //It will be the name of the file ???
 		env["SCRIPT_FILENAME"] = filePath; //It will be the path of the file ??? 
@@ -399,13 +359,6 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
 		std::string body = Req.getBody();// it will be empty in GET !!!
 		CGI cgi_obj(body, env, bin);
 		std::pair<std::string, int> respont = cgi_obj.fill_env();
-		// response = "HTTP/1.1 200 OK\r\n";
-		// response += respont.first;
-		// std::cout << "response : \n" << response << std::endl;
 		Check_CGI_Response(respont.first, respont.second, location);
 	}
 }
-
-
-
-//defining when  to handle upload the file yourself, and when to handle this with CGI

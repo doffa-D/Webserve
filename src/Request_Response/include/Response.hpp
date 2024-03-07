@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/05 23:05:28 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/07 15:06:57 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ class ResponseHeader
 		std::string ContentLength;
 		std::string	ContentFile;
 		std::string	Location;
-		std::string	ContentDisposition;
 	public:
 		ResponseHeader();
 		~ResponseHeader();
@@ -52,13 +51,11 @@ class ResponseHeader
 		std::string getContentLength() const;
 		std::string getContentFile() const;
 		std::string	getLocation() const;
-		std::string	getContentDisposition() const;
 
 		void 	setContentType(std::string contenttype);
 		void 	setContentLength(std::string contentlength);
 		void	setContentFile(std::string contentfile);
 		void	setLocation(std::string	location);
-		void	setContentDisposition(std::string content_disposition);
 };
 
 class Response
