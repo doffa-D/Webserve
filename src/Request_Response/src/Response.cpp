@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/08 11:54:31 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/08 12:05:52 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,13 +185,11 @@ std::string	Response::Error_HmlPage(const std::string& stat_code, const std::str
 	return Error_Page;
 }
 
-void	Response::Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int File_Or_Str, int isCgi, Location location)
+void	Response::Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int File_Or_Str, Location location)
 {
 	ResLine.setHttpVersion("HTTP/1.1");
 	ResLine.setStatus_Code(Stat_Code);
 	ResLine.setStatus_Message(Stat_Msg);
-
-	(void)isCgi;
 
 	if(File_Or_Str == 0)
 	{
@@ -219,7 +217,7 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 	{
 		ResHeader.setLocation("http://" + _host + Req.getReqLine().getPath() + "/");
 		ResPath = "";
-		Fill_Response("301", "Moved Permanently", 1, 0, location);
+		Fill_Response("301", "Moved Permanently", 1, location);
 		return ;
 	}
 	
@@ -228,13 +226,13 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 	// std::cout << "ResPath = " << ResPath <<  std::endl;
 	if(ResPath.empty() == 0)
 	{
-		Fill_Response("200", "OK", 0, 0, location);
+		Fill_Response("200", "OK", 0, location);
 		return;
 	}
 	if(location.getAutoIndex() == 1)
 	{
 		ResPath = AutoIndex(Root_ReqPath, Req.getReqLine().getPath());
-		Fill_Response("200", "OK", 1, 0, location);
+		Fill_Response("200", "OK", 1, location);
 		return;
 	}
 	handleForbidden(location);
@@ -347,26 +345,26 @@ void	Response::Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, c
 		else
 		{
 			ResPath = Cgi_Response;
-			Fill_Response("200", "OK", 1, 0, location);
+			Fill_Response("200", "OK", 1, location);
 		}
 		return;
 	}
 	if(Cgi_Stat_Code == -1) // sys call faild
 	{
 		ResPath = Error_HmlPage("500", "Internal Server Error");
-		Fill_Response("500", "Internal Server Error", 1, 0, location);
+		Fill_Response("500", "Internal Server Error", 1, location);
 		return ;
 	}
 	if(Cgi_Stat_Code == -5) // Gateway Timeout
 	{
 		ResPath = Error_HmlPage("504", "Gateway Timeout");
-		Fill_Response("504", "Gateway Timeout", 1, 0, location);
+		Fill_Response("504", "Gateway Timeout", 1, location);
 		return ;
 	}
 	else
 	{
 		ResPath = Error_HmlPage("502", "Bad Gateway");
-		Fill_Response("502", "Bad Gateway", 1, 0, location);
+		Fill_Response("502", "Bad Gateway", 1, location);
 		return ;
 	}
 }
@@ -380,7 +378,7 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
     if (bin.empty())
 	{
 		ResPath = filePath;
-		Fill_Response("200", "ok", 0, 0, location);
+		Fill_Response("200", "ok", 0, location);
         //normale way
 	}
     else
