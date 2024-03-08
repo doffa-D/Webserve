@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/08 12:18:46 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/08 16:03:57 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,20 +257,10 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 					{
 						Request request;
 						request.Parse_Request(Client[SocketID].request);
-						// Response response;
 						Response response(Client[SocketID]);
 						response.setReq(request);
-						// Client[SocketID].ClientRespont = response.ft_Response(parsedData, Client[SocketID]);
 						Client[SocketID].ClientRespont = response.ft_Response(parsedData);
-						// response.track_cookie;
-						std::vector<std::pair<std::string,std::string> >::iterator it = Client[SocketID].cookie_tracker.begin();
-						while(it != Client[SocketID].cookie_tracker.end())
-						{
-							std::cout << it->first << " " << it->second << std::endl;
-							it++;
-						}
-						// Client[SocketID].cookie_tracker ;
-						// VecStringString 
+						Client[SocketID].CheckSeend = "checker";
 					}
 					if (send_full_response(Client,SocketID) == true)
 					{
@@ -326,6 +316,7 @@ bool Wb_Server::send_full_response(std::map<int, RequestClient>& Client, int Soc
     size_t bytesRemaining = client.ClientRespont.size() - client.byteSent;
     bytesWritten = write(client.SocketID, client.ClientRespont.c_str() + client.byteSent, bytesRemaining);
     if (bytesWritten == -1) {
+		// std::cout << "Error in write" << std::endl;
 		FD_CLR(client.SocketID, &fd_set_write);
 		Client.erase(SocketID);
 		close(SocketID);

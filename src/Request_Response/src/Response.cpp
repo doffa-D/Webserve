@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/08 12:15:55 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/08 15:28:51 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -400,9 +400,9 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
 	
 		std::string body = Req.getBody();// it will be empty in GET !!!
 		CGI cgi_obj(body, env, bin);
-		std::cout << "===================>  " << std::endl;
+		// std::cout << "===================>  " << std::endl;
 		std::pair<std::string, int> respont = cgi_obj.fill_env();
-		std::cout << "===================>  " << std::endl;
+		// std::cout << "===================>  " << std::endl;
 		// response = "HTTP/1.1 200 OK\r\n";
 		// response += respont.first;
 		// std::cout << "response : \n" << response << std::endl;
