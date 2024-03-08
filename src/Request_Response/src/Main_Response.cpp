@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Main_Response.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/08 12:06:14 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/08 17:58:56 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ bool Response::isRequestBodySizeAllowed(const Location& location)
     long MaxBodySize = atoi(Req.getHttp_Header()["Content-Length"].c_str());
     return MaxBodySize <= location.getClientMaxBodySize();
 }
+
 void logging(std::string FilePath,bool isError,std::string Message,Request Request)
 {
 	time_t now = time(0);
@@ -54,62 +55,64 @@ void logging(std::string FilePath,bool isError,std::string Message,Request Reque
     }
 	std::cout << logmessage << std::endl;
 }
+
+void    Response::HandleDeletMethod(const std::string& Root_ReqPath, const Location& location)
+{
+    if(std::remove(Root_ReqPath.c_str()) == 0)
+    {
+        Fill_Response("200", "OK", 1, location);
+        std::cout << "deleted\n";
+    }
+    else
+        std::cout << "not deleted\n";
+}
+
+void    Response::Upload(const Location& location)
+{
+    struct statvfs buffer;
+    if (location.getUpload().c_str() != NULL && statvfs(location.getUpload().c_str(), &buffer) == 0) 
+    {
+        unsigned long freeSpace = buffer.f_bavail * buffer.f_frsize; // free space:
+        if(Req.getBody().size() > freeSpace)
+        {
+            logging(location.getErrorLog(),true,"No space left on device",Req);
+        }
+        else
+        {
+            logging(location.getAccessLog(),false,"file saved successfully",Req);
+            upload_file(Req.getBody(),  location.getUpload(), Req.getHttp_Header());
+        }
+    }
+    else
+        logging(location.getErrorLog(),true,"Failed to get disk space information",Req);
+    
+}
+
+
 bool Response::serveRequestedResource(const std::string& Root_ReqPath, const Location& location)
 {
-
-    std::ifstream File(Root_ReqPath.c_str());
-	
-    if (File.is_open())
-	{
-		std::string bnd  = Req.getHttp_Header()["Content-Type"];
-		// std::cout << "bnd  =   " << bnd << std::endl;
-		size_t pos = str_utils::r_find(bnd, '=');
-		std::string bondry = bnd.substr(pos + 1);
-        // here i need to call upload function
-        // 9bl khasni ntchecki wax kayn nit upload 
-        // ghadi ntchiki bu contentType 
-        // if contentType = multipart/form-data  &&  this Req Path not CGI  && Method is Post 
-        // Like this  :
-        
-		
-		
+    struct stat	fileInfo;
+    if(stat(Root_ReqPath.c_str(), &fileInfo) == 0)
+    {
         size_t _pos = str_utils::r_find(Root_ReqPath, '.');
         std::string bin = location.getCgi()[Root_ReqPath.substr(_pos + 1)];
-        if(bin.empty() && Req.getReqLine().getMethod() == "POST")
+        if(bin.empty() && Req.getReqLine().getMethod() == "DELETE")
         {
-            struct statvfs buffer;
-            if (location.getUpload().c_str() != NULL && statvfs(location.getUpload().c_str(), &buffer) == 0) 
-            {
-                unsigned long freeSpace = buffer.f_bavail * buffer.f_frsize; // free space:
-                if(Req.getBody().size() > freeSpace)
-                {
-                    logging(location.getErrorLog(),true,"No space left on device",Req);
-                }
-                else
-                {
-                    logging(location.getAccessLog(),false,"file saved successfully",Req);
-                    upload_file(Req.getBody(),  location.getUpload(), Req.getHttp_Header());
-                }
-            } else {
-                logging(location.getErrorLog(),true,"Failed to get disk space information",Req);
-            }
-
-
-        }
-        
-        struct stat fileInfo;
-        if (stat(Root_ReqPath.c_str(), &fileInfo) == 0)
-		{
-            if (S_ISDIR(fileInfo.st_mode))
-                handleDirectoryRequest(Root_ReqPath, location);
-            else if (S_ISREG(fileInfo.st_mode))
-                handleFileRequest(Root_ReqPath, location);
+            HandleDeletMethod(Root_ReqPath, location);
             return true;
         }
+        if(bin.empty() && Req.getReqLine().getMethod() == "POST")
+		    Upload(location);
+        if (access(Root_ReqPath.c_str(), R_OK) == -1)
+            handleForbidden(location);
+        else if (S_ISDIR(fileInfo.st_mode))
+            handleDirectoryRequest(Root_ReqPath, location);
+        else if (S_ISREG(fileInfo.st_mode))
+            handleFileRequest(Root_ReqPath, location);
+        return true;
     }
     return false;
 }
-
 
 bool    Response::isUriTooLong(const long& _value)
 {
@@ -126,6 +129,7 @@ std::string Response::ft_Response(const Parser& parser)
     pair<string, Location> Loc = server.getLocationByPath(Req.getReqLine().getPath());
     std::string LocationName = Loc.first;
     Location location = Loc.second;
+
     handleBadRequest(location);
     if(ReqErr == 1)
         return response;
@@ -142,6 +146,7 @@ std::string Response::ft_Response(const Parser& parser)
     if (!isMethodAllowed(location))
 	{
         handleMethodNotAllowed(location);
+        std::cout << "Response : \n" << response << std::endl;
         return response;
     }
     string Redirection = location.getRedirection();
@@ -153,7 +158,6 @@ std::string Response::ft_Response(const Parser& parser)
         return response;
     }
     
-
     std::string Root_ReqPath;
     std::string ReqPath = Req.getReqLine().getPath();
     if(location.getAlias().empty())

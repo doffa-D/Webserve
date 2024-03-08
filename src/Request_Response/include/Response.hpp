@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/08 12:05:22 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/08 17:57:39 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,9 @@ class Response
 		void		Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, const Location& location);
 		void		processCgiResponse(const std::string& Cgi_Response);
 		void		handleErrorResponse(const Location& location, int errorCode, std::string errorMsg);
+		void    	Upload(const Location& location);
+		void		HandleDeletMethod(const std::string& Root_ReqPath, const Location& location);
+		
 		// void 		handleErrorResponse(std::string errorCode, const std::string& errorMessage, const Location& location);
 };
 

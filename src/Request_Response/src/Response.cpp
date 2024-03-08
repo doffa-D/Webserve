@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/08 15:28:51 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/08 17:09:01 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,9 +221,7 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 		return ;
 	}
 	
-	// std::cout << "Root_ReqPath =  " << Root_ReqPath << std::endl;
 	ResPath = location.getIndexFilePathByRoot(Root_ReqPath); // this function kat9alb 3la file ila mal9atxe xi file kat3tina empty
-	// std::cout << "ResPath = " << ResPath <<  std::endl;
 	if(ResPath.empty() == 0)
 	{
 		Fill_Response("200", "OK", 0, location);
@@ -400,9 +398,9 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
 	
 		std::string body = Req.getBody();// it will be empty in GET !!!
 		CGI cgi_obj(body, env, bin);
-		// std::cout << "===================>  " << std::endl;
+		std::cout << "===================>  " << std::endl;
 		std::pair<std::string, int> respont = cgi_obj.fill_env();
-		// std::cout << "===================>  " << std::endl;
+		std::cout << "===================>  " << std::endl;
 		// response = "HTTP/1.1 200 OK\r\n";
 		// response += respont.first;
 		// std::cout << "response : \n" << response << std::endl;
