@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/07 15:15:50 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/08 11:54:31 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,24 @@ void	ResponseHeader::setLocation(std::string	location)
 }
 
 // part of Response 
-Response::Response() : ResLine(ResponseLine()), ResHeader(ResponseHeader()), ResBody(""), ResPath("")
+// Response::Response() : ResLine(ResponseLine()), ResHeader(ResponseHeader()), ResBody(""), ResPath("")
+// {
+// 	httpMethods.push_back("GET");
+// 	httpMethods.push_back("POST");
+// 	httpMethods.push_back("DELETE");
+// 	httpMethods.push_back("PUT");
+// 	httpMethods.push_back("HEAD");
+// 	httpMethods.push_back("OPTIONS");
+// 	httpMethods.push_back("TRACE");
+// 	httpMethods.push_back("CONNECT");
+// 	httpMethods.push_back("PATCH");
+
+// 	ReqErr = 0;
+
+// 	// httpMethods = {"GET", "POST", "DELETE", "PUT", "HEAD", "OPTIONS", "TRACE", "CONNECT", "PATCH"};
+// }
+
+Response::Response(RequestClient& Client) : ResLine(ResponseLine()), ResHeader(ResponseHeader()), ResBody(""), ResPath(""), Client(Client) 
 {
 	httpMethods.push_back("GET");
 	httpMethods.push_back("POST");
@@ -245,6 +262,27 @@ bool    CheckKeyinHeader(std::vector <std::pair<string, string> > Cgi_Header, st
     return false;
 }
 
+static void	parseSetCookie(const std::string& attribute, VecStringString& track_cookie)
+{
+	// string attribute = header.substr(12, header.length());
+	VecString _attributes = str_utils::split(attribute, ';');
+	VecString_iter _it = _attributes.begin();
+	std::pair<string, string> cookie;
+	for (;_it != _attributes.end();_it++)
+	{
+		*_it = str_utils::trim(*_it);
+		if (_it->find("SID=") != string::npos)
+			cookie.first = str_utils::trim(_it->substr(4, _it->length()));
+		else if (_it->find("expires=") != string::npos)
+			cookie.second = str_utils::trim(_it->substr(8, _it->length()));
+	}
+	if (!cookie.first.empty())
+	{
+		// cout << "cookie.first: [" << cookie.first << "] cookie.second: [" << cookie.second << "]" << endl;
+		track_cookie.push_back(cookie);
+	}
+}
+
 void	Response::processCgiResponse(const std::string& Cgi_Response)
 {
 	std::vector <std::pair<string, string> > Cgi_Header;
@@ -262,6 +300,10 @@ void	Response::processCgiResponse(const std::string& Cgi_Response)
             Body += line;
             continue;
         }
+		//
+		
+		if(line.find("Set-Cookie: ") != std::string::npos)
+			parseSetCookie(line.substr(12), Client.cookie_tracker);
         if(line.find("Status") == std::string::npos)
             Header += line;
         size_t pos = line.find(':');
@@ -290,6 +332,8 @@ void	Response::processCgiResponse(const std::string& Cgi_Response)
     if(!CheckKeyinHeader(Cgi_Header, "Content-Type") && !CheckKeyinHeader(Cgi_Header, "Location"))
         response += "Content-Type: text/html\r\n";
     response += Header + "\r\n" + Body;
+
+	std::string Cookie = FindValueOfKey(Cgi_Header, "Set-Cookie");
 }
 
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/06 19:08:33 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/08 11:58:54 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ Wb_Server::Wb_Server(const Parser& parsedData)
 		this->Number_of_ports = hAndP.size();
 		this->bindFailed = 0;
 		for (size_t i = 0; i < hAndP.size(); i++)
-			Setup_Server(i);		  // Setup_Server function is used to setup the server
+			Setup_Server(i);	  // Setup_Server function is used to setup the server
 		listen_to_multiple_clients(parsedData); // listen_to_multiple_clients function is used to listen to multiple clients_request
 	}
 	catch (const std::exception &e)
@@ -78,48 +78,48 @@ void Wb_Server::Setup_Server(int port_index)
 	}
 }
 
-static void	CookieTracker(RequestClient& RequestClient)
-{
-	// cout << "--------------->Response" << endl;
-	// cout << RequestClient.ClientRespont << endl;	
-	// cout << "<-----------------------" << endl;
-	size_t pos = RequestClient.ClientRespont.find("\r\n\r\n");
-	if (pos != string::npos)
-	{
-		string header =  RequestClient.ClientRespont.substr(0, pos);
-		// cout << "---------------------------" << endl;
-		// cout << header << endl;	
-		// cout << "---------------------------" << endl;
-		string to_find = "Set-Cookie: ";
-		VecString _headers = str_utils::ultimatSplit(header, "\r\n");
-		VecString_iter it = _headers.begin();
-		for (;it != _headers.end();it++)
-		{
-			size_t _pos = it->find(to_find);
-			if (_pos != string::npos)
-			{
-				string attribute = it->substr(to_find.length(), it->length());
-				// cout << attribute << endl;
-				VecString _attributes = str_utils::split(attribute, ';');
-				VecString_iter _it = _attributes.begin();
-				std::pair<string, string> cookie;
-				for (;_it != _attributes.end();_it++)
-				{
-					*_it = str_utils::trim(*_it);
-					if (_it->find("SID=") != string::npos)
-						cookie.first = str_utils::trim(_it->substr(4, _it->length()));
-					else if (_it->find("expires=") != string::npos)
-						cookie.second = str_utils::trim(_it->substr(8, _it->length()));
-				}
-				if (!cookie.first.empty())
-				{
-					// cout << "cookie.first: [" << cookie.first << "] cookie.second: [" << cookie.second << "]" << endl;
-					RequestClient.cookie_tracker.push_back(cookie);
-				}
-			}
-		}
-	}
-}
+// static void	CookieTracker(RequestClient& RequestClient)
+// {
+// 	// cout << "--------------->Response" << endl;
+// 	// cout << RequestClient.ClientRespont << endl;	
+// 	// cout << "<-----------------------" << endl;
+// 	size_t pos = RequestClient.ClientRespont.find("\r\n\r\n");
+// 	if (pos != string::npos)
+// 	{
+// 		string header =  RequestClient.ClientRespont.substr(0, pos);
+// 		// cout << "---------------------------" << endl;
+// 		// cout << header << endl;	
+// 		// cout << "---------------------------" << endl;
+// 		string to_find = "Set-Cookie: ";
+// 		VecString _headers = str_utils::ultimatSplit(header, "\r\n");
+// 		VecString_iter it = _headers.begin();
+// 		for (;it != _headers.end();it++)
+// 		{
+// 			size_t _pos = it->find(to_find);
+// 			if (_pos != string::npos)
+// 			{
+// 				string attribute = it->substr(to_find.length(), it->length());
+// 				// cout << attribute << endl;
+// 				VecString _attributes = str_utils::split(attribute, ';');
+// 				VecString_iter _it = _attributes.begin();
+// 				std::pair<string, string> cookie;
+// 				for (;_it != _attributes.end();_it++)
+// 				{
+// 					*_it = str_utils::trim(*_it);
+// 					if (_it->find("SID=") != string::npos)
+// 						cookie.first = str_utils::trim(_it->substr(4, _it->length()));
+// 					else if (_it->find("expires=") != string::npos)
+// 						cookie.second = str_utils::trim(_it->substr(8, _it->length()));
+// 				}
+// 				if (!cookie.first.empty())
+// 				{
+// 					// cout << "cookie.first: [" << cookie.first << "] cookie.second: [" << cookie.second << "]" << endl;
+// 					RequestClient.cookie_tracker.push_back(cookie);
+// 				}
+// 			}
+// 		}
+// 	}
+// }
 
 static void	check_session_expiration(VecStringString& cookie)
 {
@@ -130,7 +130,7 @@ static void	check_session_expiration(VecStringString& cookie)
 		// 	continue ;
 		if (time(0) >= str_utils::to_Time_t(cookie[i].second.c_str()))
 		{
-			std::string fullPath = "./session" + cookie[i].first;
+			std::string fullPath = "./session/" + cookie[i].first;
 			std::remove(fullPath.c_str());
 			cookie.erase(cookie.begin() + i);
 		}
@@ -158,6 +158,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
         Tmp_fd_set_write = fd_set_write;
         timeout.tv_sec = 3; 
         timeout.tv_usec = 0;
+
 		int ready = select(FD_SETSIZE, &Tmp_fd_set_Read, &Tmp_fd_set_write, NULL, &timeout);
         if (ready < 0)
         {
@@ -253,10 +254,20 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 					{
 						Request request;
 						request.Parse_Request(Client[SocketID].request);
-						Response response;
+						// Response response;
+						Response response(Client[SocketID]);
 						response.setReq(request);
+						// Client[SocketID].ClientRespont = response.ft_Response(parsedData, Client[SocketID]);
 						Client[SocketID].ClientRespont = response.ft_Response(parsedData);
-						CookieTracker(Client[SocketID]);
+						// response.track_cookie;
+						std::vector<std::pair<std::string,std::string> >::iterator it = Client[SocketID].cookie_tracker.begin();
+						while(it != Client[SocketID].cookie_tracker.end())
+						{
+							std::cout << it->first << " " << it->second << std::endl;
+							it++;
+						}
+						// Client[SocketID].cookie_tracker ;
+						// VecStringString 
 					}
 					if (send_full_response(SocketID, Client[SocketID].ClientRespont) == true)
 					{

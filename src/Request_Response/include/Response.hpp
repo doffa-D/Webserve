@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/07 15:06:57 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/08 11:54:00 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ class ResponseLine
 		std::string HttpVersion;
 		std::string Status_Code;
 		std::string	Status_Message;
+
 		// std::string Eroor_Page;
 	public:
 		ResponseLine();
@@ -69,10 +70,14 @@ class Response
 		std::string		response;
 		std::string		_host;
 		Request			Req;
+		RequestClient &Client;
 	public:
+		VecStringString	track_cookie;
 		int	ReqErr;
 		std::vector<std::string> httpMethods;
-		Response();
+		// Response();
+		Response(RequestClient& Client);
+
 		ResponseLine	getResLine() const;
 		ResponseHeader	getResHeader() const;
 		std::string		getResBody() const;

@@ -1,6 +1,11 @@
 <?php
-    header("Content-Type: text/html; charset=UTF-8");
-	session_start();
+header("Content-Type: text/html; charset=UTF-8");
+// to change session key name:
+session_name("SID");
+
+// to change path of sessions files
+session_save_path('/Users/kchaouki/Desktop/___web/session');
+session_start();
 
 
 // Check if user is logged in

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/04 22:30:30 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/07 16:59:19 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -346,6 +346,11 @@ Parser::Parser(int ac, char**av)
 			continue ;
 		dataToParse += line;
 		dataToParse += " ";
+	}
+	if (str_utils::trim(dataToParse).empty())
+	{
+		throw CustomException("No configuration was provided", fileName);
+		exit(1);
 	}
 	tokens = tokenizer(dataToParse);
 	analyzer();
