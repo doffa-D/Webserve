@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/06 12:05:24 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/07 19:33:53 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,14 @@
 #define PORT 8080		 // the port users will be connecting to
 #define BACKLOG 5		 // how many pending connections queue will hold
 #define BUFFER_SIZE 1024 // the size of the buffer that will be used to store data
-#define KEEPALIVE_TIMEOUT 1 
+#define KEEPALIVE_TIMEOUT 1
 #ifndef SERVER_HP
 #define SERVER_HPP
 
 
 struct RequestClient
 {
+	int SocketID;
 	std::string		request;
 	VecStringString	cookie_tracker;
 	time_t			KeepAliveTimeOut;
@@ -29,6 +30,7 @@ struct RequestClient
 	std::string		CheckSeend;
 	std::string		ClientRespont;
 	std::string		Host;
+	ssize_t     byteSent;
 };
 
 struct Client
@@ -48,11 +50,14 @@ struct Client
 	bool isFile;
 	std::string header;
 	bool first_respont;
+	bool CompleteHeader;
 };
 
 class Wb_Server
 {
 private:
+    fd_set fd_set_Read, Tmp_fd_set_Read;
+    fd_set fd_set_write, Tmp_fd_set_write;
 	int Number_of_ports;
 	std::vector<std::pair<Uint, int> > HostAndPorts;
 	int socket_fd_server[FD_SETSIZE]; // socket_fd_server is the file descriptor of the server socket
@@ -64,10 +69,10 @@ private:
 	Wb_Server();
 	char *argv;
 	std::vector<Client> clients_request;
-	std::vector<SendTracker> clients_respont;
 	int bindFailed;
 
 public:
+
 	Wb_Server(const Parser& parsedData);
 	~Wb_Server();
 	void Setup_Server(int port_index);						   // Setup_Server function is used to setup the server
@@ -90,7 +95,7 @@ public:
 	void create_client(std::string body, int socket_fd);
 	void handle_chunked_data(int client_index);
 	void handle_non_chunked_data();
-	bool send_full_response(int socket_fd, std::string respont);
+	bool send_full_response(std::map<int,RequestClient>& Client, int SocketID);
 	void get_method(std::string request);
 	int find_clinet_response(std::vector<SendTracker> &clients_respont, int socket_fd);
 	int getNumber_of_ports();
