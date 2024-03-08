@@ -3,7 +3,7 @@
 session_name("SID");
 
 // to change path of sessions files
-session_save_path('/Users/hdagdagu/Desktop/Webserve/session');
+session_save_path('../../session');;
 
 header("Content-Type: text/html; charset=UTF-8");
 session_start();

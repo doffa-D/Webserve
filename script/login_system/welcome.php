@@ -4,7 +4,7 @@ header("Content-Type: text/html; charset=UTF-8");
 session_name("SID");
 
 // to change path of sessions files
-session_save_path('/Users/kchaouki/Desktop/___web/session');
+session_save_path('../../session');
 session_start();
 
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGI.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/07 16:57:08 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/08 12:17:56 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ int WaitCgi(pid_t pid, time_t BeginTime)
     int status;
     pid_t result;
     do {
-        std::cout << "Waiting for CGI process" << std::endl;
         result = waitpid(pid, &status, WNOHANG);
         if (result == 0)
         {
