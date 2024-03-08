@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:15:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/19 16:36:26 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/09 00:10:03 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ class Location : public CommonDirectives
 	private:
 		string		alias;
 		bool		nullObject;
+		long		Uri_Max;
 	public:
 		Location();
 		~Location();
@@ -30,6 +31,8 @@ class Location : public CommonDirectives
 		static Location	createNullObject();
 		bool			isNull();
 		void			setAlias(const string& _alias);
-		string		getIndexFilePathByRoot(const string& _value) const;
+		void			setUri_Max(const long& uri_max);
+		string			getIndexFilePathByRoot(const string& _value) const;
 		const string&	getAlias() const;
+		const long&		getUri_Max() const;
 };

@@ -6,7 +6,7 @@
 #    By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/03/08 21:47:09 by rrhnizar         ###   ########.fr        #
+#    Updated: 2024/03/08 23:26:07 by rrhnizar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,7 +42,9 @@ SRCS = main.cpp \
 	$(SRC_DIR)/Request_Response/src/Main_Response.cpp \
 	$(SRC_DIR)/Request_Response/src/Response_Utils.cpp \
 	$(SRC_DIR)/Request_Response/src/AutoIndex.cpp \
-	$(SRC_DIR)/Request_Response/src/Client_Errors.cpp 
+	$(SRC_DIR)/Request_Response/src/Client_Errors.cpp \
+	$(SRC_DIR)/Request_Response/src/Cgi_Response.cpp \
+	$(SRC_DIR)/Request_Response/src/serveRequestedResource.cpp
 
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 DEPS = $(OBJS:.o=.d)
@@ -54,8 +56,8 @@ GREEN = \033[0;32m
 RED = \033[0;31m
 YELLOW = \033[0;33m
 NC = \033[0m
-# ascii_art
-all:  $(NAME)
+
+all: ascii_art $(NAME)
 
 ascii_art:
 	@echo "\n"

@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 11:47:24 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/07 18:49:24 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/09 00:46:48 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void Response::handleErrorResponse(const Location& location, int errorCode, std:
 	if (location.getErrorPages()[errorCode].empty())
 	{
         ResPath = Error_HmlPage(std::to_string(errorCode), errorMsg);
-        Fill_Response(std::to_string(errorCode), errorMsg, 1, location);
+        Fill_Response(std::to_string(errorCode), errorMsg, REGULAR_STRING, location);
     }
 	else
 	{
@@ -25,10 +25,9 @@ void Response::handleErrorResponse(const Location& location, int errorCode, std:
 		if(errorCode == 403)
 			ResHeader.setLocation("http://" + _host +  Req.getReqLine().getPath() + location.getErrorPages()[errorCode]);
         ResPath = "";
-        Fill_Response("302", "Moved Temporarily", 1, location);
+        Fill_Response("302", "Moved Temporarily", REGULAR_STRING, location);
     }
 }
-
 
 void    Response::handleBadRequest(const Location& location)
 {
@@ -68,12 +67,12 @@ void Response::handleForbidden(const Location& location)
 	handleErrorResponse(location, 403, "Forbidden");
 }
 
-void Response::handleNotFound(Location& location)
+void Response::handleNotFound(const Location& location)
 {
 	handleErrorResponse(location, 404, "Not Found");
 }
 
-void	Response::handleUriTooLong(Location& location)
+void	Response::handleUriTooLong(const Location& location)
 {
 	handleErrorResponse(location, 414, "URI Too Long");
 }
