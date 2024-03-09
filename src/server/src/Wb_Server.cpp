@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/09 11:42:40 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/09 11:47:38 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,22 +80,9 @@ void Wb_Server::Setup_Server(int port_index)
 
 static void	check_session_expiration(VecStringString& cookie)
 {
-	cout << "cookie.size(): " << cookie.size() << endl;
 	for (size_t i = 0; i < cookie.size();i++)
 	{
-		cout << "-----------" << endl;
-		cout << "cookie[i].first: " << cookie[i].first << " cookie[i].second: " << cookie[i].second << endl;
-		// std::ifstream sessionFile(cookie[i].first.c_str());
-		// if (sessionFile.fail())
-		// 	continue ;
-		// sleep(4);
-		time_t neew = (time(0));
-		// std::string timeStr = ctime(&neew);
-		cout << "Current: "<< neew << endl;
-		// cout << "_Current: "<< timeStr << endl;
-		cout << "Exparition: "<< str_utils::to_Time_t(cookie[i].second.c_str()) << endl;
-		// cout << "_Exparition: "<< cookie[i].second.c_str() << endl;
-		if ((time(0)) >= str_utils::to_Time_t(cookie[i].second.c_str()))
+		if (time(0) >= str_utils::to_Time_t(cookie[i].second.c_str()))
 		{
 			std::string fullPath = "./session/sess_" + cookie[i].first;
 			std::remove(fullPath.c_str());

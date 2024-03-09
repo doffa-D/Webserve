@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 11:30:49 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/09 11:44:34 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@
 #include <sys/stat.h>
 #include <dirent.h> // include this headre for use DIR struct
 
+#define FILE_PATH 1
+#define REGULAR_STRING 0
+
 
 class ResponseLine
 {
 	private:
-		std::string request;
 		std::string HttpVersion;
 		std::string Status_Code;
 		std::string	Status_Message;
-
-		// std::string Eroor_Page;
 	public:
 		ResponseLine();
 		~ResponseLine();
@@ -90,35 +90,37 @@ class Response
 		void	setReq(Request req);
 		
 		std::string	ft_Response(const Parser& parser);
-		void		Fill_Response(std::string	Stat_Code, std::string	Stat_Msg, int File_Or_Str, Location location);
+		void		Fill_Response(std::string Stat_Code, std::string Stat_Msg, bool File_Or_Str, Location location);
 		std::string	Error_HmlPage(const std::string& stat_code, const std::string& stat_msg);
-		// Location	Find_Location(Parser& parser, std::string& _host, std::string Path_Req);
 
 		void		handleDirectoryRequest(const std::string& Root_ReqPath, const Location& location);
 		void		handleFileRequest(const std::string& filePath, const Location& location);
-		void 		handleNotFound(Location& location);
+		void 		handleNotFound(const Location& location);
 		void		handleForbidden(const Location& location);
 		void		handleBadRequest(const Location& location);
-		// std::string ReadFile();
+		
 		~Response();
 
-		// organization
-		bool 		isMethodAllowed(const Location& location);
-		bool 		isRequestBodySizeAllowed(const Location& location);
-		bool 		isUriTooLong(const long& _value);
-		void 		handleMethodNotAllowed(const Location& location);
-		void 		handleBodyTooLarge(const Location& location);
-		void 		handleUriTooLong(Location& location);
-		bool 		serveRequestedResource(const std::string& Root_ReqPath, const Location& location);
-		long		MaxBodySize();
-		std::string	findHostFromHeaders();
-		std::string	ReadFile(std::string&	ResPath);
+		bool	isMethodAllowed(const Location& location);
+		bool	isRequestBodySizeAllowed(const Location& location);
+		bool	isUriTooLong(const long& _value);
+		void	handleMethodNotAllowed(const Location& location);
+		void	handleBodyTooLarge(const Location& location);
+		void	handleUriTooLong(const Location& location);
+		bool	serveRequestedResource(const std::string& Root_ReqPath, const Location& location);
 		
 		
-		void		Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, const Location& location);
-		void		processCgiResponse(const std::string& Cgi_Response);
-		void		handleErrorResponse(const Location& location, int errorCode, std::string errorMsg);
-		// void 		handleErrorResponse(std::string errorCode, const std::string& errorMessage, const Location& location);
+		void	Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, const Location& location);
+		void	processCgiResponse(const std::string& Cgi_Response);
+		void	handleErrorResponse(const Location& location, int errorCode, std::string errorMsg);
+		void   	Upload(const Location& location);
+		void	HandleDeletMethod(const std::string& Root_ReqPath, const Location& location);
+
+
+		std::pair<std::string, Location> extractRequestInformation(const Parser& parser);
+		bool		handleCommonRequestErrors(const Location& location);
+		bool		handleRedirection(const Location& location);
+		std::string	constructRootRequestPath(const Location& location, const std::string& LocationName);
 };
 
 std::string	 AutoIndex(std::string ResPath, std::string ReqPath);

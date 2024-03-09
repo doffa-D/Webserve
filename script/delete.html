@@ -1,0 +1,26 @@
+<form id="deleteForm">
+    <input type="submit" value="Submit">
+</form>
+
+<script>
+document.getElementById("deleteForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    // Fetch API to send a DELETE request
+    fetch("./FIleToDelete", {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+            // You may need to add other headers if required by your server
+        }
+    })
+    .then(response => {
+        // Handle response
+        console.log(response);
+    })
+    .catch(error => {
+        // Handle error
+        console.error("Error:", error);
+    });
+});
+</script>

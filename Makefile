@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
+#    By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/03/06 19:13:57 by hdagdagu         ###   ########.fr        #
+#    Updated: 2024/03/08 23:26:07 by rrhnizar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,7 +42,9 @@ SRCS = main.cpp \
 	$(SRC_DIR)/Request_Response/src/Main_Response.cpp \
 	$(SRC_DIR)/Request_Response/src/Response_Utils.cpp \
 	$(SRC_DIR)/Request_Response/src/AutoIndex.cpp \
-	$(SRC_DIR)/Request_Response/src/Client_Errors.cpp 
+	$(SRC_DIR)/Request_Response/src/Client_Errors.cpp \
+	$(SRC_DIR)/Request_Response/src/Cgi_Response.cpp \
+	$(SRC_DIR)/Request_Response/src/serveRequestedResource.cpp
 
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 DEPS = $(OBJS:.o=.d)

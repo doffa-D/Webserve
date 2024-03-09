@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:15:25 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/02/19 16:36:51 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/09 00:13:25 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,11 @@ void	Location::setAlias(const string& _alias)
 	root_alias = true;
 }
 
+void	Location::setUri_Max(const long& uri_max)
+{
+	Uri_Max = uri_max;
+}
+
 string			Location::getIndexFilePathByRoot(const string& _value) const
 {
 	string fullPath;
@@ -68,4 +73,7 @@ string			Location::getIndexFilePathByRoot(const string& _value) const
 	return ("");
 }
 
-const string&		Location::getAlias() const {return (alias);}
+
+
+const string&	Location::getAlias() const {return (alias);}
+const long&		Location::getUri_Max() const {return Uri_Max;}
