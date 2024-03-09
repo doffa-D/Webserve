@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/09 11:54:22 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/09 12:57:48 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,7 +306,7 @@ std::string unchunked_request(std::string const &request, int start,int bytes_re
 		if (sizePos != std::string::npos)
 		{
 			std::string chunkSizeHex = request.substr(startPos, sizePos - startPos);
-			int chunkSize = std::stoi(chunkSizeHex, 0, 16);
+			int chunkSize = static_cast<int>(std::strtol(chunkSizeHex.c_str(),NULL,16));
 			startPos = sizePos + 2;
 			if (startPos + chunkSize <= endPos)
 			{
