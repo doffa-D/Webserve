@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/09 11:47:38 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/09 11:51:55 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,7 +224,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 						{
 							FD_CLR(SocketID, &fd_set_write);
 							close(SocketID);
-							// Client.erase(SocketID);
+							Client.erase(SocketID);
 						}
 						else
 						{
