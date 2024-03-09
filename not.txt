@@ -1,5 +1,4 @@
 [done] kep-alive vs close fd_client
-check headers files relink
 check alias
 check rediretion
 
@@ -9,15 +8,19 @@ check rediretion
 [done] check upload_pass file path
 [done] check cgi_pass bin path
 
-bonus cookies and setions
-get data of an already created socket_fd
-
-headers can have multiple keys with the same value!!
-
+[done] bonus cookies and setions
 
 Clean My Code .
-Handle delete Method .
 [done] Handle Server Errors ==> 500 502 504 .
-Hnadle Acces_log and Error_log .
 [done] Making Response working in case CGI Response
 
+
+
+
+
+
+check headers files relink
+
+Handle delete Method 
+Hnadle Acces_log and Error_log .
+handle HTTP version not supported (aka 505)
