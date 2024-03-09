@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/09 15:49:21 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/09 19:25:36 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int WaitCgi(pid_t pid, time_t BeginTime)
     pid_t result;
     while(true)
     {
+        std::cout << "Waiting for CGI" << std::endl;
         result = waitpid(pid, &status, WNOHANG);
         if (result == pid && (WIFSIGNALED(status) || WIFEXITED(status)))
         {
@@ -122,15 +123,18 @@ std::pair<std::string, int> CGI::fill_env() {
         size_t totalBytesWritten = 0;
         size_t bytesToWrite = body.length();
         while (totalBytesWritten < bytesToWrite) {
-            ssize_t bytesWritten = write(input[1], body.c_str() + totalBytesWritten, bytesToWrite - totalBytesWritten);
+            if (difftime(time(0), BeginTime) > 4) {
+                kill(pid, SIGKILL);
+                return std::make_pair("504 Gateway Timeout", CGI_TIMEOUT);
+            }
+            ssize_t bytesWritten = write(input[1], body.c_str() + totalBytesWritten, std::min<size_t>(1024, bytesToWrite - totalBytesWritten));
             if (bytesWritten == -1) {
                 close(input[1]);
-                break;
             }
             totalBytesWritten += bytesWritten;
+            // std::cout << "Writing to CGI: "<< totalBytesWritten << std::endl;
         }
         close(input[1]);
-
         int wait_status = WaitCgi(pid, BeginTime);
         switch (wait_status) {
             case CGI_TIMEOUT:

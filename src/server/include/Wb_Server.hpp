@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/09 11:39:38 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/09 18:50:13 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,9 @@ private:
 	int Number_of_ports;
 	std::vector<std::pair<Uint, int> > HostAndPorts;
 	int socket_fd_server[FD_SETSIZE]; // socket_fd_server is the file descriptor of the server socket
-	int socket_fd_client;			  // socket_fd_client is the file descriptor of the client socket
-	int bytes_read;					  // bytes_read is the number of bytes read from the client
-	sockaddr_in address[FD_SETSIZE];			   // address is the address of the server socket
-	std::string sBuffer;						   // sBuffer is the buffer that will be used to store data as a string
-	std::string HtmlFile;						   // HtmlFile is the html file that will be sent to the client
+	int socket_fd_client;			  // bytes_read is the number of bytes read from the client
+	sockaddr_in address[FD_SETSIZE];						   // HtmlFile is the html file that will be sent to the client
 	Wb_Server();
-	char *argv;
 	std::vector<Client> clients_request;
 	int bindFailed;
 

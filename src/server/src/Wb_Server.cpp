@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/09 17:24:53 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/09 18:55:03 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,6 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 						httpRequest = read_full_request(SocketID, fd_set_Read, fd_set_write);
 						if (FD_ISSET(SocketID, &fd_set_write))
 						{
-							std::cout << "httpRequest: " << httpRequest << std::endl;
 							RequestClient requestClient;
 							std::string header;
 							size_t pos = httpRequest.find("\r\n\r\n");
@@ -199,7 +198,11 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 							requestClient.SocketID = SocketID;
 							requestClient.byteSent = 0;
 							requestClient.KeepAliveTimeOut = time(0);
-							requestClient.CheckSeend = "init";
+							Request request;
+							Response response(track_cookie);
+							request.Parse_Request(requestClient.request);
+							response.setReq(request);
+							requestClient.ClientRespont = response.ft_Response(parsedData);
 							Client[SocketID] = requestClient;
 
 						}
@@ -207,19 +210,9 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 				}
 				else if (FD_ISSET(SocketID, &Tmp_fd_set_write))
 				{
-					if (Client[SocketID].CheckSeend == "init")
-					{
-						Request request;
-						request.Parse_Request(Client[SocketID].request);
-						Response response(track_cookie);
-						response.setReq(request);
-						Client[SocketID].ClientRespont = response.ft_Response(parsedData);
-						Client[SocketID].CheckSeend = "checker";
-					}
 					if (send_full_response(Client,SocketID) == true)
 					{
 						FD_CLR(SocketID, &fd_set_write);
-						Client[SocketID].CheckSeend = "finish";
 						Client[SocketID].KeepAliveTimeOut = time(0);
 						if (Client[SocketID].keepAlive == false)
 						{
@@ -411,7 +404,6 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 	{
 		if (clients_request[client_index].isChunked == true)
 		{
-			std::cout << "chunked" << std::endl;
 			size_t searchLength = std::min(static_cast<size_t>(10), clients_request[client_index].bytes_read);
 			std::string substring = clients_request[client_index].buffer.substr(clients_request[client_index].bytes_read - searchLength, searchLength);
 			size_t foundPos = substring.rfind("\r\n0\r\n");
@@ -429,7 +421,6 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 		}
 		else if(clients_request[client_index].isChunked  == false && clients_request[client_index].contentLength > 0)
 		{
-			std::cout << "chunked" << " have contentLength " << clients_request[client_index].contentLength<< std::endl;
 			if (clients_request[client_index].bytes_read - clients_request[client_index].start >= clients_request[client_index].contentLength)
 			{
 				FD_CLR(socket_fd, &fd_set_Read);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi_Response.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 23:14:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 11:45:39 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/09 18:56:21 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,13 +119,13 @@ void	Response::Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, c
 		}
 		return;
 	}
-	if(Cgi_Stat_Code == -1) // sys call faild
+	if(Cgi_Stat_Code == 260) // sys call faild
 	{
 		ResPath = Error_HmlPage("500", "Internal Server Error");
 		Fill_Response("500", "Internal Server Error", REGULAR_STRING, location);
 		return ;
 	}
-	if(Cgi_Stat_Code == -5) // Gateway Timeout
+	if(Cgi_Stat_Code == 266) // Gateway Timeout
 	{
 		ResPath = Error_HmlPage("504", "Gateway Timeout");
 		Fill_Response("504", "Gateway Timeout", REGULAR_STRING, location);
