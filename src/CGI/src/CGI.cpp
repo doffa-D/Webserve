@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CGI.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/08 12:17:56 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/09 15:49:21 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,29 +42,22 @@ int WaitCgi(pid_t pid, time_t BeginTime)
 {
     int status;
     pid_t result;
-    do {
+    while(true)
+    {
         result = waitpid(pid, &status, WNOHANG);
-        if (result == 0)
+        if (result == pid && (WIFSIGNALED(status) || WIFEXITED(status)))
         {
-            if (difftime(time(0), BeginTime) > 4) {
-                kill(pid, SIGKILL);
-                std::cout << "CGI process was killed Timeout" << std::endl;
-                return CGI_TIMEOUT;
-            }
-        } 
-        else
-        {
-            if (WIFEXITED(status))
-            {
-                return WEXITSTATUS(status);
-            }
+            if(WEXITSTATUS(status) == 0)
+                return status;
             else
-            {
-                std::cerr << "CGI process was signaled" << std::endl;
                 return CGI_ERROR;
-            }
         }
-    } while (result == 0);
+        else if (difftime(time(0), BeginTime) > 4)
+        {
+            kill(pid, SIGKILL);
+            return CGI_TIMEOUT;
+        }
+    }
     return CGI_ERROR;
 }
 
