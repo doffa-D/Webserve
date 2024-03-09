@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 11:47:24 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 00:46:48 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/09 20:10:28 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,11 @@ void Response::handleErrorResponse(const Location& location, int errorCode, std:
         ResPath = "";
         Fill_Response("302", "Moved Temporarily", REGULAR_STRING, location);
     }
+}
+
+void    Response::handleHttpVerNotSuported(const Location& location)
+{
+	handleErrorResponse(location, 505, "HTTP Version Not Supported");
 }
 
 void    Response::handleBadRequest(const Location& location)

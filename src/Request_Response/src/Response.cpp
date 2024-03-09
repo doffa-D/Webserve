@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 11:45:15 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/09 19:59:53 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,11 @@
 // part of Response line
 
 ResponseLine::ResponseLine(): HttpVersion(""), Status_Code(""), Status_Message(""){}
-
 ResponseLine::~ResponseLine(){}
 
 std::string ResponseLine::getHttpVersion() const{return 	HttpVersion;}
 std::string ResponseLine::getStatus_Code() const{return Status_Code;}
 std::string ResponseLine::getStatus_Message() const{return Status_Message;}
-
 
 void ResponseLine::setHttpVersion(std::string htttpversion){HttpVersion = htttpversion;}
 void ResponseLine::setStatus_Code(std::string status_code){Status_Code = status_code;}
@@ -32,41 +30,21 @@ ResponseHeader::ResponseHeader():ContentType(""), ContentLength(""), ContentFile
 ResponseHeader::~ResponseHeader(){}
 
 std::string ResponseHeader::getContentType() const{return ContentType;}
-
 std::string ResponseHeader::getContentLength() const{return ContentLength;}
+std::string ResponseHeader::getContentFile() const{return ContentFile;}
+std::string	ResponseHeader::getLocation() const{return Location;}
 
-std::string ResponseHeader::getContentFile() const
-{
-	return ContentFile;
-}
-
-std::string	ResponseHeader::getLocation() const
-{
-	return Location;
-}
-
-void ResponseHeader::setContentType(std::string contenttype)
-{
-	ContentType = contenttype;
-}
-void ResponseHeader::setContentLength(std::string contentlength)
-{
-	ContentLength = contentlength;	
-}
-void ResponseHeader::setContentFile(std::string contentfile)
-{
-	ContentFile = contentfile;	
-}
-void	ResponseHeader::setLocation(std::string	location)
-{
-	Location = location;
-}
+void	ResponseHeader::setContentType(std::string contenttype){ContentType = contenttype;}
+void	ResponseHeader::setContentLength(std::string contentlength){ContentLength = contentlength;}
+void	ResponseHeader::setContentFile(std::string contentfile){ContentFile = contentfile;}
+void	ResponseHeader::setLocation(std::string	location){Location = location;}
 
 
 // part of Response 
 
 Response::Response(VecStringString& track_cookie) : ResLine(ResponseLine()), ResHeader(ResponseHeader()), ResBody(""), ResPath(""), track_cookie(track_cookie) 
 {
+	// fill vector of httpMethods
 	httpMethods.push_back("GET");
 	httpMethods.push_back("POST");
 	httpMethods.push_back("DELETE");
@@ -76,55 +54,28 @@ Response::Response(VecStringString& track_cookie) : ResLine(ResponseLine()), Res
 	httpMethods.push_back("TRACE");
 	httpMethods.push_back("CONNECT");
 	httpMethods.push_back("PATCH");
+	// fill vector of httpVersions
+	httpVersions.push_back("HTTP/0.9");
+	httpVersions.push_back("HTTP/1.0");
+	httpVersions.push_back("HTTP/2");
+	httpVersions.push_back("HTTP/3:");
+	
 	ReqErr = 0;
 }
 
-Response::~Response()
-{
-}
+Response::~Response(){}
 
 
-ResponseLine	Response::getResLine() const
-{
-	return ResLine;
-}
+ResponseLine	Response::getResLine() const{return ResLine;}
+ResponseHeader	Response::getResHeader() const{return ResHeader;}
+std::string		Response::getResBody() const{return ResBody;}
+std::string		Response::getResPath() const{return ResPath;}
 
-ResponseHeader	Response::getResHeader() const
-{
-	return ResHeader;
-}
-
-std::string		Response::getResBody() const
-{
-	return ResBody;
-}
-
-std::string		Response::getResPath() const
-{
-	return ResPath;
-}
-
-void	Response::setResLine(ResponseLine resline)
-{
-	ResLine = resline;
-}
-void	Response::setResHeader(ResponseHeader resheader)
-{
-	ResHeader = resheader;	
-}
-void	Response::setResBody(std::string resbody)
-{
-	ResBody = resbody;
-}
-void	Response::setResPath(std::string respath)
-{
-	ResPath = respath;
-}
-
-void	Response::setReq(Request req)
-{
-	Req = req;
-}
+void	Response::setResLine(ResponseLine resline){ResLine = resline;}
+void	Response::setResHeader(ResponseHeader resheader){ResHeader = resheader;}
+void	Response::setResBody(std::string resbody){ResBody = resbody;}
+void	Response::setResPath(std::string respath){ResPath = respath;}
+void	Response::setReq(Request req){Req = req;}
 
 std::string	Response::Error_HmlPage(const std::string& stat_code, const std::string& stat_msg)
 {

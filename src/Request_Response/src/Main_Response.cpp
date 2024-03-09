@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 00:44:24 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/09 20:08:04 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,20 @@ std::pair<std::string, Location> Response::extractRequestInformation(const Parse
     return locationPair;
 }
 
+bool    Response::HttpVerNotSuported()
+{
+    std::string HttpVersion = Req.getReqLine().getHttpVersion();
+     return std::find(httpVersions.begin(), httpVersions.end(), HttpVersion) != httpVersions.end(); // return true if found HttpVersion and false if not found HttpVersion
+}
+
 bool Response::handleCommonRequestErrors(const Location& location)
 {
     // Handle common request errors
+    if(HttpVerNotSuported())
+    {
+        handleHttpVerNotSuported(location);
+        return true;
+    }
     handleBadRequest(location);
     if (ReqErr == 1)
         return true;
