@@ -3,10 +3,12 @@
 session_name("SID");
 
 // to change path of sessions files
-session_save_path('../../session');;
+session_save_path('../../session');
 
 header("Content-Type: text/html; charset=UTF-8");
 session_start();
+
+$session_id = session_id();
 
 //database of users
 $filename = 'users.txt';
@@ -24,7 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Login successful
 			$_SESSION["username"] = $username;
 
-			setcookie("username", $username, time() + 3600, "/");
+			setcookie("SID", $session_id ,time() + 10, "/");
+			// setcookie("username", $username, time() + 3600, "/");
             header("Location: welcome.php");
             exit;
         }

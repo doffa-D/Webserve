@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 08:10:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/05 18:45:47 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:27:13 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ time_t	str_utils::to_Time_t(const char* dateString)
 {
     struct tm tm;
     memset(&tm, 0, sizeof(struct tm));
-    if (strptime(dateString, "%a, %d-%b-%Y %H:%M:%S GMT", &tm) != NULL)
+    if (strptime(dateString, "%a, %d-%b-%Y %H:%M:%S %Z", &tm) != NULL)
         return mktime(&tm);
     return (time_t)-1;
 }

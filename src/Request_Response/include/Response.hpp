@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/08 12:05:22 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/09 11:30:49 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,12 @@ class Response
 		std::string		response;
 		std::string		_host;
 		Request			Req;
-		RequestClient &Client;
+		VecStringString	&track_cookie;
 	public:
-		VecStringString	track_cookie;
 		int	ReqErr;
 		std::vector<std::string> httpMethods;
 		// Response();
-		Response(RequestClient& Client);
+		Response(VecStringString& track_cookie);
 
 		ResponseLine	getResLine() const;
 		ResponseHeader	getResHeader() const;

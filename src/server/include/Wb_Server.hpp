@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:36:55 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/07 19:33:53 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/09 11:39:38 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ struct RequestClient
 {
 	int SocketID;
 	std::string		request;
-	VecStringString	cookie_tracker;
 	time_t			KeepAliveTimeOut;
 	bool			keepAlive;
 	std::string		CheckSeend;
@@ -56,6 +55,7 @@ struct Client
 class Wb_Server
 {
 private:
+    VecStringString track_cookie;
     fd_set fd_set_Read, Tmp_fd_set_Read;
     fd_set fd_set_write, Tmp_fd_set_write;
 	int Number_of_ports;

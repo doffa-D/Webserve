@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/08 15:28:51 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/09 11:30:15 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void	ResponseHeader::setLocation(std::string	location)
 // 	// httpMethods = {"GET", "POST", "DELETE", "PUT", "HEAD", "OPTIONS", "TRACE", "CONNECT", "PATCH"};
 // }
 
-Response::Response(RequestClient& Client) : ResLine(ResponseLine()), ResHeader(ResponseHeader()), ResBody(""), ResPath(""), Client(Client) 
+Response::Response(VecStringString& track_cookie) : ResLine(ResponseLine()), ResHeader(ResponseHeader()), ResBody(""), ResPath(""), track_cookie(track_cookie) 
 {
 	httpMethods.push_back("GET");
 	httpMethods.push_back("POST");
@@ -274,7 +274,7 @@ static void	parseSetCookie(const std::string& attribute, VecStringString& track_
 		else if (_it->find("expires=") != string::npos)
 			cookie.second = str_utils::trim(_it->substr(8, _it->length()));
 	}
-	if (!cookie.first.empty())
+	if (!cookie.first.empty() && !cookie.second.empty())
 	{
 		// cout << "cookie.first: [" << cookie.first << "] cookie.second: [" << cookie.second << "]" << endl;
 		track_cookie.push_back(cookie);
@@ -301,7 +301,7 @@ void	Response::processCgiResponse(const std::string& Cgi_Response)
 		//
 		
 		if(line.find("Set-Cookie: ") != std::string::npos)
-			parseSetCookie(line.substr(12), Client.cookie_tracker);
+			parseSetCookie(line.substr(12), track_cookie);
         if(line.find("Status") == std::string::npos)
             Header += line;
         size_t pos = line.find(':');
