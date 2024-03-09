@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/09 20:47:16 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/09 20:56:12 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,21 +99,22 @@ std::pair<std::string, int> CGI::fill_env() {
 
         size_t totalBytesWritten = 0;
         size_t bytesToWrite = body.length();
-        while (totalBytesWritten < bytesToWrite) {
-            if (difftime(time(0), BeginTime) > 4) {
+        while (totalBytesWritten < bytesToWrite)
+        {
+            if (difftime(time(0), BeginTime) > 4)
+            {
                 kill(pid, SIGKILL);
                 return std::make_pair("504 Gateway Timeout", CGI_TIMEOUT);
             }
-            ssize_t bytesWritten = write(Inputfd, body.c_str() + totalBytesWritten, std::min<size_t>(1024, bytesToWrite - totalBytesWritten));
-            
+            std::cout << "sss" << std::endl;
+            ssize_t bytesWritten = write(Inputfd, body.c_str() + totalBytesWritten, bytesToWrite - totalBytesWritten);
+            std::cout << bytesWritten << std::endl;
             if (bytesWritten == -1) {
                 close(Inputfd);
+                break;
             }
             totalBytesWritten += bytesWritten;
-            if(totalBytesWritten > 0)
-                // std::cout << "Writing to CGI: "<< totalBytesWritten << std::endl;
         }
-        // [REMOVE /tmp/Input and /tmp/Output AFTER FIISh]
 
         close(Inputfd);
         int  Output = open ("/tmp/Output", O_RDONLY);
@@ -121,10 +122,14 @@ std::pair<std::string, int> CGI::fill_env() {
         switch (wait_status) {
             case CGI_TIMEOUT:
                 {
+                    remove("/tmp/Input");
+                    remove("/tmp/Output");
                     return std::make_pair("504 Gateway Timeout", CGI_TIMEOUT);
                 }
             case CGI_ERROR:
-                {  
+                { 
+                    remove("/tmp/Input");
+                    remove("/tmp/Output");
                     wait_status = CGI_ERROR;
                     return std::make_pair("500 Internal Server Error", CGI_ERROR);
                 }
@@ -138,6 +143,8 @@ std::pair<std::string, int> CGI::fill_env() {
                     }
                     response.push_back('\0');
                     close(Output);
+                    remove("/tmp/Input");
+                    remove("/tmp/Output");
                     return std::make_pair(response, wait_status);
                 }
         }
