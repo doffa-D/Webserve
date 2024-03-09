@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/09 16:58:05 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/09 17:24:53 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void Wb_Server::Setup_Server(int port_index)
 
 	}
 
-	if (listen(socket_fd_server[port_index], 128) == -1)
+	if (listen(socket_fd_server[port_index], SOMAXCONN) == -1)
 	{
 		std::string error = "[ listen: Port: " + std::to_string(HostAndPorts[port_index].second) + " ]";
 		perror(error.c_str());
@@ -371,6 +371,13 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 			newClient.header = bufferr.substr(0, start + 4);
 			newClient.start = start;
 			newClient.CompleteHeader = true;
+			if(newClient.method == "GET")
+			{
+				std::string request = newClient.header;
+				FD_CLR(socket_fd, &fd_set_Read);
+				FD_SET(socket_fd, &fd_set_write);
+				return request;
+			}
 		}
 		else
 			newClient.CompleteHeader = false;
@@ -388,16 +395,42 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 			clients_request[client_index].header = clients_request[client_index].buffer.substr(0, start + 4);
 			clients_request[client_index].start = start;
 			clients_request[client_index].CompleteHeader = true;
+			if(clients_request[client_index].method == "GET")
+			{
+				std::string request = clients_request[client_index].header;
+				FD_CLR(socket_fd, &fd_set_Read);
+				FD_SET(socket_fd, &fd_set_write);
+				clients_request.erase(clients_request.begin() + client_index);
+				return request;
+			}
 		}
 		else
 			clients_request[client_index].CompleteHeader = false;
 	}
 	if(clients_request[client_index].CompleteHeader == true)
 	{
-		if (clients_request[client_index].method == "GET")
+		if (clients_request[client_index].isChunked == true)
 		{
-			size_t pos = clients_request[client_index].buffer.find("\r\n\r\n");
-			if (pos != std::string::npos)
+			std::cout << "chunked" << std::endl;
+			size_t searchLength = std::min(static_cast<size_t>(10), clients_request[client_index].bytes_read);
+			std::string substring = clients_request[client_index].buffer.substr(clients_request[client_index].bytes_read - searchLength, searchLength);
+			size_t foundPos = substring.rfind("\r\n0\r\n");
+			if (foundPos != std::string::npos)
+			{
+				std::string body = unchunked_request(clients_request[client_index].buffer, clients_request[client_index].start, clients_request[client_index].bytes_read);
+				clients_request[client_index].buffer = clients_request[client_index].header + body;
+				FD_CLR(socket_fd, &fd_set_Read);
+				FD_SET(socket_fd, &fd_set_write);
+
+				std::string request = clients_request[client_index].buffer;
+				clients_request.erase(clients_request.begin() + client_index);
+				return request;
+			}
+		}
+		else if(clients_request[client_index].isChunked  == false && clients_request[client_index].contentLength > 0)
+		{
+			std::cout << "chunked" << " have contentLength " << clients_request[client_index].contentLength<< std::endl;
+			if (clients_request[client_index].bytes_read - clients_request[client_index].start >= clients_request[client_index].contentLength)
 			{
 				FD_CLR(socket_fd, &fd_set_Read);
 				FD_SET(socket_fd, &fd_set_write);
@@ -408,54 +441,22 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 		}
 		else
 		{
-			if (clients_request[client_index].isChunked == true)
+
+			size_t pos = clients_request[client_index].buffer.find("\r\n\r\n");
+			if (pos != std::string::npos)
 			{
-				std::cout << "chunked" << std::endl;
-				size_t searchLength = std::min(static_cast<size_t>(10), clients_request[client_index].bytes_read);
-				std::string substring = clients_request[client_index].buffer.substr(clients_request[client_index].bytes_read - searchLength, searchLength);
-				size_t foundPos = substring.rfind("\r\n0\r\n");
-				if (foundPos != std::string::npos)
+				size_t start = clients_request[client_index].buffer.find("\r\n\r\n");
+				if(start != std::string::npos)
 				{
-					std::string body = unchunked_request(clients_request[client_index].buffer, clients_request[client_index].start, clients_request[client_index].bytes_read);
-					clients_request[client_index].buffer = clients_request[client_index].header + body;
+					std::string request = clients_request[client_index].buffer.substr(0, start + 4);
 					FD_CLR(socket_fd, &fd_set_Read);
 					FD_SET(socket_fd, &fd_set_write);
-
-					std::string request = clients_request[client_index].buffer;
 					clients_request.erase(clients_request.begin() + client_index);
 					return request;
-				}
-			}
-			else if(clients_request[client_index].isChunked  == false && clients_request[client_index].contentLength > 0)
-			{
-				std::cout << "chunked" << " have contentLength " << clients_request[client_index].contentLength<< std::endl;
-				if (clients_request[client_index].bytes_read - clients_request[client_index].start >= clients_request[client_index].contentLength)
-				{
-					FD_CLR(socket_fd, &fd_set_Read);
-					FD_SET(socket_fd, &fd_set_write);
-					std::string request = clients_request[client_index].buffer;
-					clients_request.erase(clients_request.begin() + client_index);
-					return request;
-				}
-			}
-			else
-			{
-
-				size_t pos = clients_request[client_index].buffer.find("\r\n\r\n");
-				if (pos != std::string::npos)
-				{
-					size_t start = clients_request[client_index].buffer.find("\r\n\r\n");
-					if(start != std::string::npos)
-					{
-						std::string request = clients_request[client_index].buffer.substr(0, start + 4);
-						FD_CLR(socket_fd, &fd_set_Read);
-						FD_SET(socket_fd, &fd_set_write);
-						clients_request.erase(clients_request.begin() + client_index);
-						return request;
-					}
 				}
 			}
 		}
+		
 	}
 	return "";
 }
