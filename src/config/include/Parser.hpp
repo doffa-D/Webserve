@@ -6,7 +6,7 @@
 /*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 09:04:45 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/04 15:29:40 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/09 18:24:02 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,19 +35,19 @@ class	Parser
 		Parser();
 		Parser(const Parser& _copy);
 		Parser& operator=(const Parser& _assignment);
-		string			remove_hashtag(const string& _line);
-		ListString		tokenizer(const string& dataToParse);
-		void			analyzer();
-		void			createFiles();
-		void			fillServerData(ListString_iter& it);
-		void			fillLocationDirective(Server& server, CommonDirectives& old_location, ListString_iter& it, const  string& befor);
-		void			fillDirectives(Server& server, ListString_iter& it, bool& ok);
-		void			fillValideDirectives();
-		bool			isValideForLocation(const string& key);
-		bool			isValideDirective(const string& _directive);
-		Uint			getIPv4FromDns(const std::string& _dns) const;
-		Server			findServer(std::vector<Server>& _servers, const string& _host) const;
-		pair<Uint, int>	parseHost(const string& _host) const;
+		string					remove_hashtag(const string& _line);
+		ListString				tokenizer(const string& dataToParse);
+		void					analyzer();
+		void					createFiles();
+		void					fillServerData(ListString_iter& it);
+		void					fillLocationDirective(Server& server, CommonDirectives& old_location, ListString_iter& it, const  string& befor);
+		void					fillDirectives(Server& server, ListString_iter& it, bool& ok);
+		void					fillValideDirectives();
+		bool					isValideForLocation(const string& key);
+		bool					isValideDirective(const string& _directive);
+		vector<Uint>			getIPv4FromDns(const std::string& _dns) const;
+		Server					findServer(std::vector<Server>& _servers, const string& _host) const;
+		pair<vector<Uint>, int>	parseHost(const string& _host) const;
 	public:
 		Parser(int ac, char**av);
 		~Parser();
