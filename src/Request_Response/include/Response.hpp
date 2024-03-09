@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 11:44:34 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/09 20:09:44 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ class Response
 	public:
 		int	ReqErr;
 		std::vector<std::string> httpMethods;
+		std::vector<std::string> httpVersions;
 		// Response();
 		Response(VecStringString& track_cookie);
 
@@ -104,7 +105,9 @@ class Response
 		bool	isMethodAllowed(const Location& location);
 		bool	isRequestBodySizeAllowed(const Location& location);
 		bool	isUriTooLong(const long& _value);
+		bool    HttpVerNotSuported();
 		void	handleMethodNotAllowed(const Location& location);
+		void    handleHttpVerNotSuported(const Location& location);
 		void	handleBodyTooLarge(const Location& location);
 		void	handleUriTooLong(const Location& location);
 		bool	serveRequestedResource(const std::string& Root_ReqPath, const Location& location);

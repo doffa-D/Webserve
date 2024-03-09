@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/08 22:18:20 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/09 20:39:07 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,46 +14,17 @@
 
 
 // part of Request Line 
-RequestLine::RequestLine() : Method(""), Path(""), HttpVersion(""), Query_Params("")
-{}
+RequestLine::RequestLine() : Method(""), Path(""), HttpVersion(""), Query_Params(""){}
+RequestLine::~RequestLine(){}
 
-RequestLine::~RequestLine()
-{}
+std::string	RequestLine::getMethod() const{return Method;}
+std::string	RequestLine::getPath() const{return Path;}
+std::string	RequestLine::getHttpVersion() const{return HttpVersion;}
+std::string	RequestLine::getQuery_Params() const{return Query_Params;}
 
-std::string	RequestLine::getMethod() const
-{
-	return Method;
-}
-
-std::string	RequestLine::getPath() const
-{
-	return Path;
-}
-
-std::string	RequestLine::getHttpVersion() const
-{
-	return HttpVersion;
-}
-
-std::string	RequestLine::getQuery_Params() const
-{
-	return Query_Params;
-}
-
-void	RequestLine::setMethod(std::string method)
-{
-	Method = method;
-}
-
-void	RequestLine::setPath(std::string path)
-{
-	Path = path;	
-}
-
-void	RequestLine::setHttpVersion(std::string httpversion)
-{
-	HttpVersion = httpversion;	
-}
+void	RequestLine::setMethod(std::string method){Method = method;}
+void	RequestLine::setPath(std::string path){Path = path;}
+void	RequestLine::setHttpVersion(std::string httpversion){HttpVersion = httpversion;}
 
 
 void	RequestLine::Parse_ReqLine(std::string line)
@@ -81,35 +52,14 @@ void	RequestLine::Parse_ReqLine(std::string line)
 
 // part of Request ==> Header and Body
 
-Request::Request() : ReqLine(RequestLine()), Http_Header(), Body()
-{
-	BadRequest = 0;
-}
+Request::Request() : ReqLine(RequestLine()), Http_Header(), Body(){BadRequest = 0;}
+Request::~Request(){}
 
-Request::~Request()
-{
-}
+RequestLine	Request::getReqLine() const{return ReqLine;}
+std::map<std::string, std::string> Request::getHttp_Header() const{return Http_Header;}
+std::string	Request::getBody() const{return Body;}
 
-
-std::map<std::string, std::string> Request::getHttp_Header() const
-{
-	return Http_Header;
-}
-
-void	Request::setHttp_Header(std::map<std::string, std::string> http_header)
-{
-	Http_Header = http_header;
-}
-
-RequestLine	Request::getReqLine() const
-{
-	return ReqLine;
-}
-
-std::string	Request::getBody() const
-{
-	return Body;
-}
+void	Request::setHttp_Header(std::map<std::string, std::string> http_header){Http_Header = http_header;}
 
 void	Request::Parse_Request(std::string& HttpRequest)
 {
@@ -151,7 +101,9 @@ void	Request::Parse_Request(std::string& HttpRequest)
 			isBody = true;
 	}
 	setHttp_Header(Header);
-	if(getHttp_Header()["Host"].empty())
+	// if(getHttp_Header()["Host"].empty())
+	if(getHttp_Header()["Host"].empty() 
+	|| (ReqLine.getMethod() == "POST" && getHttp_Header()["Content_Length"].empty() && getHttp_Header()["Transfer-Encoding"] != "chunked"))
 	{
 		BadRequest = 1;
 		return;
