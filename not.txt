@@ -1,6 +1,6 @@
 [done] kep-alive vs close fd_client
-check alias
-check rediretion
+[done] check alias
+[done] check rediretion
 
 [done] check # in parsing
 [done] cgi override inside location
