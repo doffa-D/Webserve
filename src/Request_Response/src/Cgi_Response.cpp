@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 23:14:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 13:02:04 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 15:04:59 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,14 +59,14 @@ void	Response::processCgiResponse(const std::string& Cgi_Response)
 {
 	std::vector <std::pair<string, string> > Cgi_Header;
     std::string    Header;
-    std::string Body;
+    std::string 	Body;
 
     std::istringstream ss(Cgi_Response);
     std::string line;
     bool isBody = false;
     while (std::getline(ss, line))
     {
-        line += "\n";
+		line += "\n";
         if(isBody)
         {
             Body += line;
@@ -100,12 +100,11 @@ void	Response::processCgiResponse(const std::string& Cgi_Response)
         response += "Content-Length: " + std::to_string(Body.size()) + "\r\n";
     if(!CheckKeyinHeader(Cgi_Header, "Content-Type") && !CheckKeyinHeader(Cgi_Header, "Location"))
         response += "Content-Type: text/html\r\n";
-    response += Header + "\r\n" + Body;
+    response += Header + Body;
 }
 
 void	Response::Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, const Location& location)
 {
-
 	if(Cgi_Stat_Code == 0) // CGI Succes
 	{
 		size_t pos = Cgi_Response.find("\r\n\r\n");

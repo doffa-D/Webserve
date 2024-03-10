@@ -1,6 +1,6 @@
 <?php
 // Set the Content-Type header
-header('Content-Type: text/plainRRRR');
+// header('Content-Type: text/plain');
 header('kjgkgjkjkg: jkfjkfgjkj');
 
 // Your response message
@@ -16,4 +16,5 @@ header("Content-Length: $contentLength");
 
 echo "Hello";
 echo $message;
+
 ?>

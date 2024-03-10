@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 14:40:21 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/10 12:19:25 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 15:03:28 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,6 @@ std::pair<std::string, int> CGI::fill_env() {
                     while ((bytesRead = read(Output, buffer, sizeof(buffer))) > 0) {
                         response.append(buffer, bytesRead);
                     }
-                    response.push_back('\0');
                     close(Output);
                     remove("/tmp/Input");
                     remove("/tmp/Output");
