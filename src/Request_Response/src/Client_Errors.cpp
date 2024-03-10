@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 11:47:24 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 20:10:28 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 11:38:18 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,11 +69,13 @@ void Response::handleBodyTooLarge(const Location& location)
 
 void Response::handleForbidden(const Location& location)
 {
+	Req.logging(location.getErrorLog(), 1, "Forbidden");
 	handleErrorResponse(location, 403, "Forbidden");
 }
 
 void Response::handleNotFound(const Location& location)
 {
+	Req.logging(location.getErrorLog(), 1, "Not Found");
 	handleErrorResponse(location, 404, "Not Found");
 }
 

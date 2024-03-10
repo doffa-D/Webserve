@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serveRequestedResource.cpp                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 23:25:00 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 15:15:19 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/10 11:50:44 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 {
 	if(Req.getReqLine().getPath()[Req.getReqLine().getPath().size() - 1] != '/')
 	{
+        Req.logging(location.getAccessLog(), 0, "Moved Permanently");
 		ResHeader.setLocation("http://" + _host + Req.getReqLine().getPath() + "/");
 		ResPath = "";
 		Fill_Response("301", "Moved Permanently", REGULAR_STRING, location);
@@ -87,11 +88,13 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 	ResPath = location.getIndexFilePathByRoot(Root_ReqPath); // this function kat9alb 3la file ila mal9atxe xi file kat3tina empty
 	if(ResPath.empty() == 0)
 	{
+        Req.logging(location.getAccessLog(), 0, "serving file successfully");
 		Fill_Response("200", "OK", FILE_PATH, location);
 		return;
 	}
 	if(location.getAutoIndex() == 1)
 	{
+        Req.logging(location.getAccessLog(), 0, "Using AutoIndex to respond");
 		ResPath = AutoIndex(Root_ReqPath, Req.getReqLine().getPath());
 		Fill_Response("200", "OK", REGULAR_STRING, location);
 		return;
@@ -108,6 +111,7 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
 	{
 		ResPath = filePath;
 		Fill_Response("200", "ok", FILE_PATH, location);
+        Req.logging(location.getAccessLog(), 0, "Respond: using the Normal Way");
         //normale way
 	}
     else

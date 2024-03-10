@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 20:39:07 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 10:41:24 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,9 +103,40 @@ void	Request::Parse_Request(std::string& HttpRequest)
 	setHttp_Header(Header);
 	// if(getHttp_Header()["Host"].empty())
 	if(getHttp_Header()["Host"].empty() 
-	|| (ReqLine.getMethod() == "POST" && getHttp_Header()["Content_Length"].empty() && getHttp_Header()["Transfer-Encoding"] != "chunked"))
+	|| (ReqLine.getMethod() == "POST" && getHttp_Header()["Content-Length"].empty() && getHttp_Header()["Transfer-Encoding"] != "chunked"))
 	{
 		BadRequest = 1;
 		return;
 	}
+}
+
+void Request::logging(std::string FilePath, bool isError, std::string Message)
+{
+	time_t now = time(0);
+	std::string host = getHttp_Header()["Host"];
+	std::string level = isError ? "[error]" : "[success]";
+	std::string timeStr = ctime(&now);
+    timeStr.erase(timeStr.find_last_not_of("\n") + 1);
+    std::string uri = "\'" + getReqLine().getMethod() + " " + getReqLine().getPath() + " " + getReqLine().getHttpVersion() + "\'";
+	std::string logmessage = level + " " + timeStr + " " + Message + " " + uri + " " + host;
+	std::ofstream logFile;
+    if(!FilePath.empty())
+    {
+        if(isError)
+            logFile.open(FilePath, std::ios::out | std::ios::app);
+        else
+            logFile.open(FilePath, std::ios::out | std::ios::app);
+
+
+        if (logFile.is_open())
+        {
+            logFile << logmessage << std::endl;
+            logFile.close();
+        }
+        else
+        {
+            std::cerr << "Unable to open log file" << std::endl;
+        }
+    }
+	std::cout << logmessage << std::endl;
 }

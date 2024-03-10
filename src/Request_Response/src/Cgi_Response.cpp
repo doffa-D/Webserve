@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi_Response.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 23:14:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 18:56:21 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/10 11:55:18 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ void	Response::processCgiResponse(const std::string& Cgi_Response)
             continue;
         }
 		//
-		
 		if(line.find("Set-Cookie: ") != std::string::npos)
 			parseSetCookie(line.substr(12),track_cookie);
         if(line.find("Status") == std::string::npos)
@@ -102,7 +101,6 @@ void	Response::processCgiResponse(const std::string& Cgi_Response)
     if(!CheckKeyinHeader(Cgi_Header, "Content-Type") && !CheckKeyinHeader(Cgi_Header, "Location"))
         response += "Content-Type: text/html\r\n";
     response += Header + "\r\n" + Body;
-	std::string Cookie = FindValueOfKey(Cgi_Header, "Set-Cookie");
 }
 
 void	Response::Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, const Location& location)
@@ -117,22 +115,26 @@ void	Response::Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, c
 			ResPath = Cgi_Response;
 			Fill_Response("200", "OK", REGULAR_STRING, location);
 		}
+		Req.logging(location.getAccessLog(), 0, "Respond: using the CGI Way");
 		return;
 	}
 	if(Cgi_Stat_Code == 260) // sys call faild
 	{
+		Req.logging(location.getErrorLog(), 1, "Internal Server Error");
 		ResPath = Error_HmlPage("500", "Internal Server Error");
 		Fill_Response("500", "Internal Server Error", REGULAR_STRING, location);
 		return ;
 	}
 	if(Cgi_Stat_Code == 266) // Gateway Timeout
 	{
+		Req.logging(location.getErrorLog(), 1, "Gateway Timeout");
 		ResPath = Error_HmlPage("504", "Gateway Timeout");
 		Fill_Response("504", "Gateway Timeout", REGULAR_STRING, location);
 		return ;
 	}
 	else
 	{
+		Req.logging(location.getErrorLog(), 1, "Bad Gateway");
 		ResPath = Error_HmlPage("502", "Bad Gateway");
 		Fill_Response("502", "Bad Gateway", REGULAR_STRING, location);
 		return ;

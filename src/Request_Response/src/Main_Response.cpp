@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 20:08:04 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 11:42:45 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,23 +57,30 @@ bool Response::handleCommonRequestErrors(const Location& location)
     if(HttpVerNotSuported())
     {
         handleHttpVerNotSuported(location);
+        Req.logging(location.getErrorLog(), 1, "HTTP Version Not Supported");
         return true;
     }
     handleBadRequest(location);
     if (ReqErr == 1)
+    {
+        Req.logging(location.getErrorLog(), 1, "Bad Request");
         return true;
+    }
     if (isUriTooLong(location.getUri_Max()))
     {
+        Req.logging(location.getErrorLog(), 1, "URI Too Long");
         handleUriTooLong(location);
         return true;
     }
     if (!isRequestBodySizeAllowed(location))
     {
+        Req.logging(location.getErrorLog(), 1, "Content Too Large");
         handleBodyTooLarge(location);
         return true;
     }
     if (!isMethodAllowed(location))
     {
+        Req.logging(location.getErrorLog(), 1, "Method Not Allowed");
         handleMethodNotAllowed(location);
         return true;
     }
@@ -87,6 +94,8 @@ bool Response::handleRedirection(const Location& location)
     std::string redirection = location.getRedirection();
     if (!redirection.empty())
     {
+        std::string Msg = "Redirect to " + redirection + " location";
+        Req.logging(location.getAccessLog(), 0, Msg);
         ResHeader.setLocation("http://" + _host + redirection);
         ResPath = "";
         Fill_Response("303", "See Other", REGULAR_STRING, location);
@@ -115,6 +124,8 @@ std::string Response::ft_Response(const Parser& parser)
 {
     // Extract necessary information
     std::pair<std::string, Location> locationPair = extractRequestInformation(parser);
+    // 
+    Req.logging(locationPair.second.getAccessLog(), 0, "Accept the connection");
     // Handle common request errors
     if(handleCommonRequestErrors(locationPair.second))
         return response;

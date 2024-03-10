@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:12 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/08 22:19:42 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 10:39:53 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,5 @@ class Request
 		RequestLine	getReqLine() const;
 		std::string	getBody() const;
 		void		Parse_Request(std::string& HttpRequest);
+		void		logging(std::string FilePath,bool isError,std::string Message);
 };
