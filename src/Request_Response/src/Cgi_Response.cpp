@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 23:14:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 15:04:59 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 16:19:24 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void	Response::processCgiResponse(const std::string& Cgi_Response)
     else
         response = "HTTP/1.1 " + FindValueOfKey(Cgi_Header, "Status");
     if(!CheckKeyinHeader(Cgi_Header, "Content-Length"))
-        response += "Content-Length: " + std::to_string(Body.size()) + "\r\n";
+        response += "Content-Length: " + str_utils::to_string(Body.size()) + "\r\n";
     if(!CheckKeyinHeader(Cgi_Header, "Content-Type") && !CheckKeyinHeader(Cgi_Header, "Location"))
         response += "Content-Type: text/html\r\n";
     response += Header + Body;

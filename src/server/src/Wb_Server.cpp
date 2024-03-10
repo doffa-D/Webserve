@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/09 18:55:03 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/10 16:15:56 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,13 @@ void Wb_Server::Setup_Server(int port_index)
 	socket_fd_server[port_index] = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_fd_server[port_index] == -1)
 	{
-		std::string error = "[ socket: Port: " + std::to_string(HostAndPorts[port_index].second) + " ]";
+		std::string error = "[ socket: Port: " + str_utils::to_string(HostAndPorts[port_index].second) + " ]";
 		perror(error.c_str());
 	}
 	int opt = 1;
-	if (setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1 || setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt)) == -1)
+	if (setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) //|| setsockopt(socket_fd_server[port_index], SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt)) == -1)
 	{
-		std::string error = "[ setsockopt: Port: " + std::to_string(HostAndPorts[port_index].second) + " ]";
+		std::string error = "[ setsockopt: Port: " + str_utils::to_string(HostAndPorts[port_index].second) + " ]";
 		perror(error.c_str());
 	}
 
@@ -51,7 +51,7 @@ void Wb_Server::Setup_Server(int port_index)
 
 	if (bind(socket_fd_server[port_index], (struct sockaddr *)&address[port_index], sizeof(address[port_index])) == -1)
 	{
-		std::string error = "[ bind: Port: " + std::to_string(HostAndPorts[port_index].second) + " ]";
+		std::string error = "[ bind: Port: " + str_utils::to_string(HostAndPorts[port_index].second) + " ]";
 
 		this->bindFailed++;
 		perror(error.c_str());
@@ -60,14 +60,14 @@ void Wb_Server::Setup_Server(int port_index)
 
 	if (listen(socket_fd_server[port_index], SOMAXCONN) == -1)
 	{
-		std::string error = "[ listen: Port: " + std::to_string(HostAndPorts[port_index].second) + " ]";
+		std::string error = "[ listen: Port: " + str_utils::to_string(HostAndPorts[port_index].second) + " ]";
 		perror(error.c_str());
 
 
 	}
 	if(fcntl(socket_fd_server[ port_index], F_SETFL, O_NONBLOCK, FD_CLOEXEC) == -1)
 	{
-		std::string error = "[ fcntl: Port: " + std::to_string(HostAndPorts[port_index].second) + " ]";
+		std::string error = "[ fcntl: Port: " + str_utils::to_string(HostAndPorts[port_index].second) + " ]";
 		perror(error.c_str());
 
 	}
@@ -165,7 +165,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 						{
 							if(fcntl(socket_fd_client, F_SETFL, O_NONBLOCK, FD_CLOEXEC) == -1)
 							{
-								std::string error = "[ fcntl: Port: " + std::to_string(HostAndPorts[SocketID].second) + " ]";
+								std::string error = "[ fcntl: Port: " + str_utils::to_string(HostAndPorts[SocketID].second) + " ]";
 								perror(error.c_str());
 							}
 							FD_SET(socket_fd_client, &fd_set_Read);

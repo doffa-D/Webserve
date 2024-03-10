@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 11:47:24 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 13:25:10 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 16:18:56 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ void Response::handleErrorResponse(const Location& location, int errorCode, std:
 {
 	if (location.getErrorPages()[errorCode].empty())
 	{
-        ResPath = Error_HmlPage(std::to_string(errorCode), errorMsg);
-        Fill_Response(std::to_string(errorCode), errorMsg, REGULAR_STRING, location);
+        ResPath = Error_HmlPage(str_utils::to_string(errorCode), errorMsg);
+        Fill_Response(str_utils::to_string(errorCode), errorMsg, REGULAR_STRING, location);
     }
 	else
 	{

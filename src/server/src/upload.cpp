@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   upload.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:13:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/06 18:23:47 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/10 16:16:29 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ std::string upload_file(std::string const &body,std::string const &location,MapS
 
 std::string readFileContent(const std::string &filePath)
 {
-	std::ifstream fileStream(filePath);
+	std::ifstream fileStream(filePath.c_str());
 	if (!fileStream.is_open())
 	{
 		return "";
