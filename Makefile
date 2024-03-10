@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
+#    By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/03/09 18:46:14 by hdagdagu         ###   ########.fr        #
+#    Updated: 2024/03/10 13:26:44 by rrhnizar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,6 @@ SRCS = main.cpp \
 	$(SRC_DIR)/Request_Response/src/Request.cpp \
 	$(SRC_DIR)/Request_Response/src/Response.cpp \
 	$(SRC_DIR)/Request_Response/src/Main_Response.cpp \
-	$(SRC_DIR)/Request_Response/src/Response_Utils.cpp \
 	$(SRC_DIR)/Request_Response/src/AutoIndex.cpp \
 	$(SRC_DIR)/Request_Response/src/Client_Errors.cpp \
 	$(SRC_DIR)/Request_Response/src/Cgi_Response.cpp \

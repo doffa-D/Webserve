@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 11:47:24 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 11:38:18 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 13:25:10 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,11 @@ void Response::handleMethodNotAllowed(const Location& location)
 	handleErrorResponse(location, 405, "Method Not Allowed");
 }
 
+void	Response::handleUriTooLong(const Location& location)
+{
+	handleErrorResponse(location, 414, "URI Too Long");
+}
+
 void Response::handleBodyTooLarge(const Location& location)
 {
 	handleErrorResponse(location, 413, "Content Too Large");
@@ -77,9 +82,4 @@ void Response::handleNotFound(const Location& location)
 {
 	Req.logging(location.getErrorLog(), 1, "Not Found");
 	handleErrorResponse(location, 404, "Not Found");
-}
-
-void	Response::handleUriTooLong(const Location& location)
-{
-	handleErrorResponse(location, 414, "URI Too Long");
 }

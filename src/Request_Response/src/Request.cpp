@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 12:04:20 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 13:25:22 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ void	Request::Parse_Request(std::string& HttpRequest)
 			isBody = true;
 	}
 	setHttp_Header(Header);
-	// if(getHttp_Header()["Host"].empty())
 	if(getHttp_Header()["Host"].empty() 
 	|| (ReqLine.getMethod() == "POST" && getHttp_Header()["Content-Length"].empty() && getHttp_Header()["Transfer-Encoding"] != "chunked"))
 	{
