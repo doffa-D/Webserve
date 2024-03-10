@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 23:25:00 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 15:15:19 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/10 11:51:27 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,9 +129,7 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
 	
 		std::string body = Req.getBody();// it will be empty in GET !!!
 		CGI cgi_obj(body, env, bin);
-        std::cout << "enter to CGI" << std::endl;
 		std::pair<std::string, int> respont = cgi_obj.fill_env();
-        std::cout << "exit form CGI" << std::endl;
 		Check_CGI_Response(respont.first, respont.second, location);
 	}
 }

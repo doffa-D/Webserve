@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 20:39:07 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 10:46:57 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,9 +101,8 @@ void	Request::Parse_Request(std::string& HttpRequest)
 			isBody = true;
 	}
 	setHttp_Header(Header);
-	// if(getHttp_Header()["Host"].empty())
-	if(getHttp_Header()["Host"].empty() 
-	|| (ReqLine.getMethod() == "POST" && getHttp_Header()["Content_Length"].empty() && getHttp_Header()["Transfer-Encoding"] != "chunked"))
+	// if(getHttp_Header()["Host"].empty()  || (ReqLine.getMethod() == "POST" && getHttp_Header()["Content_Length"].empty() && getHttp_Header()["Transfer-Encoding"] != "chunked"))
+	if(getHttp_Header()["Host"].empty())
 	{
 		BadRequest = 1;
 		return;

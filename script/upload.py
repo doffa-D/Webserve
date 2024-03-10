@@ -10,9 +10,6 @@ import sys
 cgitb.enable()
 
 # Current working directory
-print("in python", file=sys.stderr)
-
-print("stuck", file=sys.stderr)
 form = cgi.FieldStorage()
 
 if 'file' not in form:
