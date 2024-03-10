@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 21:01:14 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/08 16:00:14 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 13:22:48 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,25 +56,17 @@ std::string	 AutoIndex(std::string ResPath, std::string ReqPath)
 	DIR *directory;
     struct dirent *entry;
 
-    // Open the current directory (replace "." with the path to your desired directory)
-    if ((directory = opendir(ResPath.c_str())) != NULL)
+    // Open the directory
+    directory = opendir(ResPath.c_str());
+    // Read each entry in the directory
+    while ((entry = readdir(directory)) != NULL)
 	{
-        // Read each entry in the directory
-        while ((entry = readdir(directory)) != NULL)
-		{
-			d_names.push_back(entry->d_name);
-			d_dates.push_back(getModificationDate(ResPath + entry->d_name));
-			d_sizes.push_back(getFileSize(ResPath + entry->d_name));
-        }
-
-        // Close the directory
-        closedir(directory);
+		d_names.push_back(entry->d_name);
+		d_dates.push_back(getModificationDate(ResPath + entry->d_name));
+		d_sizes.push_back(getFileSize(ResPath + entry->d_name));
     }
-	else
-	{
-        // Handle error opening directory
-        std::cerr << "Error opening directory." << std::endl;
-    }
+    // Close the directory
+    closedir(directory);
 	std::string str = 
         "<!DOCTYPE html>\n"
         "<html lang=\"en\">\n"

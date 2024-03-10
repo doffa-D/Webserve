@@ -6,19 +6,13 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:12 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 10:39:53 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 13:20:53 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-
 #include "../../../include/header.hpp"
-// #define AUTOINDEX (arg, arg2) ("<a href=\"" + d_names[i] + "\">" + d_names[i] + "</a>" +
-//            "<span style=\"display: block; text-align: center;\">" + d_dates[i] + "</span>" +
-//            "<span style=\"display: block; text-align: right;\">" + d_sizes[i] + "</span>" +
-//        "</li>") 
-
 
 class RequestLine
 {

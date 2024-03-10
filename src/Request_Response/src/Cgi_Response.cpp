@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 23:14:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 12:33:05 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 13:02:04 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void	Response::processCgiResponse(const std::string& Cgi_Response)
             key.erase(key.find_last_not_of(" \t") + 1);
             value.erase(0, value.find_first_not_of(" \t"));
             value.erase(value.find_last_not_of(" \t") + 1);
-            // Storing at cgvector
+            // Storing at cgivector
             Cgi_Header.push_back(std::make_pair(key, value));
         }
         if(line == "\r\n")
