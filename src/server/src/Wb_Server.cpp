@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/09 18:55:03 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/10 16:25:00 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,7 +263,6 @@ bool Wb_Server::send_full_response(std::map<int, RequestClient>& Client, int Soc
     size_t bytesRemaining = client.ClientRespont.size() - client.byteSent;
     bytesWritten = write(client.SocketID, client.ClientRespont.c_str() + client.byteSent, bytesRemaining);
     if (bytesWritten == -1) {
-		// std::cout << "Error in write" << std::endl;
 		FD_CLR(client.SocketID, &fd_set_write);
 		Client.erase(SocketID);
 		close(SocketID);
@@ -339,13 +338,9 @@ std::string Wb_Server::read_full_request(int socket_fd, fd_set &fd_set_Read, fd_
 	{
 		Client newClient;
 		newClient.fd = socket_fd;
-		newClient.fisrtboundaryValue = "";
 		newClient.header = "";
-		newClient.lastboundaryValue = "";
-		newClient.isFile = false;
 		newClient.bytes_read = 0;
 		newClient.contentLength = 0;
-		newClient.first_respont = true;
 		newClient.CompleteHeader = false;
 		newClient.method = bufferr.substr(0, bufferr.find(" "));
 		ContentLength(bufferr, newClient);

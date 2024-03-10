@@ -6,7 +6,7 @@
 /*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:13:29 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/06 18:23:47 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/10 16:23:53 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void saveFile(std::string body, size_t filenamePos,std::string const &location)
 	if (filenamePos != std::string::npos)
 	{
 		std::string filename = extractFileName(body, filenamePos);
-		// std::cout << location << std::endl;
 		filename = location + "/" + filename;
 		size_t firstContentPos = body.find("\r\n\r\n", filenamePos + 9);
 		if (firstContentPos != std::string::npos)
