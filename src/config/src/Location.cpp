@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:15:25 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/09 00:13:25 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 16:14:26 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ string			Location::getIndexFilePathByRoot(const string& _value) const
 	for (VecString_iter it = out.begin(); it != out.end();it++)
 	{
 		fullPath = _value + *it;
-		std::ifstream file(fullPath);
+		std::ifstream file(fullPath.c_str());
 		if (file.is_open())
 			return (fullPath);
 	}

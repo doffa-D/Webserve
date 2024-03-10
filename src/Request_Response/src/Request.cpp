@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 14:33:02 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 16:18:21 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,9 +122,9 @@ void Request::logging(std::string FilePath, bool isError, std::string Message)
     if(!FilePath.empty())
     {
         if(isError)
-            logFile.open(FilePath, std::ios::out | std::ios::app);
+            logFile.open(FilePath.c_str(), std::ios::out | std::ios::app);
         else
-            logFile.open(FilePath, std::ios::out | std::ios::app);
+            logFile.open(FilePath.c_str(), std::ios::out | std::ios::app);
 
 
         if (logFile.is_open())
