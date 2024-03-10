@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 23:14:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 11:55:18 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 12:33:05 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ void	Response::processCgiResponse(const std::string& Cgi_Response)
 
 void	Response::Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, const Location& location)
 {
+
 	if(Cgi_Stat_Code == 0) // CGI Succes
 	{
 		size_t pos = Cgi_Response.find("\r\n\r\n");
@@ -135,7 +136,7 @@ void	Response::Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, c
 	else
 	{
 		Req.logging(location.getErrorLog(), 1, "Bad Gateway");
-		ResPath = Error_HmlPage("502", "Bad Gateway");
+		ResPath = Error_HmlPage("502", "Bad Gateway<br/><p style=\"font-size: 15;\">" + Cgi_Response + "<p/>");
 		Fill_Response("502", "Bad Gateway", REGULAR_STRING, location);
 		return ;
 	}

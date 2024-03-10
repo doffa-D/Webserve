@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 print("Content-Type: text/html")
 # print("Content-Lenght: 50")
-print()
+print("\r\n\r\n")
 
 import cgi
 import cgitb
@@ -10,9 +10,6 @@ import sys
 cgitb.enable()
 
 # Current working directory
-print("in python", file=sys.stderr)
-
-print("stuck", file=sys.stderr)
 form = cgi.FieldStorage()
 
 if 'file' not in form:
