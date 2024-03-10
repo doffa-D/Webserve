@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 09:31:57 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/09 18:22:56 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/10 20:31:45 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -414,10 +414,11 @@ Server	Parser::getServerbyHost(const string& _host) const
 
 	vector<Server> _s;
 	vector<Server> _servers = servers;
+	VecString	split = str_utils::split(_host, ':');
 	for (size_t i = 0; i < _servers.size();i++)
 	{
 		VecString server_names = _servers[i].getServerNames();
-		if (find(server_names.begin(), server_names.end(), _host) != server_names.end())
+		if (find(server_names.begin(), server_names.end(), split[0]) != server_names.end())
 			_s.push_back(_servers[i]);
 	}
 
