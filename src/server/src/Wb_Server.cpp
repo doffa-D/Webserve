@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Wb_Server.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 15:48:53 by hdagdagu          #+#    #+#             */
-/*   Updated: 2024/03/11 09:07:57 by hdagdagu         ###   ########.fr       */
+/*   Updated: 2024/03/11 12:31:01 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,6 +214,7 @@ void Wb_Server::listen_to_multiple_clients(const Parser& parsedData)
 					{
 						FD_CLR(SocketID, &fd_set_write);
 						Client[SocketID].KeepAliveTimeOut = time(0);
+						Client[SocketID].CheckSeend = "finish";
 						if (Client[SocketID].keepAlive == false)
 						{
 							FD_CLR(SocketID, &fd_set_write);

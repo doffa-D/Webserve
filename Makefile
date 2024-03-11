@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
+#    By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/03/10 16:44:11 by hdagdagu         ###   ########.fr        #
+#    Updated: 2024/03/11 13:05:14 by kchaouki         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CXX = g++
-CFLAGS = -Wall -Werror -Wextra -std=c++98 #-fsanitize=address -g3
-NAME = webserve
+CXX = c++
+CFLAGS = -Wall -Werror -Wextra -std=c++98
+NAME = webserv
 OBJDIR = .objFiles
 
 UPLOAD_DIR := upload
@@ -91,10 +91,5 @@ fclean: clean
 	@rm -rf $(UPLOAD_DIR) $(SESSION_DIR) $(LOGS_DIR) $(NAME)
 
 re: fclean all
-
-watch:
-	@npx nodemon -x 'reset && ./webserve' -e cpp,hpp
-
-
 
 .PHONY: all clean fclean re ascii_art

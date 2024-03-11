@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serveRequestedResource.cpp                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 23:25:00 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/11 10:45:12 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/11 13:04:01 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
 		std::map<std::string, std::string> env;
 		env["SCRIPT_NAME"] = filePath.substr(_pos + 1); //It will be the name of the file
 		env["SCRIPT_FILENAME"] = filePath; //It will be the path of the file
+		env["PATH_INFO"] = filePath;
 
 		env["CONTENT_TYPE"] = Req.getHttp_Header()["Content-Type"];
 		env["REQUEST_METHOD"] = Req.getReqLine().getMethod();
