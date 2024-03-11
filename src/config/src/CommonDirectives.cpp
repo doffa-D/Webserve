@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommonDirectives.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:48:02 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/07 14:59:46 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/11 07:44:44 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ void	CommonDirectives::setErrorLog(const string& _error_log)
 		throw CustomException("directive is duplicate", "error_log");
 	VecString vec = str_utils::proSplit(_error_log);
 	if (vec.size() > 1)
-		throw CustomException("invalid number of arguments in \"root\" directive");
+		throw CustomException("invalid number of arguments in \"error_log\" directive");
 	check_unexpected(_error_log, "error_log");
 	error_log = str_utils::remove_quotes(_error_log);
 	check[5] = 1;
@@ -164,7 +164,7 @@ void	CommonDirectives::setAccessLog(const string& _access_log)
 		throw CustomException("directive is duplicate", "access_log");
 	VecString vec = str_utils::proSplit(_access_log);
 	if (vec.size() > 1)
-		throw CustomException("invalid number of arguments in \"root\" directive");
+		throw CustomException("invalid number of arguments in \"access_log\" directive");
 	check_unexpected(_access_log, "access_log");
 	access_log = str_utils::remove_quotes(_access_log);
 	check[6] = 1;
