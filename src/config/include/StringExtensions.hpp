@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   StringExtensions.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 08:31:30 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/05 18:46:04 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/11 17:31:52 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ typedef VecInt::iterator 				VecInt_iter;
 typedef std::list<string>				ListString;
 typedef ListString::iterator			ListString_iter;
 typedef unsigned int					Uint;
-
 
 using	std::vector;
 using	std::pair;

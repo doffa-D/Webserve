@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 18:46:32 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/11 17:32:46 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ class Response
 		int	ReqErr;
 		std::vector<std::string> httpMethods;
 		std::vector<std::string> httpVersions;
-		// Response();
 		Response(VecStringString& track_cookie);
 
 		ResponseLine	getResLine() const;

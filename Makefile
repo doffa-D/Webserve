@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+         #
+#    By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/02 12:48:47 by hdagdagu          #+#    #+#              #
-#    Updated: 2024/03/11 13:05:14 by kchaouki         ###   ########.fr        #
+#    Updated: 2024/03/11 17:23:30 by hdagdagu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,11 +20,21 @@ SESSION_DIR := session
 LOGS_DIR := logs
 
 SRC_DIR = src
-INCLUDE_DIR = include
-CONFIG_INCLUDE_DIR = $(SRC_DIR)/config/include
-SERVER_INCLUDE_DIR = $(SRC_DIR)/server/include
-CGI_INCLUDE_DIR = $(SRC_DIR)/CGI/include
-REQUEST_RESPONSE = $(SRC_DIR)/Request_Response/include
+
+INCLUDE_DIR = include/header.hpp \
+			$(SRC_DIR)/CGI/include/CGI.hpp\
+			$(SRC_DIR)/server/include/Upload.hpp\
+			$(SRC_DIR)/server/include/Upload.hpp\
+			$(SRC_DIR)/server/include/Wb_Server.hpp\
+			$(SRC_DIR)/config/include/CommonDirectives.hpp\
+			$(SRC_DIR)/config/include/CustomException.hpp\
+			$(SRC_DIR)/config/include/Location.hpp\
+			$(SRC_DIR)/config/include/Parser.hpp\
+			$(SRC_DIR)/config/include/Server.hpp\
+			$(SRC_DIR)/config/include/StringExtensions.hpp\
+			$(SRC_DIR)/Request_Response/include/Request.hpp\
+			$(SRC_DIR)/Request_Response/include/Response.hpp
+
 
 SRCS = main.cpp \
 	$(SRC_DIR)/config/src/CommonDirectives.cpp \
@@ -45,9 +55,7 @@ SRCS = main.cpp \
 	$(SRC_DIR)/Request_Response/src/serveRequestedResource.cpp
 
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
-DEPS = $(OBJS:.o=.d)
 
-INCLUDES = -I$(INCLUDE_DIR) -I$(CONFIG_INCLUDE_DIR) -I$(SERVER_INCLUDE_DIR) -I$(CGI_INCLUDE_DIR) -I$(REQUEST_RESPONSE)
 
 # Color codes
 GREEN = \033[0;32m
@@ -72,15 +80,18 @@ ascii_art:
 	@echo "\n"
 
 
-$(NAME): $(OBJS)
+# 
+
+$(NAME): $(OBJS) $(INCLUDE_DIR)
 	@mkdir -p $(UPLOAD_DIR) $(SESSION_DIR) $(LOGS_DIR)
 	@echo "$(RED)$(NAME)$(YELLOW) Executable is ready$(NC)"
-	@$(CXX) $(CFLAGS) $(INCLUDES) $^ -o $@
+	@$(CXX) $(CFLAGS) $(OBJS) -o $(NAME)
+	
 
 $(OBJDIR)/%.o: %.cpp
 	@echo "$(GREEN)Compiling $(notdir $<)$(NC) >> $(GREEN)$(notdir $@)$(NC)"
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CXX) $(CFLAGS) -c $< -o $@
 
 clean:
 	@echo "$(RED)Cleaning up object files$(NC)"

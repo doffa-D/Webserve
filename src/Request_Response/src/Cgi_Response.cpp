@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi_Response.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hdagdagu <hdagdagu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 23:14:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/11 10:50:14 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/11 17:30:42 by hdagdagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 static void	parseSetCookie(const std::string& attribute, VecStringString& track_cookie)
 {
-	// string attribute = header.substr(12, header.length());
 	VecString _attributes = str_utils::split(attribute, ';');
 	VecString_iter _it = _attributes.begin();
 	std::pair<string, string> cookie;
@@ -27,10 +26,7 @@ static void	parseSetCookie(const std::string& attribute, VecStringString& track_
 			cookie.second = str_utils::trim(_it->substr(8, _it->length()));
 	}
 	if (!cookie.first.empty())
-	{
-		// cout << "cookie.first: [" << cookie.first << "] cookie.second: [" << cookie.second << "]" << endl;
 		track_cookie.push_back(cookie);
-	}
 }
 
 std::string    FindValueOfKey(std::vector <std::pair<string, string> > Cgi_Header, std::string Key)
@@ -72,7 +68,6 @@ void	Response::processCgiResponse(const std::string& Cgi_Response)
             Body += line;
             continue;
         }
-		//
 		if(line.find("Set-Cookie: ") != std::string::npos)
 			parseSetCookie(line.substr(12),track_cookie);
         if(line.find("Status") == std::string::npos)
