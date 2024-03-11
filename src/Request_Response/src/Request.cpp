@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 16:18:21 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/11 10:48:51 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,5 +137,4 @@ void Request::logging(std::string FilePath, bool isError, std::string Message)
             std::cerr << "Unable to open log file" << std::endl;
         }
     }
-	// std::cout << logmessage << std::endl;
 }

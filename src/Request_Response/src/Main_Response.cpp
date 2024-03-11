@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 19:07:19 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/11 10:48:35 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ std::string Response::ft_Response(const Parser& parser)
 {
     // Extract necessary information
     std::pair<std::string, Location> locationPair = extractRequestInformation(parser);
-    // 
+    // fill logging of Access Log with Message "Connection Accepted"
     Req.logging(locationPair.second.getAccessLog(), 0, "Accept the connection");
     // Handle common request errors
     if(handleCommonRequestErrors(locationPair.second))
@@ -164,7 +164,6 @@ std::string Response::ft_Response(const Parser& parser)
     if(Req.getReqLine().getPath() == "/" && locationPair.second.getRoot() == "." && locationPair.second.getIndexes()[0] == "index.html")
     {
         ProvideDefaultWelcomePage(locationPair.second);
-        std::cout << "Provide with default Welcome Page";
         return response;
     }
     // Construct absolute path for serving requested resource

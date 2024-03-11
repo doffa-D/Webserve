@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 23:25:00 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 13:08:15 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/11 10:45:12 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,15 @@ void    Response::HandleDeletMethod(const std::string& Root_ReqPath, const Locat
     if(std::remove(Root_ReqPath.c_str()) == 0)
     {
         Req.logging(location.getAccessLog(), false, "file deleted successfully");
+        ResPath = "file deleted successfully";
         Fill_Response("200", "OK", REGULAR_STRING, location);
-        // std::cout << "deleted\n";
     }
-    // else
-    //     std::cout << "not deleted\n";
+    else
+    {
+        Req.logging(location.getErrorLog(), true, "file deleted successfully");
+        ResPath = "failed to delete  " + Root_ReqPath;
+        Fill_Response("409", "Conflict", REGULAR_STRING, location);
+    }
 }
 
 void    Response::Upload(const Location& location)
@@ -33,16 +37,16 @@ void    Response::Upload(const Location& location)
         unsigned long freeSpace = buffer.f_bavail * buffer.f_frsize; // free space:
         if(Req.getBody().size() > freeSpace)
         {
-            Req.logging(location.getErrorLog(),true,"No space left on device");
+            Req.logging(location.getErrorLog(), true, "No space left on device");
         }
         else
         {
-            Req.logging(location.getAccessLog(),false,"file saved successfully");
+            Req.logging(location.getAccessLog(), false, "file saved successfully");
             upload_file(Req.getBody(),  location.getUpload(), Req.getHttp_Header());
         }
     }
     else
-        Req.logging(location.getErrorLog(),true,"Failed to get disk space information");
+        Req.logging(location.getErrorLog(), true, "Failed to get disk space information");
 }
 
 void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Location& location)
@@ -55,7 +59,7 @@ void	Response::handleDirectoryRequest(const std::string& Root_ReqPath, const Loc
 		Fill_Response("301", "Moved Permanently", REGULAR_STRING, location);
 		return ;
 	}
-	ResPath = location.getIndexFilePathByRoot(Root_ReqPath); // this function kat9alb 3la file ila mal9atxe xi file kat3tina empty
+	ResPath = location.getIndexFilePathByRoot(Root_ReqPath); // this function search to file in case not found will return empty
 	if(ResPath.empty() == 0)
 	{
         Req.logging(location.getAccessLog(), 0, "serving file successfully");
@@ -89,8 +93,8 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
 	{
 		size_t _pos = str_utils::r_find(filePath, '/');
 		std::map<std::string, std::string> env;
-		env["SCRIPT_NAME"] = filePath.substr(_pos + 1); //It will be the name of the file ???
-		env["SCRIPT_FILENAME"] = filePath; //It will be the path of the file ??? 
+		env["SCRIPT_NAME"] = filePath.substr(_pos + 1); //It will be the name of the file
+		env["SCRIPT_FILENAME"] = filePath; //It will be the path of the file
 
 		env["CONTENT_TYPE"] = Req.getHttp_Header()["Content-Type"];
 		env["REQUEST_METHOD"] = Req.getReqLine().getMethod();
@@ -99,8 +103,8 @@ void Response::handleFileRequest(const std::string& filePath, const Location& lo
 		env["SERVER_PROTOCOL"] = Req.getReqLine().getHttpVersion();
 		
 		env["HTTP_COOKIE"] = Req.getHttp_Header()["Cookie"];
-		env["SERVER_NAME"] = "WebServer"; // ????
-		env["REDIRECT_STATUS"] = "200"; // ????
+		env["SERVER_NAME"] = "WebServer";
+		env["REDIRECT_STATUS"] = "200";
 	
 		std::string body = Req.getBody();// it will be empty in GET !!!
 		CGI cgi_obj(body, env, bin);

@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 23:14:09 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 16:19:24 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/11 10:50:14 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ void	Response::Check_CGI_Response(std::string Cgi_Response, int Cgi_Stat_Code, c
 	if(Cgi_Stat_Code == 0) // CGI Succes
 	{
 		size_t pos = Cgi_Response.find("\r\n\r\n");
-		if(pos != std::string::npos) // it mean response fiha separater bin header o body
+		if(pos != std::string::npos) // it mean response it have a separator between header and body
 			processCgiResponse(Cgi_Response);
 		else
 		{
