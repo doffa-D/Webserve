@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:15:56 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/10 11:42:45 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 19:07:19 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,34 @@ std::string Response::constructRootRequestPath(const Location& location, const s
     return rootReqPath;
 }
 
+void    Response::ProvideDefaultWelcomePage(const Location& location)
+{
+    std::string str = "<!DOCTYPE html>\n"
+                  "<html>\n"
+                  "<head>\n"
+                  "<title>Welcome to fake nginx!</title>\n"
+                  "<style>\n"
+                  "html { color-scheme: light dark; }\n"
+                  "body { width: 35em; margin: 0 auto;\n"
+                  "font-family: Tahoma, Verdana, Arial, sans-serif; }\n"
+                  "</style>\n"
+                  "</head>\n"
+                  "<body>\n"
+                  "<h1>Welcome to fake nginx!</h1>\n"
+                  "<p>If you see this page, the fake nginx web server is successfully installed and\n"
+                  "working. Further configuration is required.</p>\n"
+                  "<p><em>Thank you for using fake nginx.</em></p>\n"
+                  "<p>For online documentation and support please refer to\n"
+                  "<a href=\"http://nginx.org/\">nginx.org</a>.<br/>\n"
+                  "Commercial support is available at\n"
+                  "<a href=\"http://nginx.com/\">nginx.com</a>.</p>\n"
+                  "<p><em>Thank you for using fake nginx.</em></p><br/>\n"
+                  "<p><em> Developed By kchaouki hdagdagu rrhnizar .<em></p>\n"
+                  "</body>\n"
+                  "</html>";
+    ResPath = str;
+    Fill_Response("200", "Ok", REGULAR_STRING, location);
+}
 
 std::string Response::ft_Response(const Parser& parser)
 {
@@ -132,6 +160,13 @@ std::string Response::ft_Response(const Parser& parser)
     // Handle redirection if specified
     if(handleRedirection(locationPair.second))
         return response;
+    // Provide default Welcome Page 
+    if(Req.getReqLine().getPath() == "/" && locationPair.second.getRoot() == "." && locationPair.second.getIndexes()[0] == "index.html")
+    {
+        ProvideDefaultWelcomePage(locationPair.second);
+        std::cout << "Provide with default Welcome Page";
+        return response;
+    }
     // Construct absolute path for serving requested resource
     std::string rootRequestPath = constructRootRequestPath(locationPair.second, locationPair.first);
     // Serve requested resource or handle not found

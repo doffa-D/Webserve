@@ -6,7 +6,7 @@
 /*   By: rrhnizar <rrhnizar@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:20:17 by rrhnizar          #+#    #+#             */
-/*   Updated: 2024/03/09 20:09:44 by rrhnizar         ###   ########.fr       */
+/*   Updated: 2024/03/10 18:46:32 by rrhnizar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,7 @@ class Response
 		bool		handleCommonRequestErrors(const Location& location);
 		bool		handleRedirection(const Location& location);
 		std::string	constructRootRequestPath(const Location& location, const std::string& LocationName);
+		void		ProvideDefaultWelcomePage(const Location& location);
 };
 
 std::string	 AutoIndex(std::string ResPath, std::string ReqPath);

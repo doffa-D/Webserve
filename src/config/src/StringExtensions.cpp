@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   StringExtensions.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kchaouki <kchaouki@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: kchaouki < kchaouki@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 08:10:28 by kchaouki          #+#    #+#             */
-/*   Updated: 2024/03/08 18:27:13 by kchaouki         ###   ########.fr       */
+/*   Updated: 2024/03/11 07:58:33 by kchaouki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,9 +160,12 @@ std::string	str_utils::ip(unsigned int value)
 
 bool	str_utils::createFile(const string& fileName)
 {
-	if (open(fileName.c_str(), O_CREAT | O_WRONLY | O_APPEND, 0644) != -1)
-		return (false);
-	return (true);
+	int fd = open(fileName.c_str(), O_CREAT | O_WRONLY | O_APPEND, 0644);
+	if (fd == -1)
+		return (true);
+	if (close(fd) == -1)
+		return (true);
+	return (false);
 }
 
 string	str_utils::remove_quotes(const string& str)
